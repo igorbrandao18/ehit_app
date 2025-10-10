@@ -1,0 +1,784 @@
+---
+alwaysApply: true
+---
+
+# Clean Architecture - Ehit App (Spotify-style Music App)
+
+This document defines the Clean Architecture pattern applied to the Flutter Ehit App project - a Spotify-style music streaming application with Supabase backend.
+
+## 📋 Index
+
+- [Overview](#overview)
+- [Folder Structure](#folder-structure)
+- [Architecture Layers](#architecture-layers)
+- [Dependency Rules](#dependency-rules)
+- [Design System](#design-system)
+- [Code Patterns](#code-patterns)
+- [State Management](#state-management)
+- [Error Handling](#error-handling)
+- [Testing](#testing)
+- [Performance](#performance)
+- [Security](#security)
+- [Best Practices](#best-practices)
+
+## 🎯 Overview
+
+Clean Architecture separates code into well-defined layers, where each layer has a specific responsibility and depends only on inner layers. This ensures:
+
+- **Testability**: Each layer can be tested independently
+- **Maintainability**: Changes in one layer don't affect others
+- **Flexibility**: Easy to swap implementations (e.g., replace API with local database)
+- **Scalability**: Organized code facilitates project growth
+
+### App Context: Spotify-style Music Streaming
+This application is designed as a music streaming platform similar to Spotify, featuring:
+- **Music Library**: Browse and search songs, albums, artists
+- **Playlists**: Create, manage, and share playlists
+- **User Profiles**: User authentication and preferences
+- **Music Player**: Audio playback with controls
+- **Social Features**: Follow users, share music, discover new content
+- **Offline Mode**: Download music for offline listening
+
+### Technology Stack
+- **Frontend**: Flutter (Dart)
+- **Backend**: Supabase (PostgreSQL + Real-time + Auth + Storage)
+- **Audio**: Audio streaming and playback
+- **Storage**: Local caching and offline storage
+- **Authentication**: Supabase Auth with social login
+
+## 📁 Folder Structure
+
+```
+lib/
+├── core/                    # Shared functionality
+│   ├── constants/          # Global constants
+│   ├── errors/            # Custom error classes
+│   ├── network/           # Supabase client configuration
+│   ├── utils/             # General utilities
+│   ├── extensions/        # Dart/Flutter extensions
+│   ├── injection/         # Dependency injection
+│   ├── validators/        # Global validators
+│   └── audio/             # Audio player utilities
+├── features/              # App features
+│   ├── auth/              # Authentication feature
+│   ├── music_library/     # Music browsing and search
+│   ├── playlists/         # Playlist management
+│   ├── music_player/      # Audio playback
+│   ├── user_profile/      # User management
+│   ├── social/           # Social features
+│   └── offline/           # Offline music management
+│       ├── data/          # Data layer
+│       │   ├── datasources/    # Supabase + Local storage
+│       │   ├── models/         # Data models
+│       │   └── repositories/   # Repository implementations
+│       ├── domain/        # Domain layer
+│       │   ├── entities/       # Business entities
+│       │   ├── repositories/   # Repository contracts
+│       │   ├── usecases/       # Use cases
+│       │   └── validators/     # Feature-specific validators
+│       └── presentation/ # Presentation layer
+│           ├── pages/          # Screens/Pages
+│           ├── widgets/        # Feature-specific widgets
+│           ├── providers/      # State management
+│           └── controllers/    # Controllers/Blocs
+├── shared/                # Shared components
+│   ├── widgets/           # Reusable widgets
+│   ├── themes/            # Music app themes
+│   ├── utils/             # Shared utilities
+│   └── constants/         # Shared constants
+└── main.dart             # Application entry point
+```
+
+## 🏗️ Architecture Layers
+
+### 1. **Presentation Layer**
+- **Responsibility**: User interface and state management
+- **Contains**: Pages, Widgets, Providers/Bloc, Controllers
+- **Depends on**: Domain Layer
+- **Rules**:
+  - Must never call APIs or databases directly
+  - Must use only use cases to interact with domain
+  - Widgets should be stateless whenever possible
+  - Controllers should manage only UI state
+
+### 2. **Domain Layer**
+- **Responsibility**: Business rules and application logic
+- **Contains**: Entities, Use Cases, Repository Interfaces, Validators
+- **Depends on**: No external layers (innermost layer)
+- **Rules**:
+  - Cannot have external dependencies (Flutter, HTTP, etc.)
+  - Entities must be immutable
+  - Use Cases must have a single responsibility
+  - Repository interfaces define contracts, not implementations
+
+### 3. **Data Layer**
+- **Responsibility**: Data access and contract implementation
+- **Contains**: Data Sources, Models, Repository Implementations
+- **Depends on**: Domain Layer
+- **Rules**:
+  - Implements interfaces defined in Domain
+  - Models must have conversion to/from Entity
+  - Data Sources must handle network/database errors
+  - Repositories must implement cache when necessary
+
+## 🎨 Design System
+
+### Base Components
+- **Colors**: Music-themed color palette (dark mode primary)
+- **Typography**: Readable fonts for music metadata
+- **Spacing**: Grid system optimized for music cards
+- **Icons**: Music-specific icons (play, pause, skip, etc.)
+- **Buttons**: Player controls and action buttons
+- **Inputs**: Search bars and form fields
+- **Cards**: Music cards, album covers, playlist items
+- **Modals**: Player modal, playlist creation dialogs
+- **Audio Visualizer**: Waveform and spectrum displays
+
+### Music-Specific Design Rules
+- Dark theme as primary (better for music consumption)
+- Album artwork integration throughout UI
+- Consistent player controls across all screens
+- Smooth animations for music transitions
+- Accessibility for audio controls (screen readers)
+- Responsive design for different screen sizes
+
+### Theme Structure
+```
+shared/themes/
+├── app_colors.dart        # Music app color palette
+├── app_text_styles.dart   # Typography for music metadata
+├── app_spacing.dart       # Spacing for music layouts
+├── app_borders.dart       # Rounded corners for cards
+├── app_shadows.dart       # Shadows for depth
+├── app_animations.dart    # Music transition animations
+└── app_theme.dart         # Main music app theme
+```
+
+## 📝 Code Patterns
+
+### Naming Conventions
+- **Classes**: PascalCase (e.g., `UserRepository`)
+- **Methods/Variables**: camelCase (e.g., `getUserById`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `API_BASE_URL`)
+- **Files**: snake_case (e.g., `user_repository.dart`)
+- **Folders**: snake_case (e.g., `user_management`)
+
+### File Conventions
+- **Entities**: `song.dart`, `playlist.dart`, `user.dart`
+- **Models**: `song_model.dart`, `playlist_model.dart`
+- **Repositories**: `music_repository.dart` (interface), `music_repository_impl.dart` (implementation)
+- **Use Cases**: `get_songs_usecase.dart`, `create_playlist_usecase.dart`
+- **Data Sources**: `supabase_music_datasource.dart`, `local_music_datasource.dart`
+- **Pages**: `music_library_page.dart`, `playlist_page.dart`
+- **Widgets**: `song_card.dart`, `player_widget.dart`
+- **Controllers**: `music_player_controller.dart`, `playlist_controller.dart`
+
+### Documentation
+- Use comments to explain complex logic
+- Document public APIs with `///`
+- Keep README updated
+- Use descriptive names for methods and variables
+
+## 🔄 State Management
+
+### Recommended Patterns
+- **Provider**: For simple and local state
+- **Bloc/Cubit**: For complex state and business logic
+- **Riverpod**: Modern alternative to Provider
+- **GetX**: For smaller projects or rapid prototyping
+
+### State Rules
+- State must be immutable
+- Use ValueNotifier for simple state
+- Controllers must be injected via DI
+- Global state should be minimal
+- Prefer local state when possible
+
+### Controller Structure
+```
+presentation/controllers/
+├── music_player_controller.dart    # Audio playback state
+├── playlist_controller.dart        # Playlist management
+├── auth_controller.dart            # User authentication
+├── music_library_controller.dart   # Music browsing
+└── app_controller.dart            # Global app state
+```
+
+## ⚠️ Error Handling
+
+### Error Types
+- **ServerFailure**: Supabase API/server errors
+- **NetworkFailure**: Connectivity issues affecting music streaming
+- **CacheFailure**: Local storage errors for offline music
+- **ValidationFailure**: Music metadata validation errors
+- **AuthFailure**: Supabase authentication errors
+- **AudioFailure**: Audio playback and streaming errors
+
+### Result Pattern
+- Use `Result<T>` for operations that can fail
+- `Success<T>` for successful operations
+- `Error<T>` for failed operations
+- Always handle errors in the presentation layer
+
+### Logging
+- Use different log levels (debug, info, warning, error)
+- Don't log sensitive information
+- Use structured logging when possible
+- Configure different logs for debug/release
+
+## 🧪 Testing
+
+### Testing Strategy
+- **Unit Tests**: For Use Cases, Entities and utilities
+- **Widget Tests**: For UI components
+- **Integration Tests**: For complete flows
+- **Golden Tests**: For visual components
+
+### Minimum Coverage
+- Domain Layer: 90%+
+- Data Layer: 80%+
+- Presentation Layer: 70%+
+- Overall: 80%+
+
+### Test Structure
+```
+test/
+├── unit/                   # Unit tests
+│   ├── domain/
+│   ├── data/
+│   └── core/
+├── widget/                 # Widget tests
+├── integration/            # Integration tests
+└── fixtures/              # Test data
+```
+
+### Mocking
+- Use mocks for external dependencies
+- Mock only interfaces, not implementations
+- Use `mockito` for automatic mock generation
+- Keep mocks simple and focused
+
+## ⚡ Performance
+
+### UI Optimizations
+- Use `const` constructors whenever possible
+- Implement `ListView.builder` for large lists
+- Use `AutomaticKeepAliveClientMixin` to maintain state
+- Avoid unnecessary rebuilds with specific `Consumer`
+
+### Network Optimizations
+- Implement intelligent caching for music metadata
+- Use pagination for large music libraries
+- Progressive audio loading (stream while downloading)
+- CDN integration for audio files
+- Lazy loading of album artwork
+- Background sync for offline music
+
+### Memory Optimizations
+- Dispose controllers and streams
+- Use `WeakReference` when appropriate
+- Avoid memory leaks with listeners
+- Profile regularly with Flutter Inspector
+
+### Performance Metrics
+- Frame rate: Constant 60 FPS for smooth animations
+- Audio latency: < 100ms for responsive controls
+- Build time: < 16ms for UI responsiveness
+- Memory usage: Monitor audio buffer growth
+- App size: Optimize audio assets and dependencies
+- Network efficiency: Minimize data usage for streaming
+
+## 🔒 Security
+
+### Secure Storage
+- Use `flutter_secure_storage` for user tokens and credentials
+- Never store authentication tokens in SharedPreferences
+- Encrypt offline music files when downloaded
+- Use Supabase RLS (Row Level Security) for data access
+- Secure local database for offline music metadata
+
+### Secure Communication
+- Always use HTTPS for Supabase connections
+- Implement certificate pinning for Supabase API
+- Validate SSL certificates for audio streaming
+- Use Supabase Auth for secure authentication
+- Implement proper CORS policies
+
+### Data Validation
+- Validate music metadata on client and server
+- Sanitize user-generated content (playlist names, etc.)
+- Validate audio file formats and sizes
+- Use Supabase database constraints
+- Implement input validation for search queries
+
+### Authentication
+- Use Supabase Auth with social login providers
+- Implement automatic token refresh
+- Use biometrics for app access when available
+- Implement session timeout for security
+- Store user sessions securely with Supabase
+
+## 🔄 Dependency Rules
+
+1. **Dependencies point inward**: Outer layers depend on inner layers
+2. **Domain Layer is independent**: Doesn't depend on any other layer
+3. **Data Layer implements Domain**: Implements contracts defined in Domain
+4. **Presentation Layer uses Domain**: Consumes only use cases and entities
+
+```
+Presentation → Domain ← Data
+     ↓           ↑       ↓
+   Widgets   Use Cases  API/DB
+```
+
+## ✅ Best Practices
+
+### Architecture
+- Keep layers well separated
+- Use dependency injection
+- Implement interfaces for abstractions
+- Prefer composition over inheritance
+- Use SOLID principles
+
+### Code
+- Write clean and readable code
+- Use descriptive names
+- Keep methods small and focused
+- Avoid code duplication (DRY)
+- Use comments only when necessary
+
+### Performance
+- Optimize unnecessary builds
+- Use lazy loading when appropriate
+- Implement intelligent caching
+- Monitor memory usage
+- Profile regularly
+
+### Maintainability
+- Keep dependencies updated
+- Use semantic versioning
+- Document important changes
+- Refactor legacy code gradually
+- Use static analysis tools
+
+## 🚀 Next Steps
+
+1. **Setup Supabase**: Configure Supabase project with database schema
+2. **Implement Core**: Configure dependency injection and Supabase client
+3. **Create Design System**: Implement music-themed components and dark theme
+4. **Build Authentication**: Implement Supabase Auth with social login
+5. **Create Music Library**: Build music browsing and search functionality
+6. **Implement Audio Player**: Add audio streaming and playback controls
+7. **Add Playlist Management**: Create, edit, and share playlists
+8. **Build Offline Mode**: Implement music downloading and offline playback
+9. **Add Social Features**: User profiles, following, and music sharing
+10. **Configure Testing**: Set up testing environment for each layer
+11. **Add Logging**: Implement structured logging system
+12. **Configure CI/CD**: Automate tests and builds
+13. **Implement Analytics**: Add music listening analytics and crash reporting
+
+## 📚 Additional Resources
+
+- [Clean Architecture - Uncle Bob](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Flutter Clean Architecture](https://flutter.dev/docs/development/data-and-backend/state-mgmt/options)
+- [Supabase Flutter Documentation](https://supabase.com/docs/guides/getting-started/tutorials/with-flutter)
+- [Provider Package](https://pub.dev/packages/provider)
+- [Get It Package](https://pub.dev/packages/get_it)
+- [Flutter Audio Players](https://pub.dev/packages/audioplayers)
+- [Flutter Design System](https://flutter.dev/docs/development/ui/widgets/material)
+- [Flutter Performance](https://flutter.dev/docs/perf)
+
+---
+
+**Last updated**: December 2024
+**Version**: 1.0.0
+# Clean Architecture - Ehit App (Spotify-style Music App)
+
+This document defines the Clean Architecture pattern applied to the Flutter Ehit App project - a Spotify-style music streaming application with Supabase backend.
+
+## 📋 Index
+
+- [Overview](#overview)
+- [Folder Structure](#folder-structure)
+- [Architecture Layers](#architecture-layers)
+- [Dependency Rules](#dependency-rules)
+- [Design System](#design-system)
+- [Code Patterns](#code-patterns)
+- [State Management](#state-management)
+- [Error Handling](#error-handling)
+- [Testing](#testing)
+- [Performance](#performance)
+- [Security](#security)
+- [Best Practices](#best-practices)
+
+## 🎯 Overview
+
+Clean Architecture separates code into well-defined layers, where each layer has a specific responsibility and depends only on inner layers. This ensures:
+
+- **Testability**: Each layer can be tested independently
+- **Maintainability**: Changes in one layer don't affect others
+- **Flexibility**: Easy to swap implementations (e.g., replace API with local database)
+- **Scalability**: Organized code facilitates project growth
+
+### App Context: Spotify-style Music Streaming
+This application is designed as a music streaming platform similar to Spotify, featuring:
+- **Music Library**: Browse and search songs, albums, artists
+- **Playlists**: Create, manage, and share playlists
+- **User Profiles**: User authentication and preferences
+- **Music Player**: Audio playback with controls
+- **Social Features**: Follow users, share music, discover new content
+- **Offline Mode**: Download music for offline listening
+
+### Technology Stack
+- **Frontend**: Flutter (Dart)
+- **Backend**: Supabase (PostgreSQL + Real-time + Auth + Storage)
+- **Audio**: Audio streaming and playback
+- **Storage**: Local caching and offline storage
+- **Authentication**: Supabase Auth with social login
+
+## 📁 Folder Structure
+
+```
+lib/
+├── core/                    # Shared functionality
+│   ├── constants/          # Global constants
+│   ├── errors/            # Custom error classes
+│   ├── network/           # Supabase client configuration
+│   ├── utils/             # General utilities
+│   ├── extensions/        # Dart/Flutter extensions
+│   ├── injection/         # Dependency injection
+│   ├── validators/        # Global validators
+│   └── audio/             # Audio player utilities
+├── features/              # App features
+│   ├── auth/              # Authentication feature
+│   ├── music_library/     # Music browsing and search
+│   ├── playlists/         # Playlist management
+│   ├── music_player/      # Audio playback
+│   ├── user_profile/      # User management
+│   ├── social/           # Social features
+│   └── offline/           # Offline music management
+│       ├── data/          # Data layer
+│       │   ├── datasources/    # Supabase + Local storage
+│       │   ├── models/         # Data models
+│       │   └── repositories/   # Repository implementations
+│       ├── domain/        # Domain layer
+│       │   ├── entities/       # Business entities
+│       │   ├── repositories/   # Repository contracts
+│       │   ├── usecases/       # Use cases
+│       │   └── validators/     # Feature-specific validators
+│       └── presentation/ # Presentation layer
+│           ├── pages/          # Screens/Pages
+│           ├── widgets/        # Feature-specific widgets
+│           ├── providers/      # State management
+│           └── controllers/    # Controllers/Blocs
+├── shared/                # Shared components
+│   ├── widgets/           # Reusable widgets
+│   ├── themes/            # Music app themes
+│   ├── utils/             # Shared utilities
+│   └── constants/         # Shared constants
+└── main.dart             # Application entry point
+```
+
+## 🏗️ Architecture Layers
+
+### 1. **Presentation Layer**
+- **Responsibility**: User interface and state management
+- **Contains**: Pages, Widgets, Providers/Bloc, Controllers
+- **Depends on**: Domain Layer
+- **Rules**:
+  - Must never call APIs or databases directly
+  - Must use only use cases to interact with domain
+  - Widgets should be stateless whenever possible
+  - Controllers should manage only UI state
+
+### 2. **Domain Layer**
+- **Responsibility**: Business rules and application logic
+- **Contains**: Entities, Use Cases, Repository Interfaces, Validators
+- **Depends on**: No external layers (innermost layer)
+- **Rules**:
+  - Cannot have external dependencies (Flutter, HTTP, etc.)
+  - Entities must be immutable
+  - Use Cases must have a single responsibility
+  - Repository interfaces define contracts, not implementations
+
+### 3. **Data Layer**
+- **Responsibility**: Data access and contract implementation
+- **Contains**: Data Sources, Models, Repository Implementations
+- **Depends on**: Domain Layer
+- **Rules**:
+  - Implements interfaces defined in Domain
+  - Models must have conversion to/from Entity
+  - Data Sources must handle network/database errors
+  - Repositories must implement cache when necessary
+
+## 🎨 Design System
+
+### Base Components
+- **Colors**: Music-themed color palette (dark mode primary)
+- **Typography**: Readable fonts for music metadata
+- **Spacing**: Grid system optimized for music cards
+- **Icons**: Music-specific icons (play, pause, skip, etc.)
+- **Buttons**: Player controls and action buttons
+- **Inputs**: Search bars and form fields
+- **Cards**: Music cards, album covers, playlist items
+- **Modals**: Player modal, playlist creation dialogs
+- **Audio Visualizer**: Waveform and spectrum displays
+
+### Music-Specific Design Rules
+- Dark theme as primary (better for music consumption)
+- Album artwork integration throughout UI
+- Consistent player controls across all screens
+- Smooth animations for music transitions
+- Accessibility for audio controls (screen readers)
+- Responsive design for different screen sizes
+
+### Theme Structure
+```
+shared/themes/
+├── app_colors.dart        # Music app color palette
+├── app_text_styles.dart   # Typography for music metadata
+├── app_spacing.dart       # Spacing for music layouts
+├── app_borders.dart       # Rounded corners for cards
+├── app_shadows.dart       # Shadows for depth
+├── app_animations.dart    # Music transition animations
+└── app_theme.dart         # Main music app theme
+```
+
+## 📝 Code Patterns
+
+### Naming Conventions
+- **Classes**: PascalCase (e.g., `UserRepository`)
+- **Methods/Variables**: camelCase (e.g., `getUserById`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `API_BASE_URL`)
+- **Files**: snake_case (e.g., `user_repository.dart`)
+- **Folders**: snake_case (e.g., `user_management`)
+
+### File Conventions
+- **Entities**: `song.dart`, `playlist.dart`, `user.dart`
+- **Models**: `song_model.dart`, `playlist_model.dart`
+- **Repositories**: `music_repository.dart` (interface), `music_repository_impl.dart` (implementation)
+- **Use Cases**: `get_songs_usecase.dart`, `create_playlist_usecase.dart`
+- **Data Sources**: `supabase_music_datasource.dart`, `local_music_datasource.dart`
+- **Pages**: `music_library_page.dart`, `playlist_page.dart`
+- **Widgets**: `song_card.dart`, `player_widget.dart`
+- **Controllers**: `music_player_controller.dart`, `playlist_controller.dart`
+
+### Documentation
+- Use comments to explain complex logic
+- Document public APIs with `///`
+- Keep README updated
+- Use descriptive names for methods and variables
+
+## 🔄 State Management
+
+### Recommended Patterns
+- **Provider**: For simple and local state
+- **Bloc/Cubit**: For complex state and business logic
+- **Riverpod**: Modern alternative to Provider
+- **GetX**: For smaller projects or rapid prototyping
+
+### State Rules
+- State must be immutable
+- Use ValueNotifier for simple state
+- Controllers must be injected via DI
+- Global state should be minimal
+- Prefer local state when possible
+
+### Controller Structure
+```
+presentation/controllers/
+├── music_player_controller.dart    # Audio playback state
+├── playlist_controller.dart        # Playlist management
+├── auth_controller.dart            # User authentication
+├── music_library_controller.dart   # Music browsing
+└── app_controller.dart            # Global app state
+```
+
+## ⚠️ Error Handling
+
+### Error Types
+- **ServerFailure**: Supabase API/server errors
+- **NetworkFailure**: Connectivity issues affecting music streaming
+- **CacheFailure**: Local storage errors for offline music
+- **ValidationFailure**: Music metadata validation errors
+- **AuthFailure**: Supabase authentication errors
+- **AudioFailure**: Audio playback and streaming errors
+
+### Result Pattern
+- Use `Result<T>` for operations that can fail
+- `Success<T>` for successful operations
+- `Error<T>` for failed operations
+- Always handle errors in the presentation layer
+
+### Logging
+- Use different log levels (debug, info, warning, error)
+- Don't log sensitive information
+- Use structured logging when possible
+- Configure different logs for debug/release
+
+## 🧪 Testing
+
+### Testing Strategy
+- **Unit Tests**: For Use Cases, Entities and utilities
+- **Widget Tests**: For UI components
+- **Integration Tests**: For complete flows
+- **Golden Tests**: For visual components
+
+### Minimum Coverage
+- Domain Layer: 90%+
+- Data Layer: 80%+
+- Presentation Layer: 70%+
+- Overall: 80%+
+
+### Test Structure
+```
+test/
+├── unit/                   # Unit tests
+│   ├── domain/
+│   ├── data/
+│   └── core/
+├── widget/                 # Widget tests
+├── integration/            # Integration tests
+└── fixtures/              # Test data
+```
+
+### Mocking
+- Use mocks for external dependencies
+- Mock only interfaces, not implementations
+- Use `mockito` for automatic mock generation
+- Keep mocks simple and focused
+
+## ⚡ Performance
+
+### UI Optimizations
+- Use `const` constructors whenever possible
+- Implement `ListView.builder` for large lists
+- Use `AutomaticKeepAliveClientMixin` to maintain state
+- Avoid unnecessary rebuilds with specific `Consumer`
+
+### Network Optimizations
+- Implement intelligent caching for music metadata
+- Use pagination for large music libraries
+- Progressive audio loading (stream while downloading)
+- CDN integration for audio files
+- Lazy loading of album artwork
+- Background sync for offline music
+
+### Memory Optimizations
+- Dispose controllers and streams
+- Use `WeakReference` when appropriate
+- Avoid memory leaks with listeners
+- Profile regularly with Flutter Inspector
+
+### Performance Metrics
+- Frame rate: Constant 60 FPS for smooth animations
+- Audio latency: < 100ms for responsive controls
+- Build time: < 16ms for UI responsiveness
+- Memory usage: Monitor audio buffer growth
+- App size: Optimize audio assets and dependencies
+- Network efficiency: Minimize data usage for streaming
+
+## 🔒 Security
+
+### Secure Storage
+- Use `flutter_secure_storage` for user tokens and credentials
+- Never store authentication tokens in SharedPreferences
+- Encrypt offline music files when downloaded
+- Use Supabase RLS (Row Level Security) for data access
+- Secure local database for offline music metadata
+
+### Secure Communication
+- Always use HTTPS for Supabase connections
+- Implement certificate pinning for Supabase API
+- Validate SSL certificates for audio streaming
+- Use Supabase Auth for secure authentication
+- Implement proper CORS policies
+
+### Data Validation
+- Validate music metadata on client and server
+- Sanitize user-generated content (playlist names, etc.)
+- Validate audio file formats and sizes
+- Use Supabase database constraints
+- Implement input validation for search queries
+
+### Authentication
+- Use Supabase Auth with social login providers
+- Implement automatic token refresh
+- Use biometrics for app access when available
+- Implement session timeout for security
+- Store user sessions securely with Supabase
+
+## 🔄 Dependency Rules
+
+1. **Dependencies point inward**: Outer layers depend on inner layers
+2. **Domain Layer is independent**: Doesn't depend on any other layer
+3. **Data Layer implements Domain**: Implements contracts defined in Domain
+4. **Presentation Layer uses Domain**: Consumes only use cases and entities
+
+```
+Presentation → Domain ← Data
+     ↓           ↑       ↓
+   Widgets   Use Cases  API/DB
+```
+
+## ✅ Best Practices
+
+### Architecture
+- Keep layers well separated
+- Use dependency injection
+- Implement interfaces for abstractions
+- Prefer composition over inheritance
+- Use SOLID principles
+
+### Code
+- Write clean and readable code
+- Use descriptive names
+- Keep methods small and focused
+- Avoid code duplication (DRY)
+- Use comments only when necessary
+
+### Performance
+- Optimize unnecessary builds
+- Use lazy loading when appropriate
+- Implement intelligent caching
+- Monitor memory usage
+- Profile regularly
+
+### Maintainability
+- Keep dependencies updated
+- Use semantic versioning
+- Document important changes
+- Refactor legacy code gradually
+- Use static analysis tools
+
+## 🚀 Next Steps
+
+1. **Setup Supabase**: Configure Supabase project with database schema
+2. **Implement Core**: Configure dependency injection and Supabase client
+3. **Create Design System**: Implement music-themed components and dark theme
+4. **Build Authentication**: Implement Supabase Auth with social login
+5. **Create Music Library**: Build music browsing and search functionality
+6. **Implement Audio Player**: Add audio streaming and playback controls
+7. **Add Playlist Management**: Create, edit, and share playlists
+8. **Build Offline Mode**: Implement music downloading and offline playback
+9. **Add Social Features**: User profiles, following, and music sharing
+10. **Configure Testing**: Set up testing environment for each layer
+11. **Add Logging**: Implement structured logging system
+12. **Configure CI/CD**: Automate tests and builds
+13. **Implement Analytics**: Add music listening analytics and crash reporting
+
+## 📚 Additional Resources
+
+- [Clean Architecture - Uncle Bob](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [Flutter Clean Architecture](https://flutter.dev/docs/development/data-and-backend/state-mgmt/options)
+- [Supabase Flutter Documentation](https://supabase.com/docs/guides/getting-started/tutorials/with-flutter)
+- [Provider Package](https://pub.dev/packages/provider)
+- [Get It Package](https://pub.dev/packages/get_it)
+- [Flutter Audio Players](https://pub.dev/packages/audioplayers)
+- [Flutter Design System](https://flutter.dev/docs/development/ui/widgets/material)
+- [Flutter Performance](https://flutter.dev/docs/perf)
+
+---
+
+**Last updated**: December 2024
+**Version**: 1.0.0
