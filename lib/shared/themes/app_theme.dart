@@ -15,7 +15,7 @@ class AppTheme {
       // Color Scheme
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primaryRed,
-        secondary: AppColors.primaryBrown,
+        secondary: AppColors.accentYellow,
         surface: AppColors.backgroundCard,
         background: AppColors.backgroundDark,
         error: AppColors.error,
@@ -79,7 +79,7 @@ class AppTheme {
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.backgroundElevated,
+        fillColor: AppColors.backgroundCard,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.md),
           borderSide: BorderSide.none,

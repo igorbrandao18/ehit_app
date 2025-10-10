@@ -2,27 +2,20 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Primary Colors (ÊHIT Theme - Red/Brown)
-  static const Color primaryRed = Color(0xFFE50914); // Spotify-like red
-  static const Color primaryBrown = Color(0xFF8B4513); // Saddle brown
-  static const Color darkRed = Color(0xFFB71C1C); // Darker red
-  static const Color lightBrown = Color(0xFFD2691E); // Chocolate
-  
-  // Background Colors
-  static const Color backgroundDark = Color(0xFF121212); // Dark background
-  static const Color backgroundCard = Color(0xFF1E1E1E); // Card background
-  static const Color backgroundElevated = Color(0xFF2C2C2C); // Elevated background
+  // Primary Colors (ÊHIT Theme - Dark Red)
+  static const Color primaryRed = Color(0xFF8B0000); // Dark red
+  static const Color primaryDark = Color(0xFF1A0000); // Very dark red
+  static const Color backgroundDark = Color(0xFF0D0000); // Almost black with red tint
+  static const Color backgroundCard = Color(0xFF2A0000); // Dark red card background
   
   // Text Colors
   static const Color textPrimary = Color(0xFFFFFFFF); // White text
   static const Color textSecondary = Color(0xFFB3B3B3); // Light gray
   static const Color textTertiary = Color(0xFF808080); // Medium gray
-  static const Color textDisabled = Color(0xFF4A4A4A); // Dark gray
   
   // Accent Colors
-  static const Color accentGreen = Color(0xFF1DB954); // Spotify green
-  static const Color accentOrange = Color(0xFFFF6B35); // Orange accent
-  static const Color accentGold = Color(0xFFFFD700); // Gold accent
+  static const Color accentYellow = Color(0xFFFFD700); // Gold for album titles
+  static const Color accentBlue = Color(0xFF4169E1); // Blue for backgrounds
   
   // Status Colors
   static const Color success = Color(0xFF4CAF50);
@@ -34,7 +27,7 @@ class AppColors {
   static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [primaryRed, primaryBrown],
+    colors: [primaryRed, primaryDark],
   );
   
   static const LinearGradient backgroundGradient = LinearGradient(

@@ -23,7 +23,6 @@ class AlbumCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final cardWidth = AppDimensions.getAlbumCardWidth(context);
     final cardHeight = AppDimensions.getAlbumCardHeight(context);
-    final coverSize = cardWidth;
     final spacing = AppDimensions.getCardSpacing(context);
     
     return InkWell(
@@ -36,36 +35,39 @@ class AlbumCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Album cover
-            ClipRRect(
-              borderRadius: BorderRadius.circular(AppSpacing.md),
-              child: Image.network(
-                imageUrl,
-                width: coverSize,
-                height: coverSize,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: coverSize,
-                    height: coverSize,
-                    color: AppColors.backgroundElevated,
-                    child: Icon(
-                      Icons.album,
-                      color: AppColors.textTertiary,
-                      size: coverSize * 0.3,
-                    ),
-                  );
-                },
+            // Album cover - rectangular format
+            Expanded(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(AppSpacing.md),
+                child: Image.network(
+                  imageUrl,
+                  width: cardWidth,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: cardWidth,
+                      height: double.infinity,
+                      color: AppColors.backgroundElevated,
+                      child: Icon(
+                        Icons.album,
+                        color: AppColors.textTertiary,
+                        size: cardWidth * 0.3,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
             
             SizedBox(height: spacing),
             
-            // Album info - Flexible to prevent overflow
-            Flexible(
+            // Album info - Fixed height to prevent overflow
+            Container(
+              height: 40, // Fixed height for text area
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
                     title,
@@ -73,7 +75,7 @@ class AlbumCard extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                       fontSize: AppDimensions.getBodySize(context),
                     ),
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   
