@@ -1,6 +1,7 @@
 // shared/widgets/playhits_card.dart
 import 'package:flutter/material.dart';
 import 'music_components/music_card.dart';
+import '../design/design_tokens.dart';
 
 class PlayHitsCard extends StatelessWidget {
   final String title;
@@ -20,20 +21,21 @@ class PlayHitsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cardWidth = 180.0; // Same width for all cards
-    final cardHeight = isLarge ? 300.0 : 260.0;
+    final cardWidth = DesignTokens.musicCardWidth;
+    final cardHeight = isLarge ? DesignTokens.musicCardHeightLarge : DesignTokens.musicCardHeight;
     
     return MusicCard(
-      title: '', // No title
-      artist: '', // No artist
+      title: title, // Show title
+      artist: artist, // Show artist
       imageUrl: imageUrl,
       onTap: onTap,
       width: cardWidth,
       height: cardHeight,
       isCircular: false,
-      showPlayButton: true,
+      showPlayButton: false, // No play button
       onPlay: onTap,
-      showText: false, // Hide text
+      showText: true, // Show text
+      centerText: true, // Center text in the middle
     );
   }
 }

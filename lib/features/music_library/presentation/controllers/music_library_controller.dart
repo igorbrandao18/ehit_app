@@ -25,12 +25,12 @@ class MusicLibraryController extends ChangeNotifier {
       {
         'title': 'Sertanejo Esquenta',
         'artist': 'Vários artistas',
-        'imageUrl': 'https://via.placeholder.com/280x200',
+        'imageUrl': 'https://www.cartacapital.com.br/wp-content/uploads/2021/11/pluralmusica.jpg',
       },
       {
         'title': 'Potên',
         'artist': 'Artista',
-        'imageUrl': 'https://via.placeholder.com/200x200',
+        'imageUrl': 'https://cdn-images.dzcdn.net/images/artist/ea589fefdebdefd0624edda903d07672/1900x1900-000000-81-0-0.jpg',
       },
     ];
 
