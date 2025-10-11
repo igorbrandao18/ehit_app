@@ -1,17 +1,17 @@
 // shared/design/app_text_styles.dart
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'design_tokens.dart';
 import 'app_colors.dart';
 
 /// Sistema de tipografia consolidado do app ÊHIT
-/// Elimina duplicações e centraliza todos os estilos de texto
+/// Usa Montserrat (similar ao Spotify Circular)
 class AppTextStyles {
   // ============================================================================
   // BASE TEXT STYLES
   // ============================================================================
   
-  static const TextStyle _baseTextStyle = TextStyle(
-    fontFamily: 'Inter',
+  static TextStyle get _baseTextStyle => GoogleFonts.montserrat(
     color: AppColors.textPrimary,
     height: 1.4,
   );
@@ -20,42 +20,42 @@ class AppTextStyles {
   // HEADING STYLES
   // ============================================================================
   
-  static const TextStyle h1 = TextStyle(
+  static TextStyle get h1 => GoogleFonts.montserrat(
     fontSize: DesignTokens.displayFontSize, // 32px
     fontWeight: FontWeight.bold,
     color: AppColors.textPrimary,
     height: 1.2,
   );
   
-  static const TextStyle h2 = TextStyle(
+  static TextStyle get h2 => GoogleFonts.montserrat(
     fontSize: DesignTokens.headingFontSize, // 24px
     fontWeight: FontWeight.bold,
     color: AppColors.textPrimary,
     height: 1.3,
   );
   
-  static const TextStyle h3 = TextStyle(
+  static TextStyle get h3 => GoogleFonts.montserrat(
     fontSize: DesignTokens.titleFontSize, // 20px
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
     height: 1.3,
   );
   
-  static const TextStyle h4 = TextStyle(
+  static TextStyle get h4 => GoogleFonts.montserrat(
     fontSize: DesignTokens.subtitleFontSize, // 18px
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
     height: 1.4,
   );
   
-  static const TextStyle h5 = TextStyle(
+  static TextStyle get h5 => GoogleFonts.montserrat(
     fontSize: DesignTokens.bodyFontSize, // 16px
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
     height: 1.4,
   );
   
-  static const TextStyle h6 = TextStyle(
+  static TextStyle get h6 => GoogleFonts.montserrat(
     fontSize: DesignTokens.fontSizeSM, // 14px
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
@@ -66,21 +66,21 @@ class AppTextStyles {
   // BODY TEXT STYLES
   // ============================================================================
   
-  static const TextStyle bodyLarge = TextStyle(
+  static TextStyle get bodyLarge => GoogleFonts.montserrat(
     fontSize: DesignTokens.fontSizeLG, // 18px
     fontWeight: FontWeight.normal,
     color: AppColors.textPrimary,
     height: 1.5,
   );
   
-  static const TextStyle bodyMedium = TextStyle(
+  static TextStyle get bodyMedium => GoogleFonts.montserrat(
     fontSize: DesignTokens.bodyFontSize, // 16px
     fontWeight: FontWeight.normal,
     color: AppColors.textPrimary,
     height: 1.5,
   );
   
-  static const TextStyle bodySmall = TextStyle(
+  static TextStyle get bodySmall => GoogleFonts.montserrat(
     fontSize: DesignTokens.fontSizeSM, // 14px
     fontWeight: FontWeight.normal,
     color: AppColors.textSecondary,
@@ -91,14 +91,14 @@ class AppTextStyles {
   // CAPTION STYLES
   // ============================================================================
   
-  static const TextStyle caption = TextStyle(
+  static TextStyle get caption => GoogleFonts.montserrat(
     fontSize: DesignTokens.captionFontSize, // 12px
     fontWeight: FontWeight.normal,
     color: AppColors.textTertiary,
     height: 1.3,
   );
   
-  static const TextStyle captionSmall = TextStyle(
+  static TextStyle get captionSmall => GoogleFonts.montserrat(
     fontSize: 10.0,
     fontWeight: FontWeight.normal,
     color: AppColors.textTertiary,
@@ -109,21 +109,21 @@ class AppTextStyles {
   // BUTTON TEXT STYLES
   // ============================================================================
   
-  static const TextStyle buttonText = TextStyle(
+  static TextStyle get buttonText => GoogleFonts.montserrat(
     fontSize: DesignTokens.fontSizeSM, // 14px
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
     height: 1.2,
   );
   
-  static const TextStyle buttonTextLarge = TextStyle(
+  static TextStyle get buttonTextLarge => GoogleFonts.montserrat(
     fontSize: DesignTokens.bodyFontSize, // 16px
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
     height: 1.2,
   );
   
-  static const TextStyle buttonTextSmall = TextStyle(
+  static TextStyle get buttonTextSmall => GoogleFonts.montserrat(
     fontSize: DesignTokens.captionFontSize, // 12px
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
@@ -134,21 +134,21 @@ class AppTextStyles {
   // INPUT TEXT STYLES
   // ============================================================================
   
-  static const TextStyle inputText = TextStyle(
+  static TextStyle get inputText => GoogleFonts.montserrat(
     fontSize: DesignTokens.bodyFontSize, // 16px
     fontWeight: FontWeight.normal,
     color: AppColors.textPrimary,
     height: 1.4,
   );
   
-  static const TextStyle inputLabel = TextStyle(
+  static TextStyle get inputLabel => GoogleFonts.montserrat(
     fontSize: DesignTokens.fontSizeSM, // 14px
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
     height: 1.3,
   );
   
-  static const TextStyle inputHint = TextStyle(
+  static TextStyle get inputHint => GoogleFonts.montserrat(
     fontSize: DesignTokens.bodyFontSize, // 16px
     fontWeight: FontWeight.normal,
     color: AppColors.textTertiary,
@@ -159,14 +159,14 @@ class AppTextStyles {
   // NAVIGATION TEXT STYLES
   // ============================================================================
   
-  static const TextStyle navigationLabel = TextStyle(
+  static TextStyle get navigationLabel => GoogleFonts.montserrat(
     fontSize: DesignTokens.captionFontSize, // 12px
     fontWeight: FontWeight.w500,
     color: AppColors.textTertiary,
     height: 1.2,
   );
   
-  static const TextStyle navigationLabelSelected = TextStyle(
+  static TextStyle get navigationLabelSelected => GoogleFonts.montserrat(
     fontSize: DesignTokens.captionFontSize, // 12px
     fontWeight: FontWeight.w600,
     color: AppColors.primaryRed,
@@ -177,35 +177,35 @@ class AppTextStyles {
   // MUSIC-SPECIFIC TEXT STYLES
   // ============================================================================
   
-  static const TextStyle songTitle = TextStyle(
+  static TextStyle get songTitle => GoogleFonts.montserrat(
     fontSize: DesignTokens.bodyFontSize, // 16px
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
     height: 1.3,
   );
   
-  static const TextStyle songArtist = TextStyle(
+  static TextStyle get songArtist => GoogleFonts.montserrat(
     fontSize: DesignTokens.fontSizeSM, // 14px
     fontWeight: FontWeight.normal,
     color: AppColors.textSecondary,
     height: 1.3,
   );
   
-  static const TextStyle songDuration = TextStyle(
+  static TextStyle get songDuration => GoogleFonts.montserrat(
     fontSize: DesignTokens.captionFontSize, // 12px
     fontWeight: FontWeight.normal,
     color: AppColors.textTertiary,
     height: 1.2,
   );
   
-  static const TextStyle albumTitle = TextStyle(
+  static TextStyle get albumTitle => GoogleFonts.montserrat(
     fontSize: DesignTokens.subtitleFontSize, // 18px
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
     height: 1.3,
   );
   
-  static const TextStyle playlistTitle = TextStyle(
+  static TextStyle get playlistTitle => GoogleFonts.montserrat(
     fontSize: DesignTokens.titleFontSize, // 20px
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
@@ -216,28 +216,28 @@ class AppTextStyles {
   // STATUS TEXT STYLES
   // ============================================================================
   
-  static const TextStyle successText = TextStyle(
+  static TextStyle get successText => GoogleFonts.montserrat(
     fontSize: DesignTokens.fontSizeSM, // 14px
     fontWeight: FontWeight.normal,
     color: AppColors.success,
     height: 1.4,
   );
   
-  static const TextStyle errorText = TextStyle(
+  static TextStyle get errorText => GoogleFonts.montserrat(
     fontSize: DesignTokens.fontSizeSM, // 14px
     fontWeight: FontWeight.normal,
     color: AppColors.error,
     height: 1.4,
   );
   
-  static const TextStyle warningText = TextStyle(
+  static TextStyle get warningText => GoogleFonts.montserrat(
     fontSize: DesignTokens.fontSizeSM, // 14px
     fontWeight: FontWeight.normal,
     color: AppColors.warning,
     height: 1.4,
   );
   
-  static const TextStyle infoText = TextStyle(
+  static TextStyle get infoText => GoogleFonts.montserrat(
     fontSize: DesignTokens.fontSizeSM, // 14px
     fontWeight: FontWeight.normal,
     color: AppColors.info,

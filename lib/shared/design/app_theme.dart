@@ -29,7 +29,7 @@ class AppTheme {
       ),
       
       // App Bar Theme
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: AppColors.backgroundDark,
         foregroundColor: AppColors.textPrimary,
         elevation: DesignTokens.elevationNone,

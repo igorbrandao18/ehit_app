@@ -34,13 +34,10 @@ class PlayHitsSection extends StatelessWidget {
             SectionHeader(
               title: AppConstants.playHitsTitle,
               action: onViewAllTap != null
-                  ? const Text(
-                      'Ver todos',
-                      style: TextStyle(
-                        color: AppColors.primaryRed,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                      ),
+                  ? const Icon(
+                      Icons.arrow_forward_ios,
+                      color: AppColors.textPrimary,
+                      size: 20,
                     )
                   : null,
               onActionTap: onViewAllTap,
