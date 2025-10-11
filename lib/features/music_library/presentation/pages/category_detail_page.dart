@@ -159,10 +159,10 @@ class CategoryDetailPage extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: const Color(0xFF1A1A1A),
+          color: Colors.white.withOpacity(0.1),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Colors.white.withOpacity(0.1),
+            color: Colors.white.withOpacity(0.2),
             width: 1,
           ),
         ),
@@ -173,14 +173,14 @@ class CategoryDetailPage extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: const Color(0xFFDA3637).withOpacity(0.2),
+                color: Colors.white.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Center(
                 child: Text(
                   '$rank',
                   style: const TextStyle(
-                    color: Color(0xFFDA3637),
+                    color: Colors.white,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
@@ -233,7 +233,7 @@ class CategoryDetailPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Artista',
+                    _getArtistSubtitle(rank),
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.7),
                       fontSize: 14,
@@ -247,6 +247,23 @@ class CategoryDetailPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getArtistSubtitle(int rank) {
+    // Generate different subtitles based on rank
+    if (rank <= 3) {
+      return '${_getRandomSongCount(rank)} músicas • Top ${rank}';
+    } else if (rank <= 10) {
+      return '${_getRandomSongCount(rank)} músicas • Popular';
+    } else {
+      return '${_getRandomSongCount(rank)} músicas • Artista';
+    }
+  }
+
+  String _getRandomSongCount(int rank) {
+    // Generate random song count between 15-150
+    final counts = [15, 23, 28, 34, 42, 51, 67, 78, 89, 95, 112, 134, 147];
+    return counts[rank % counts.length].toString();
   }
 }
 
