@@ -90,7 +90,10 @@ class _MusicCardState extends State<MusicCard>
       onTapDown: _onTapDown,
       onTapUp: _onTapUp,
       onTapCancel: _onTapCancel,
-      onTap: widget.onTap,
+      onTap: () {
+        print('MusicCard onTap called');
+        widget.onTap?.call();
+      },
       child: AnimatedBuilder(
         animation: _scaleAnimation,
         builder: (context, child) {
@@ -99,14 +102,14 @@ class _MusicCardState extends State<MusicCard>
             child: Container(
               width: widget.width,
               height: widget.height,
-              child: Stack(
-                children: [
-                  // Image container
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: widget.isCircular
-                          ? BorderRadius.circular(DesignTokens.radiusCircular)
-                          : BorderRadius.circular(DesignTokens.cardBorderRadius),
+              child: ClipRRect(
+                borderRadius: widget.isCircular
+                    ? BorderRadius.circular(DesignTokens.radiusCircular)
+                    : BorderRadius.circular(DesignTokens.cardBorderRadius),
+                child: Stack(
+                  children: [
+                    // Image container
+                    Positioned.fill(
                       child: Image.network(
                         widget.imageUrl,
                         fit: BoxFit.cover,
@@ -122,7 +125,6 @@ class _MusicCardState extends State<MusicCard>
                         },
                       ),
                     ),
-                  ),
                   
                   // Dark overlay with centered text
                   if (widget.showText)
@@ -182,7 +184,10 @@ class _MusicCardState extends State<MusicCard>
       onTapDown: _onTapDown,
       onTapUp: _onTapUp,
       onTapCancel: _onTapCancel,
-      onTap: widget.onTap,
+      onTap: () {
+        print('MusicCard onTap called');
+        widget.onTap?.call();
+      },
       child: AnimatedBuilder(
         animation: _scaleAnimation,
         builder: (context, child) {

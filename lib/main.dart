@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'shared/design/app_theme.dart';
-import 'features/music_library/presentation/pages/home_page.dart';
 import 'features/music_player/presentation/controllers/music_player_controller.dart';
 import 'features/music_library/presentation/controllers/music_library_controller.dart';
+import 'core/routing/app_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,10 +22,10 @@ class EhitApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MusicPlayerController()),
         ChangeNotifierProvider(create: (_) => MusicLibraryController()..initialize()),
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
         title: 'ÊHIT',
         theme: AppTheme.darkTheme,
-        home: const HomePage(),
+        routerConfig: AppRouter.router,
         debugShowCheckedModeBanner: false,
       ),
     );

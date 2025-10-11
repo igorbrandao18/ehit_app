@@ -15,25 +15,13 @@ class HomePage extends StatelessWidget {
       body: PageContent(
         children: [
           // PlayHITS da semana section
-          const PlayHitsSection(
-            onCardTap: _onPlayHitsCardTap,
-            onViewAllTap: _onViewAllPlayHits,
-          ),
+          const PlayHitsSection(),
           
           // Bottom padding for player
           const SizedBox(height: DesignTokens.miniPlayerHeight + 20),
         ],
       ),
     );
-  }
-
-  // Navigation handlers
-  static void _onPlayHitsCardTap() {
-    // TODO: Implement navigation to specific playlist
-  }
-
-  static void _onViewAllPlayHits() {
-    // TODO: Implement navigation to all PlayHITS
   }
 
 }

@@ -1,6 +1,7 @@
 // shared/widgets/music_components/playhits_section.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import '../../design/app_constants.dart';
 import '../../design/design_tokens.dart';
 import '../../design/app_colors.dart';
@@ -8,6 +9,7 @@ import '../layout/section_header.dart';
 import '../layout/loading_section.dart';
 import '../playhits_card.dart';
 import '../../../features/music_library/presentation/controllers/music_library_controller.dart';
+import '../../../core/routing/app_routes.dart';
 
 /// Seção PlayHITS da semana componentizada
 class PlayHitsSection extends StatelessWidget {
@@ -52,8 +54,10 @@ class PlayHitsSection extends StatelessWidget {
                 itemCount: controller.playHits.length,
                 itemBuilder: (context, index) {
                   final playHit = controller.playHits[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(right: DesignTokens.cardSpacing),
+                  return Container(
+                    margin: EdgeInsets.only(
+                      right: index < controller.playHits.length - 1 ? DesignTokens.cardSpacing : 0,
+                    ),
                     child: PlayHitsCard(
                       title: playHit['title']!,
                       artist: playHit['artist']!,
@@ -75,12 +79,17 @@ class PlayHitsSection extends StatelessWidget {
   }
 
   void _navigateToPlaylist(BuildContext context, Map<String, String> playHit) {
-    // TODO: Implement navigation to playlist
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Navegando para: ${playHit['title']}'),
-        duration: const Duration(seconds: 1),
-      ),
+    // Navigate immediately to category detail page using GoRouter
+    final controller = Provider.of<MusicLibraryController>(context, listen: false);
+    
+    // Load artists data in background
+    controller.loadCategoryArtists(playHit['title']!);
+    
+    // Navigate immediately without waiting
+    context.pushNamed(
+      'category-detail',
+      pathParameters: {'categoryTitle': playHit['title']!},
+      extra: playHit['artist']!,
     );
   }
 }

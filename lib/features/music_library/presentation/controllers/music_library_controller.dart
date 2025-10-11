@@ -4,11 +4,15 @@ import 'package:flutter/foundation.dart';
 class MusicLibraryController extends ChangeNotifier {
   List<Map<String, String>> _playHits = [];
   List<Map<String, String>> _artists = [];
+  List<Map<String, String>> _categoryArtists = [];
+  String _selectedCategory = '';
   bool _isLoading = false;
 
   // Getters
   List<Map<String, String>> get playHits => _playHits;
   List<Map<String, String>> get artists => _artists;
+  List<Map<String, String>> get categoryArtists => _categoryArtists;
+  String get selectedCategory => _selectedCategory;
   bool get isLoading => _isLoading;
 
   // Initialize with mock data
@@ -114,5 +118,69 @@ class MusicLibraryController extends ChangeNotifier {
     _playHits.clear();
     _artists.clear();
     _loadMockData();
+  }
+
+  // Load artists for specific category
+  void loadCategoryArtists(String category) {
+    _isLoading = true;
+    _selectedCategory = category;
+    notifyListeners();
+
+    // Mock artists data by category
+    _categoryArtists = _getArtistsByCategory(category);
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  List<Map<String, String>> _getArtistsByCategory(String category) {
+    switch (category) {
+      case 'Sertanejo Esquenta':
+        return [
+          {'name': 'Marília Mendonça', 'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop'},
+          {'name': 'Zé Neto & Cristiano', 'imageUrl': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop'},
+          {'name': 'Gusttavo Lima', 'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop'},
+          {'name': 'Matheus & Kauan', 'imageUrl': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop'},
+          {'name': 'Murilo Huff', 'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop'},
+        ];
+      case 'Funk Nacional':
+        return [
+          {'name': 'MC Kevin', 'imageUrl': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop'},
+          {'name': 'MC Livinho', 'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop'},
+          {'name': 'Anitta', 'imageUrl': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop'},
+          {'name': 'MC Fioti', 'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop'},
+          {'name': 'MC Poze do Rodo', 'imageUrl': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop'},
+        ];
+      case 'MPB Clássica':
+        return [
+          {'name': 'Caetano Veloso', 'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop'},
+          {'name': 'Gilberto Gil', 'imageUrl': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop'},
+          {'name': 'Chico Buarque', 'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop'},
+          {'name': 'Milton Nascimento', 'imageUrl': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop'},
+          {'name': 'Djavan', 'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop'},
+        ];
+      case 'Pagode Romântico':
+        return [
+          {'name': 'Péricles', 'imageUrl': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop'},
+          {'name': 'Ferrugem', 'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop'},
+          {'name': 'Thiaguinho', 'imageUrl': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop'},
+          {'name': 'Sorriso Maroto', 'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop'},
+          {'name': 'Exaltasamba', 'imageUrl': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop'},
+        ];
+      case 'Rock Brasileiro':
+        return [
+          {'name': 'Legião Urbana', 'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop'},
+          {'name': 'CPM 22', 'imageUrl': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop'},
+          {'name': 'Charlie Brown Jr.', 'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop'},
+          {'name': 'Titãs', 'imageUrl': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop'},
+          {'name': 'Engenheiros do Hawaii', 'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop'},
+        ];
+      default:
+        return [
+          {'name': 'Artista 1', 'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop'},
+          {'name': 'Artista 2', 'imageUrl': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop'},
+          {'name': 'Artista 3', 'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300&h=300&fit=crop'},
+        ];
+    }
   }
 }
