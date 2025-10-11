@@ -23,53 +23,73 @@ class CategoryDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: Text(categoryTitle),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () => context.pop(),
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFFDA3637),
+            Color(0xFF8B0000),
+          ],
         ),
       ),
-      body: PageContent(
-        children: [
-          // Category info section
-          _buildCategoryInfo(),
-          
-          // Artists section
-          _buildArtistsSection(),
-          
-          // Bottom padding
-          const SizedBox(height: DesignTokens.miniPlayerHeight + 20),
-        ],
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () => context.pop(),
+          ),
+          title: Text(
+            categoryTitle,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          centerTitle: true,
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header section
+              _buildHeaderSection(),
+              
+              // Artists section
+              _buildArtistsSection(),
+              
+              // Bottom padding
+              const SizedBox(height: 100),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildCategoryInfo() {
+  Widget _buildHeaderSection() {
     return Container(
-      margin: const EdgeInsets.only(bottom: DesignTokens.spaceLG),
+      padding: const EdgeInsets.all(24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            categoryTitle,
-            style: const TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: DesignTokens.spaceSM),
-          Text(
-            categoryArtists,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.white70,
-            ),
+          // Category description
+          Consumer<MusicLibraryController>(
+            builder: (context, controller, child) {
+              return Text(
+                '${controller.categoryArtists.length} artistas nesta categoria',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.white70,
+                  fontWeight: FontWeight.w400,
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -80,47 +100,153 @@ class CategoryDetailPage extends StatelessWidget {
     return Consumer<MusicLibraryController>(
       builder: (context, controller, child) {
         if (controller.isLoading) {
-          return const LoadingSection(message: 'Carregando artistas...');
+          return Container(
+            height: 200,
+            padding: const EdgeInsets.all(24),
+            child: const Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFDA3637)),
+              ),
+            ),
+          );
         }
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SectionHeader(
-              title: 'Artistas',
-              padding: EdgeInsets.zero,
-            ),
-            const SizedBox(height: DesignTokens.spaceMD),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: DesignTokens.cardSpacing,
-                mainAxisSpacing: DesignTokens.cardSpacing,
-                childAspectRatio: 0.8,
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Section header
+              const Text(
+                'Artistas',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
               ),
-              itemCount: controller.categoryArtists.length,
-              itemBuilder: (context, index) {
-                final artist = controller.categoryArtists[index];
-                return ArtistCard(
-                  name: artist['name']!,
-                  imageUrl: artist['imageUrl']!,
-                  onTap: () {
-                    // TODO: Navigate to artist detail page
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Navegando para: ${artist['name']}'),
-                        duration: const Duration(seconds: 1),
-                      ),
-                    );
-                  },
-                );
-              },
-            ),
-          ],
+              const SizedBox(height: 16),
+              
+              // Artists list
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: controller.categoryArtists.length,
+                separatorBuilder: (context, index) => const SizedBox(height: 12),
+                itemBuilder: (context, index) {
+                  final artist = controller.categoryArtists[index];
+                  return _buildArtistListItem(context, artist, index + 1);
+                },
+              ),
+            ],
+          ),
         );
       },
     );
   }
+
+  Widget _buildArtistListItem(BuildContext context, Map<String, String> artist, int rank) {
+    return GestureDetector(
+      onTap: () {
+        // TODO: Navigate to artist detail page
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Navegando para: ${artist['name']}'),
+            duration: const Duration(seconds: 1),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1A1A1A),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.1),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            // Rank number
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: const Color(0xFFDA3637).withOpacity(0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: Text(
+                  '$rank',
+                  style: const TextStyle(
+                    color: Color(0xFFDA3637),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 16),
+            
+            // Artist image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.network(
+                artist['imageUrl']!,
+                width: 56,
+                height: 56,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade800,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.person,
+                      color: Colors.grey,
+                      size: 28,
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(width: 16),
+            
+            // Artist info
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    artist['name']!,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Artista',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.7),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
+
