@@ -45,8 +45,17 @@ class _MusicCardState extends State<MusicCard>
   @override
   void initState() {
     super.initState();
-    _animationController = AppAnimations.createPlayerController(this);
-    _scaleAnimation = AppAnimations.createPlayerAnimation(_animationController);
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
   }
 
   @override
@@ -96,8 +105,8 @@ class _MusicCardState extends State<MusicCard>
                   Positioned.fill(
                     child: ClipRRect(
                       borderRadius: widget.isCircular
-                          ? AppBorders.circularBorderRadius
-                          : AppBorders.cardBorderRadius,
+                          ? BorderRadius.circular(DesignTokens.radiusCircular)
+                          : BorderRadius.circular(DesignTokens.cardBorderRadius),
                       child: Image.network(
                         widget.imageUrl,
                         fit: BoxFit.cover,
@@ -131,8 +140,8 @@ class _MusicCardState extends State<MusicCard>
                               stops: const [0.0, 0.6, 1.0],
                             ),
                             borderRadius: widget.isCircular
-                                ? AppBorders.circularBorderRadius
-                                : AppBorders.cardBorderRadius,
+                                ? BorderRadius.circular(DesignTokens.radiusCircular)
+                                : BorderRadius.circular(DesignTokens.cardBorderRadius),
                           ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
