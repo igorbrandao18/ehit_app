@@ -6,7 +6,6 @@ import '../../design/design_tokens.dart';
 import '../../design/app_colors.dart';
 import '../layout/section_header.dart';
 import '../layout/loading_section.dart';
-import '../layout/horizontal_list_section.dart';
 import '../playhits_card.dart';
 import '../../../features/music_library/presentation/controllers/music_library_controller.dart';
 
@@ -56,7 +55,8 @@ class PlayHitsSection extends StatelessWidget {
                 itemCount: controller.playHits.length,
                 itemBuilder: (context, index) {
                   final playHit = controller.playHits[index];
-                  return HorizontalListSection(
+                  return Padding(
+                    padding: const EdgeInsets.only(right: DesignTokens.cardSpacing),
                     child: PlayHitsCard(
                       title: playHit['title']!,
                       artist: playHit['artist']!,
