@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/app_config.dart';
 import '../../../../core/errors/failures.dart';
+import '../../../../core/supabase/supabase_music_service.dart';
 import '../models/song_model.dart';
 import '../models/artist_model.dart';
 
@@ -22,26 +23,32 @@ abstract class MusicRemoteDataSource {
   Future<List<ArtistModel>> searchArtists(String query);
 }
 
-/// Implementação do data source remoto
+/// Implementação do data source remoto usando Supabase
 class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
   final Dio _dio;
+  final SupabaseMusicService _musicService;
 
-  const MusicRemoteDataSourceImpl(this._dio);
+  const MusicRemoteDataSourceImpl(this._dio) : _musicService = SupabaseMusicService();
 
   @override
   Future<List<SongModel>> getSongs() async {
     try {
-      // TODO: Implementar chamada real para API
-      // Por enquanto, retorna dados mock
-      return _getMockSongs();
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao buscar músicas: ${e.message}',
-        code: e.response?.statusCode,
-      );
+      final result = await _musicService.getSongs();
+      
+      if (result is Error) {
+        throw ServerFailure(
+          message: result.message,
+          code: result.code,
+        );
+      }
+
+      final songs = (result as Success).data;
+      return songs.map((song) => SongModel.fromEntity(song)).toList();
+    } on ServerFailure {
+      rethrow;
     } catch (e) {
       throw ServerFailure(
-        message: 'Erro desconhecido ao buscar músicas: $e',
+        message: 'Erro inesperado ao buscar músicas: $e',
       );
     }
   }
@@ -49,18 +56,22 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
   @override
   Future<SongModel> getSongById(String id) async {
     try {
-      // TODO: Implementar chamada real para API
-      final songs = await getSongs();
-      final song = songs.firstWhere((song) => song.id == id);
-      return song;
-    } on StateError {
-      throw ServerFailure(
-        message: 'Música não encontrada',
-        code: 404,
-      );
+      final result = await _musicService.getSongById(id);
+      
+      if (result is Error) {
+        throw ServerFailure(
+          message: result.message,
+          code: result.code,
+        );
+      }
+
+      final song = (result as Success).data;
+      return SongModel.fromEntity(song);
+    } on ServerFailure {
+      rethrow;
     } catch (e) {
       throw ServerFailure(
-        message: 'Erro ao buscar música: $e',
+        message: 'Erro inesperado ao buscar música: $e',
       );
     }
   }
@@ -68,12 +79,22 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
   @override
   Future<List<SongModel>> getSongsByArtist(String artistId) async {
     try {
-      // TODO: Implementar chamada real para API
-      final songs = await getSongs();
-      return songs.where((song) => song.artist == artistId).toList();
+      final result = await _musicService.getSongsByArtist(artistId);
+      
+      if (result is Error) {
+        throw ServerFailure(
+          message: result.message,
+          code: result.code,
+        );
+      }
+
+      final songs = (result as Success).data;
+      return songs.map((song) => SongModel.fromEntity(song)).toList();
+    } on ServerFailure {
+      rethrow;
     } catch (e) {
       throw ServerFailure(
-        message: 'Erro ao buscar músicas do artista: $e',
+        message: 'Erro inesperado ao buscar músicas do artista: $e',
       );
     }
   }
@@ -81,15 +102,22 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
   @override
   Future<List<SongModel>> searchSongs(String query) async {
     try {
-      // TODO: Implementar chamada real para API
-      final songs = await getSongs();
-      return songs.where((song) => 
-        song.title.toLowerCase().contains(query.toLowerCase()) ||
-        song.artist.toLowerCase().contains(query.toLowerCase())
-      ).toList();
+      final result = await _musicService.searchSongs(query);
+      
+      if (result is Error) {
+        throw ServerFailure(
+          message: result.message,
+          code: result.code,
+        );
+      }
+
+      final songs = (result as Success).data;
+      return songs.map((song) => SongModel.fromEntity(song)).toList();
+    } on ServerFailure {
+      rethrow;
     } catch (e) {
       throw ServerFailure(
-        message: 'Erro ao buscar músicas: $e',
+        message: 'Erro inesperado ao buscar músicas: $e',
       );
     }
   }
@@ -97,12 +125,22 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
   @override
   Future<List<SongModel>> getPopularSongs() async {
     try {
-      // TODO: Implementar chamada real para API
-      final songs = await getSongs();
-      return songs.take(10).toList(); // Primeiras 10 como populares
+      final result = await _musicService.getPopularSongs();
+      
+      if (result is Error) {
+        throw ServerFailure(
+          message: result.message,
+          code: result.code,
+        );
+      }
+
+      final songs = (result as Success).data;
+      return songs.map((song) => SongModel.fromEntity(song)).toList();
+    } on ServerFailure {
+      rethrow;
     } catch (e) {
       throw ServerFailure(
-        message: 'Erro ao buscar músicas populares: $e',
+        message: 'Erro inesperado ao buscar músicas populares: $e',
       );
     }
   }
@@ -110,12 +148,22 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
   @override
   Future<List<SongModel>> getRecentSongs() async {
     try {
-      // TODO: Implementar chamada real para API
-      final songs = await getSongs();
-      return songs.take(5).toList(); // Primeiras 5 como recentes
+      final result = await _musicService.getRecentSongs();
+      
+      if (result is Error) {
+        throw ServerFailure(
+          message: result.message,
+          code: result.code,
+        );
+      }
+
+      final songs = (result as Success).data;
+      return songs.map((song) => SongModel.fromEntity(song)).toList();
+    } on ServerFailure {
+      rethrow;
     } catch (e) {
       throw ServerFailure(
-        message: 'Erro ao buscar músicas recentes: $e',
+        message: 'Erro inesperado ao buscar músicas recentes: $e',
       );
     }
   }
@@ -123,11 +171,22 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
   @override
   Future<List<ArtistModel>> getArtists() async {
     try {
-      // TODO: Implementar chamada real para API
-      return _getMockArtists();
+      final result = await _musicService.getArtists();
+      
+      if (result is Error) {
+        throw ServerFailure(
+          message: result.message,
+          code: result.code,
+        );
+      }
+
+      final artists = (result as Success).data;
+      return artists.map((artist) => ArtistModel.fromEntity(artist)).toList();
+    } on ServerFailure {
+      rethrow;
     } catch (e) {
       throw ServerFailure(
-        message: 'Erro ao buscar artistas: $e',
+        message: 'Erro inesperado ao buscar artistas: $e',
       );
     }
   }
@@ -135,18 +194,22 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
   @override
   Future<ArtistModel> getArtistById(String id) async {
     try {
-      // TODO: Implementar chamada real para API
-      final artists = await getArtists();
-      final artist = artists.firstWhere((artist) => artist.id == id);
-      return artist;
-    } on StateError {
-      throw ServerFailure(
-        message: 'Artista não encontrado',
-        code: 404,
-      );
+      final result = await _musicService.getArtistById(id);
+      
+      if (result is Error) {
+        throw ServerFailure(
+          message: result.message,
+          code: result.code,
+        );
+      }
+
+      final artist = (result as Success).data;
+      return ArtistModel.fromEntity(artist);
+    } on ServerFailure {
+      rethrow;
     } catch (e) {
       throw ServerFailure(
-        message: 'Erro ao buscar artista: $e',
+        message: 'Erro inesperado ao buscar artista: $e',
       );
     }
   }
@@ -154,12 +217,22 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
   @override
   Future<List<ArtistModel>> getPopularArtists() async {
     try {
-      // TODO: Implementar chamada real para API
-      final artists = await getArtists();
-      return artists.take(6).toList(); // Primeiros 6 como populares
+      final result = await _musicService.getPopularArtists();
+      
+      if (result is Error) {
+        throw ServerFailure(
+          message: result.message,
+          code: result.code,
+        );
+      }
+
+      final artists = (result as Success).data;
+      return artists.map((artist) => ArtistModel.fromEntity(artist)).toList();
+    } on ServerFailure {
+      rethrow;
     } catch (e) {
       throw ServerFailure(
-        message: 'Erro ao buscar artistas populares: $e',
+        message: 'Erro inesperado ao buscar artistas populares: $e',
       );
     }
   }
@@ -167,14 +240,22 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
   @override
   Future<List<ArtistModel>> searchArtists(String query) async {
     try {
-      // TODO: Implementar chamada real para API
-      final artists = await getArtists();
-      return artists.where((artist) => 
-        artist.name.toLowerCase().contains(query.toLowerCase())
-      ).toList();
+      final result = await _musicService.searchArtists(query);
+      
+      if (result is Error) {
+        throw ServerFailure(
+          message: result.message,
+          code: result.code,
+        );
+      }
+
+      final artists = (result as Success).data;
+      return artists.map((artist) => ArtistModel.fromEntity(artist)).toList();
+    } on ServerFailure {
+      rethrow;
     } catch (e) {
       throw ServerFailure(
-        message: 'Erro ao buscar artistas: $e',
+        message: 'Erro inesperado ao buscar artistas: $e',
       );
     }
   }

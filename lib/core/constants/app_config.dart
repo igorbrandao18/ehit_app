@@ -50,9 +50,9 @@ class AppConfig {
   // SUPABASE CONFIGURATION
   // ============================================================================
   
-  // TODO: Replace with your actual Supabase project URL and anon key
-  static const String supabaseUrl = 'https://your-project.supabase.co';
-  static const String supabaseAnonKey = 'your-anon-key-here';
+  // Supabase project configuration
+  static const String supabaseUrl = 'https://hblvhdqjkwmgvshrkzko.supabase.co';
+  static const String supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhibHZoZHFqa3dtZ3ZzaHJremtvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAyNjQ0MTgsImV4cCI6MjA3NTg0MDQxOH0.JIEqgJO08XiSYyYYjOoPqJ56tX_TaDn5wTGdezmcjbo';
   
   // Supabase storage buckets
   static const String audioStorageBucket = 'audio-files';
