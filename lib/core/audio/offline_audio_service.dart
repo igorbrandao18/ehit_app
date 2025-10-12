@@ -6,7 +6,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:dio/dio.dart';
 import '../utils/result.dart';
 import '../errors/failures.dart';
-import '../supabase/supabase_storage_service.dart';
 import '../../features/music_library/domain/entities/song.dart';
 
 /// Serviço para gerenciar downloads de áudio offline
@@ -16,7 +15,6 @@ class OfflineAudioService {
   OfflineAudioService._internal();
 
   final Dio _dio = Dio();
-  final SupabaseStorageService _storageService = SupabaseStorageService();
   final Map<String, StreamController<double>> _downloadProgress = {};
   final Map<String, CancelToken> _downloadCancelTokens = {};
 
@@ -66,32 +64,18 @@ class OfflineAudioService {
       _downloadCancelTokens[song.id] = cancelToken;
 
       try {
-        // Tenta baixar do Supabase Storage primeiro
-        final storageResult = await _storageService.downloadAudioFile(song.audioUrl);
-        
-        if (storageResult is Success) {
-          // Salva o arquivo localmente
-          await file.writeAsBytes(storageResult.data);
-          progressController.add(1.0);
-          progressController.close();
-          _downloadProgress.remove(song.id);
-          _downloadCancelTokens.remove(song.id);
-          
-          return const Success(null);
-        } else {
-          // Fallback para download direto da URL
-          await _dio.download(
-            song.audioUrl,
-            filePath,
-            cancelToken: cancelToken,
-            onReceiveProgress: (received, total) {
-              if (total != -1) {
-                final progress = received / total;
-                progressController.add(progress);
-              }
-            },
-          );
-        }
+        // Tenta baixar diretamente da URL
+        await _dio.download(
+          song.audioUrl,
+          filePath,
+          cancelToken: cancelToken,
+          onReceiveProgress: (received, total) {
+            if (total != -1) {
+              final progress = received / total;
+              progressController.add(progress);
+            }
+          },
+        );
 
         // Download concluído
         progressController.add(1.0);

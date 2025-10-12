@@ -5,6 +5,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/app_config.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/supabase/supabase_music_service.dart';
+import '../../../../core/utils/result.dart';
 import '../models/song_model.dart';
 import '../models/artist_model.dart';
 
@@ -28,22 +29,20 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
   final Dio _dio;
   final SupabaseMusicService _musicService;
 
-  const MusicRemoteDataSourceImpl(this._dio) : _musicService = SupabaseMusicService();
+  MusicRemoteDataSourceImpl(this._dio) : _musicService = SupabaseMusicService();
 
   @override
   Future<List<SongModel>> getSongs() async {
     try {
       final result = await _musicService.getSongs();
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final songs = (result as Success).data;
-      return songs.map((song) => SongModel.fromEntity(song)).toList();
+      return result.when(
+        success: (songs) => songs.map((song) => SongModel.fromEntity(song)).toList(),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -58,15 +57,13 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
     try {
       final result = await _musicService.getSongById(id);
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final song = (result as Success).data;
-      return SongModel.fromEntity(song);
+      return result.when(
+        success: (song) => SongModel.fromEntity(song),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -81,15 +78,13 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
     try {
       final result = await _musicService.getSongsByArtist(artistId);
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final songs = (result as Success).data;
-      return songs.map((song) => SongModel.fromEntity(song)).toList();
+      return result.when(
+        success: (songs) => songs.map((song) => SongModel.fromEntity(song)).toList(),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -104,15 +99,13 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
     try {
       final result = await _musicService.searchSongs(query);
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final songs = (result as Success).data;
-      return songs.map((song) => SongModel.fromEntity(song)).toList();
+      return result.when(
+        success: (songs) => songs.map((song) => SongModel.fromEntity(song)).toList(),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -127,15 +120,13 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
     try {
       final result = await _musicService.getPopularSongs();
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final songs = (result as Success).data;
-      return songs.map((song) => SongModel.fromEntity(song)).toList();
+      return result.when(
+        success: (songs) => songs.map((song) => SongModel.fromEntity(song)).toList(),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -150,15 +141,13 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
     try {
       final result = await _musicService.getRecentSongs();
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final songs = (result as Success).data;
-      return songs.map((song) => SongModel.fromEntity(song)).toList();
+      return result.when(
+        success: (songs) => songs.map((song) => SongModel.fromEntity(song)).toList(),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -173,15 +162,13 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
     try {
       final result = await _musicService.getArtists();
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final artists = (result as Success).data;
-      return artists.map((artist) => ArtistModel.fromEntity(artist)).toList();
+      return result.when(
+        success: (artists) => artists.map((artist) => ArtistModel.fromEntity(artist)).toList(),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -196,15 +183,13 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
     try {
       final result = await _musicService.getArtistById(id);
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final artist = (result as Success).data;
-      return ArtistModel.fromEntity(artist);
+      return result.when(
+        success: (artist) => ArtistModel.fromEntity(artist),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -219,15 +204,13 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
     try {
       final result = await _musicService.getPopularArtists();
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final artists = (result as Success).data;
-      return artists.map((artist) => ArtistModel.fromEntity(artist)).toList();
+      return result.when(
+        success: (artists) => artists.map((artist) => ArtistModel.fromEntity(artist)).toList(),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -242,15 +225,13 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
     try {
       final result = await _musicService.searchArtists(query);
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final artists = (result as Success).data;
-      return artists.map((artist) => ArtistModel.fromEntity(artist)).toList();
+      return result.when(
+        success: (artists) => artists.map((artist) => ArtistModel.fromEntity(artist)).toList(),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {

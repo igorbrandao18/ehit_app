@@ -129,6 +129,10 @@ Future<void> init() async {
     ),
   );
 
+  sl.registerLazySingleton<ArtistRepository>(
+    () => ArtistRepositoryImpl(sl<MusicRemoteDataSource>()),
+  );
+
   // Music Player Repositories
   sl.registerLazySingleton<playlist_repo.PlaylistRepository>(
     () => PlaylistRepositoryImpl(
@@ -160,11 +164,11 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetPopularSongsUseCase(sl<MusicRepository>()));
   sl.registerLazySingleton(() => GetRecentSongsUseCase(sl<MusicRepository>()));
   sl.registerLazySingleton(() => SearchSongsUseCase(sl<MusicRepository>()));
-  sl.registerLazySingleton(() => GetArtistsUseCase(sl<MusicRepository>()));
-  sl.registerLazySingleton(() => GetArtistByIdUseCase(sl<MusicRepository>()));
-  sl.registerLazySingleton(() => GetPopularArtistsUseCase(sl<MusicRepository>()));
-  sl.registerLazySingleton(() => GetArtistsByGenreUseCase(sl<MusicRepository>()));
-  sl.registerLazySingleton(() => SearchArtistsUseCase(sl<MusicRepository>()));
+  sl.registerLazySingleton(() => GetArtistsUseCase(sl<ArtistRepository>()));
+  sl.registerLazySingleton(() => GetArtistByIdUseCase(sl<ArtistRepository>()));
+  sl.registerLazySingleton(() => GetPopularArtistsUseCase(sl<ArtistRepository>()));
+  sl.registerLazySingleton(() => GetArtistsByGenreUseCase(sl<ArtistRepository>()));
+  sl.registerLazySingleton(() => SearchArtistsUseCase(sl<ArtistRepository>()));
 
   // Music Player Use Cases - Playlists
   sl.registerLazySingleton(() => GetUserPlaylistsUseCase(sl<playlist_repo.PlaylistRepository>()));

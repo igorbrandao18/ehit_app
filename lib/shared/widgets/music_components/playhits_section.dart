@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../design/app_constants.dart';
+import '../../../core/constants/app_constants.dart';
 import '../../design/design_tokens.dart';
 import '../../design/app_colors.dart';
 import '../layout/section_header.dart';

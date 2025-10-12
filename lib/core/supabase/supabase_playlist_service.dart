@@ -558,12 +558,12 @@ class SupabasePlaylistService {
           title: songData['title'],
           artist: artist['name'],
           album: album?['title'] ?? 'Unknown Album',
-          duration: Duration(seconds: songData['duration']),
+          duration: _formatDuration(songData['duration'] ?? 0),
           imageUrl: songData['image_url'] ?? '',
           audioUrl: songData['audio_url'],
-          genre: songData['genre'] ?? '',
-          year: songData['year'],
-          isFavorite: false,
+          isExplicit: songData['is_explicit'] ?? false,
+          playCount: songData['play_count'] ?? 0,
+          releaseDate: DateTime.parse(songData['created_at'] ?? DateTime.now().toIso8601String()),
         );
       }));
     }
@@ -581,10 +581,19 @@ class SupabasePlaylistService {
       isPublic: data['is_public'] ?? true,
       isCollaborative: data['is_collaborative'] ?? false,
       followersCount: data['followers_count'] ?? 0,
-      songsCount: data['songs_count'] ?? 0,
+      totalSongs: data['songs_count'] ?? 0,
+      isFollowing: data['is_following'] ?? false,
+          totalDuration: _formatDuration(data['total_duration'] ?? 0),
       songs: songs,
       createdAt: DateTime.parse(data['created_at']),
       updatedAt: DateTime.parse(data['updated_at']),
     );
+  }
+
+  /// Format duration in seconds to MM:SS format
+  String _formatDuration(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
   }
 }

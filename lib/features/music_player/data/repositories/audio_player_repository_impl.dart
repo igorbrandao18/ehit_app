@@ -78,7 +78,7 @@ class AudioPlayerRepositoryImpl implements AudioPlayerRepository {
         playerState: AudioPlayerState.playing,
         currentSong: song,
         position: Duration.zero,
-        duration: song.duration,
+        duration: _parseDuration(song.duration),
         queue: [song],
         currentIndex: 0,
         errorMessage: null,
@@ -114,7 +114,7 @@ class AudioPlayerRepositoryImpl implements AudioPlayerRepository {
         playerState: AudioPlayerState.playing,
         currentSong: currentSong,
         position: Duration.zero,
-        duration: currentSong.duration,
+        duration: _parseDuration(currentSong.duration),
         queue: songs,
         currentIndex: index,
         errorMessage: null,
@@ -207,7 +207,7 @@ class AudioPlayerRepositoryImpl implements AudioPlayerRepository {
         currentSong: nextSong,
         currentIndex: nextIndex,
         position: Duration.zero,
-        duration: nextSong.duration,
+        duration: _parseDuration(nextSong.duration),
       );
       
       return const Success(null);
@@ -242,7 +242,7 @@ class AudioPlayerRepositoryImpl implements AudioPlayerRepository {
         currentSong: previousSong,
         currentIndex: previousIndex,
         position: Duration.zero,
-        duration: previousSong.duration,
+        duration: _parseDuration(previousSong.duration),
       );
       
       return const Success(null);
@@ -546,7 +546,7 @@ class AudioPlayerRepositoryImpl implements AudioPlayerRepository {
         currentIndex: index,
         currentSong: song,
         position: Duration.zero,
-        duration: song.duration,
+        duration: _parseDuration(song.duration),
       );
       
       return const Success(null);
@@ -704,12 +704,12 @@ class AudioPlayerRepositoryImpl implements AudioPlayerRepository {
         'title': song.title,
         'artist': song.artist,
         'album': song.album,
-        'duration': song.duration.inMilliseconds,
+        'duration': _parseDuration(song.duration).inMilliseconds,
         'imageUrl': song.imageUrl,
         'audioUrl': song.audioUrl,
-        'genre': song.genre,
-        'year': song.year,
-        'isFavorite': song.isFavorite,
+            'genre': 'Unknown',
+        'year': song.releaseDate.year,
+        'isFavorite': false, // TODO: Implementar favoritos
       });
     } catch (e) {
       return Error<Map<String, dynamic>>(
@@ -726,12 +726,12 @@ class AudioPlayerRepositoryImpl implements AudioPlayerRepository {
         'title': song.title,
         'artist': song.artist,
         'album': song.album,
-        'duration': song.duration.inMilliseconds,
+        'duration': _parseDuration(song.duration).inMilliseconds,
         'imageUrl': song.imageUrl,
         'audioUrl': song.audioUrl,
-        'genre': song.genre,
-        'year': song.year,
-        'isFavorite': song.isFavorite,
+            'genre': 'Unknown',
+        'year': song.releaseDate.year,
+        'isFavorite': false, // TODO: Implementar favoritos
       });
     } catch (e) {
       return Error<Map<String, dynamic>>(
@@ -842,5 +842,32 @@ class AudioPlayerRepositoryImpl implements AudioPlayerRepository {
     if (availableIndices.isEmpty) return _currentState.currentIndex;
     
     return availableIndices[DateTime.now().millisecondsSinceEpoch % availableIndices.length];
+  }
+
+  /// Converte string de duração (ex: "3:45") para Duration
+  Duration _parseDuration(String durationString) {
+    try {
+      final parts = durationString.split(':');
+      if (parts.length == 2) {
+        final minutes = int.parse(parts[0]);
+        final seconds = int.parse(parts[1]);
+        return Duration(minutes: minutes, seconds: seconds);
+      }
+      return const Duration(minutes: 0);
+    } catch (e) {
+      return const Duration(minutes: 0);
+    }
+  }
+
+  @override
+  Future<Result<void>> savePlaybackStats(Map<String, dynamic> stats) async {
+    try {
+      // TODO: Implementar salvamento de estatísticas de reprodução
+      // Por enquanto, apenas simula o salvamento
+      await Future.delayed(const Duration(milliseconds: 100));
+      return const Success(null);
+    } catch (e) {
+      return Error(message: 'Failed to save playback stats: $e');
+    }
   }
 }

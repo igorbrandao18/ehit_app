@@ -34,10 +34,12 @@ class SocialService {
           email: 'user$userId@example.com',
           displayName: 'User $userId',
           profileImageUrl: 'https://example.com/profile_$userId.jpg',
-          isVerified: false,
-          followersCount: 0,
-          followingCount: 0,
           createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          isEmailVerified: false,
+          isActive: true,
+          preferences: [],
+          metadata: {},
         ),
       );
       
@@ -364,10 +366,12 @@ class SocialService {
         email: 'user$index@example.com',
         displayName: 'User $index',
         profileImageUrl: 'https://example.com/profile_$index.jpg',
-        isVerified: index % 3 == 0,
-        followersCount: index * 100,
-        followingCount: index * 50,
         createdAt: DateTime.now().subtract(Duration(days: index * 30)),
+        updatedAt: DateTime.now().subtract(Duration(days: index * 30)),
+        isEmailVerified: index % 3 == 0,
+        isActive: true,
+        preferences: [],
+        metadata: {},
       ));
       
       return Success(users);

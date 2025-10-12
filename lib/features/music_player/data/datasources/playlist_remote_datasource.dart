@@ -5,6 +5,7 @@ import '../models/playlist_model.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/constants/app_config.dart';
 import '../../../../core/supabase/supabase_playlist_service.dart';
+import '../../../../core/utils/result.dart';
 
 /// Interface para fonte de dados remota de playlists
 abstract class PlaylistRemoteDataSource {
@@ -38,15 +39,13 @@ class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
     try {
       final result = await _playlistService.getUserPlaylists();
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final playlists = (result as Success).data;
-      return playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList();
+      return result.when(
+        success: (playlists) => playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList(),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -61,15 +60,13 @@ class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
     try {
       final result = await _playlistService.getPlaylistById(playlistId);
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final playlist = (result as Success).data;
-      return PlaylistModel.fromEntity(playlist);
+      return result.when(
+        success: (playlist) => PlaylistModel.fromEntity(playlist),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -84,15 +81,13 @@ class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
     try {
       final result = await _playlistService.getPublicPlaylists();
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final playlists = (result as Success).data;
-      return playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList();
+      return result.when(
+        success: (playlists) => playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList(),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -107,15 +102,13 @@ class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
     try {
       final result = await _playlistService.getPopularPlaylists();
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final playlists = (result as Success).data;
-      return playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList();
+      return result.when(
+        success: (playlists) => playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList(),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -130,15 +123,13 @@ class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
     try {
       final result = await _playlistService.getPlaylistsByGenre(genre);
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final playlists = (result as Success).data;
-      return playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList();
+      return result.when(
+        success: (playlists) => playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList(),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -153,15 +144,13 @@ class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
     try {
       final result = await _playlistService.searchPlaylists(query);
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final playlists = (result as Success).data;
-      return playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList();
+      return result.when(
+        success: (playlists) => playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList(),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -181,15 +170,13 @@ class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
         isCollaborative: playlistData['isCollaborative'] as bool? ?? false,
       );
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final playlist = (result as Success).data;
-      return PlaylistModel.fromEntity(playlist);
+      return result.when(
+        success: (playlist) => PlaylistModel.fromEntity(playlist),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -210,15 +197,13 @@ class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
         isCollaborative: playlistData['isCollaborative'] as bool?,
       );
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final playlist = (result as Success).data;
-      return PlaylistModel.fromEntity(playlist);
+      return result.when(
+        success: (playlist) => PlaylistModel.fromEntity(playlist),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -256,15 +241,13 @@ class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
         songId: songId,
       );
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final playlist = (result as Success).data;
-      return PlaylistModel.fromEntity(playlist);
+      return result.when(
+        success: (playlist) => PlaylistModel.fromEntity(playlist),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -282,15 +265,13 @@ class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
         songId: songId,
       );
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final playlist = (result as Success).data;
-      return PlaylistModel.fromEntity(playlist);
+      return result.when(
+        success: (playlist) => PlaylistModel.fromEntity(playlist),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -309,15 +290,13 @@ class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
         newIndex: newIndex,
       );
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final playlist = (result as Success).data;
-      return PlaylistModel.fromEntity(playlist);
+      return result.when(
+        success: (playlist) => PlaylistModel.fromEntity(playlist),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -372,14 +351,13 @@ class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
     try {
       final result = await _playlistService.isFollowingPlaylist(playlistId);
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      return (result as Success).data;
+      return result.when(
+        success: (success) => success,
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -394,15 +372,13 @@ class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
     try {
       final result = await _playlistService.getFollowedPlaylists();
       
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final playlists = (result as Success).data;
-      return playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList();
+      return result.when(
+        success: (playlists) => playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList(),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {

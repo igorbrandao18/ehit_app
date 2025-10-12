@@ -1,7 +1,9 @@
 // shared/widgets/music_components/song_list_item.dart
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../features/music_library/domain/entities/song.dart';
+import '../../../features/music_player/presentation/controllers/music_player_controller.dart';
 import '../../design/design_tokens.dart';
 
 /// Componente para item individual da lista de músicas
@@ -114,7 +116,7 @@ class SongListItem extends StatelessWidget {
             final isAvailableOffline = snapshot.data ?? false;
             
             return GestureDetector(
-              onTap: () => _handleDownloadTap(),
+              onTap: () => _handleDownloadTap(context),
               child: Container(
                 padding: const EdgeInsets.all(DesignTokens.spaceSM),
                 child: Icon(
@@ -135,7 +137,7 @@ class SongListItem extends StatelessWidget {
     return false;
   }
 
-  void _handleDownloadTap() async {
+  void _handleDownloadTap(BuildContext context) async {
     // TODO: Implementar download usando OfflineAudioService
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

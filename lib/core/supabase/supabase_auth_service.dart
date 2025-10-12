@@ -3,8 +3,8 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../utils/result.dart';
 import '../errors/failures.dart';
-import '../../features/authentication/domain/entities/user.dart';
-import '../../features/authentication/domain/entities/auth_state.dart';
+import '../../features/authentication/domain/entities/user.dart' as app_user;
+import '../../features/authentication/domain/entities/auth_state.dart' as app_auth;
 import 'supabase_config.dart';
 
 /// Supabase-based authentication service
@@ -14,7 +14,7 @@ class SupabaseAuthService {
   SupabaseAuthService._internal();
 
   /// Sign up with email and password
-  Future<Result<User>> signUpWithEmail({
+  Future<Result<app_user.User>> signUpWithEmail({
     required String email,
     required String password,
     required String username,
@@ -31,7 +31,7 @@ class SupabaseAuthService {
       );
 
       if (response.user == null) {
-        return Error<User>(
+        return Error<app_user.User>(
           message: 'Failed to create user account',
         );
       }
@@ -44,25 +44,27 @@ class SupabaseAuthService {
       );
 
       if (profileResult is Error) {
-        return profileResult;
+        return Error<app_user.User>(
+          message: profileResult.errorMessage ?? 'Failed to create user profile',
+        );
       }
 
       final user = _mapSupabaseUserToEntity(response.user!);
       return Success(user);
     } on AuthException catch (e) {
-      return Error<User>(
+      return Error<app_user.User>(
         message: e.message,
-        code: e.statusCode,
+            code: int.tryParse(e.statusCode ?? '500'),
       );
     } catch (e) {
-      return Error<User>(
+      return Error<app_user.User>(
         message: 'Unexpected error during sign up: $e',
       );
     }
   }
 
   /// Sign in with email and password
-  Future<Result<User>> signInWithEmail({
+  Future<Result<app_user.User>> signInWithEmail({
     required String email,
     required String password,
   }) async {
@@ -73,7 +75,7 @@ class SupabaseAuthService {
       );
 
       if (response.user == null) {
-        return Error<User>(
+        return Error<app_user.User>(
           message: 'Invalid email or password',
         );
       }
@@ -81,12 +83,12 @@ class SupabaseAuthService {
       final user = _mapSupabaseUserToEntity(response.user!);
       return Success(user);
     } on AuthException catch (e) {
-      return Error<User>(
+      return Error<app_user.User>(
         message: e.message,
-        code: e.statusCode,
+            code: int.tryParse(e.statusCode ?? '500'),
       );
     } catch (e) {
-      return Error<User>(
+      return Error<app_user.User>(
         message: 'Unexpected error during sign in: $e',
       );
     }
@@ -105,7 +107,7 @@ class SupabaseAuthService {
   }
 
   /// Get current user
-  Future<Result<User?>> getCurrentUser() async {
+  Future<Result<app_user.User?>> getCurrentUser() async {
     try {
       final supabaseUser = SupabaseConfig.client.auth.currentUser;
       if (supabaseUser == null) {
@@ -115,26 +117,45 @@ class SupabaseAuthService {
       final user = _mapSupabaseUserToEntity(supabaseUser);
       return Success(user);
     } catch (e) {
-      return Error<User?>(
+      return Error<app_user.User?>(
         message: 'Error getting current user: $e',
       );
     }
   }
 
   /// Get current auth state
-  Future<Result<AuthState>> getCurrentAuthState() async {
+  Future<Result<app_auth.AuthState>> getCurrentAuthState() async {
     try {
       final supabaseUser = SupabaseConfig.client.auth.currentUser;
       final session = SupabaseConfig.client.auth.currentSession;
 
       if (supabaseUser == null || session == null) {
-        return Success(AuthState.unauthenticated());
+            return Success(app_auth.AuthState(
+              status: app_auth.AuthStatus.unauthenticated,
+              isLoading: false,
+              emailVerificationStatus: app_auth.EmailVerificationStatus.notVerified,
+              isBiometricEnabled: false,
+              isRememberMeEnabled: false,
+              loginAttempts: 0,
+              isPasswordResetRequested: false,
+              isAccountLocked: false,
+            ));
       }
 
       final user = _mapSupabaseUserToEntity(supabaseUser);
-      return Success(AuthState.authenticated(user));
+      return Success(app_auth.AuthState(
+        status: app_auth.AuthStatus.authenticated,
+        user: user,
+        isLoading: false,
+        emailVerificationStatus: app_auth.EmailVerificationStatus.verified,
+        isBiometricEnabled: false,
+        isRememberMeEnabled: false,
+        loginAttempts: 0,
+        isPasswordResetRequested: false,
+        isAccountLocked: false,
+      ));
     } catch (e) {
-      return Error<AuthState>(
+      return Error<app_auth.AuthState>(
         message: 'Error getting auth state: $e',
       );
     }
@@ -160,7 +181,7 @@ class SupabaseAuthService {
     } on AuthException catch (e) {
       return Error<void>(
         message: e.message,
-        code: e.statusCode,
+            code: int.tryParse(e.statusCode ?? '500'),
       );
     } catch (e) {
       return Error<void>(
@@ -179,7 +200,7 @@ class SupabaseAuthService {
     } on AuthException catch (e) {
       return Error<void>(
         message: e.message,
-        code: e.statusCode,
+            code: int.tryParse(e.statusCode ?? '500'),
       );
     } catch (e) {
       return Error<void>(
@@ -189,7 +210,7 @@ class SupabaseAuthService {
   }
 
   /// Update user profile
-  Future<Result<User>> updateProfile({
+  Future<Result<app_user.User>> updateProfile({
     String? username,
     String? displayName,
     String? bio,
@@ -198,7 +219,7 @@ class SupabaseAuthService {
     try {
       final currentUser = SupabaseConfig.client.auth.currentUser;
       if (currentUser == null) {
-        return Error<User>(
+        return Error<app_user.User>(
           message: 'No authenticated user',
         );
       }
@@ -232,25 +253,44 @@ class SupabaseAuthService {
       final updatedUser = _mapSupabaseUserToEntity(currentUser);
       return Success(updatedUser);
     } on AuthException catch (e) {
-      return Error<User>(
+      return Error<app_user.User>(
         message: e.message,
-        code: e.statusCode,
+            code: int.tryParse(e.statusCode ?? '500'),
       );
     } catch (e) {
-      return Error<User>(
+      return Error<app_user.User>(
         message: 'Error updating profile: $e',
       );
     }
   }
 
   /// Get auth state changes stream
-  Stream<AuthState> get authStateChanges {
+  Stream<app_auth.AuthState> get authStateChanges {
     return SupabaseConfig.client.auth.onAuthStateChange.map((data) {
-      if (data.user == null) {
-        return AuthState.unauthenticated();
+      if (data.session?.user == null) {
+        return app_auth.AuthState(
+          status: app_auth.AuthStatus.unauthenticated,
+          isLoading: false,
+          emailVerificationStatus: app_auth.EmailVerificationStatus.notVerified,
+          isBiometricEnabled: false,
+          isRememberMeEnabled: false,
+          loginAttempts: 0,
+          isPasswordResetRequested: false,
+          isAccountLocked: false,
+        );
       } else {
-        final user = _mapSupabaseUserToEntity(data.user!);
-        return AuthState.authenticated(user);
+        final user = _mapSupabaseUserToEntity(data.session!.user!);
+        return app_auth.AuthState(
+          status: app_auth.AuthStatus.authenticated,
+          user: user,
+          isLoading: false,
+          emailVerificationStatus: app_auth.EmailVerificationStatus.verified,
+          isBiometricEnabled: false,
+          isRememberMeEnabled: false,
+          loginAttempts: 0,
+          isPasswordResetRequested: false,
+          isAccountLocked: false,
+        );
       }
     });
   }
@@ -279,24 +319,26 @@ class SupabaseAuthService {
   }
 
   /// Map Supabase User to our User entity
-  User _mapSupabaseUserToEntity(User supabaseUser) {
+  app_user.User _mapSupabaseUserToEntity(User supabaseUser) {
     final metadata = supabaseUser.userMetadata ?? {};
     
-    return User(
+    return app_user.User(
       id: supabaseUser.id,
       username: metadata['username'] ?? supabaseUser.email?.split('@').first ?? '',
       email: supabaseUser.email ?? '',
       displayName: metadata['display_name'] ?? metadata['username'] ?? '',
       profileImageUrl: metadata['profile_image_url'],
-      isVerified: supabaseUser.emailConfirmedAt != null,
-      followersCount: 0, // Will be fetched from database
-      followingCount: 0, // Will be fetched from database
-      createdAt: supabaseUser.createdAt,
+      createdAt: DateTime.parse(supabaseUser.createdAt),
+      updatedAt: DateTime.parse(supabaseUser.updatedAt ?? supabaseUser.createdAt),
+      isEmailVerified: supabaseUser.emailConfirmedAt != null,
+      isActive: true,
+      preferences: [],
+      metadata: metadata,
     );
   }
 
   /// Get user profile from database
-  Future<Result<User>> getUserProfile(String userId) async {
+  Future<Result<app_user.User>> getUserProfile(String userId) async {
     try {
       final response = await SupabaseConfig.client
           .from('profiles')
@@ -304,21 +346,23 @@ class SupabaseAuthService {
           .eq('id', userId)
           .single();
 
-      final user = User(
+      final user = app_user.User(
         id: response['id'],
         username: response['username'],
         email: '', // Not stored in profiles table
         displayName: response['display_name'],
         profileImageUrl: response['profile_image_url'],
-        isVerified: response['is_verified'],
-        followersCount: response['followers_count'],
-        followingCount: response['following_count'],
         createdAt: DateTime.parse(response['created_at']),
+        updatedAt: DateTime.parse(response['updated_at']),
+        isEmailVerified: response['is_verified'] ?? false,
+        isActive: true,
+        preferences: [],
+        metadata: response,
       );
 
       return Success(user);
     } catch (e) {
-      return Error<User>(
+      return Error<app_user.User>(
         message: 'Error fetching user profile: $e',
       );
     }

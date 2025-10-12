@@ -5,6 +5,7 @@ import '../models/user_model.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/constants/app_config.dart';
 import '../../../../core/supabase/supabase_auth_service.dart';
+import '../../../../core/utils/result.dart';
 
 /// Interface para fonte de dados remota de autenticação
 abstract class AuthRemoteDataSource {
@@ -97,15 +98,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         password: password,
       );
 
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final user = (result as Success).data;
-      return UserModel.fromEntity(user);
+      return result.when(
+        success: (user) => UserModel.fromEntity(user),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
@@ -146,15 +145,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         displayName: displayName,
       );
 
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-
-      final user = (result as Success).data;
-      return UserModel.fromEntity(user);
+      return result.when(
+        success: (user) => UserModel.fromEntity(user),
+        error: (message, code) => throw ServerFailure(
+          message: message,
+          code: code,
+        ),
+      );
     } on ServerFailure {
       rethrow;
     } catch (e) {
