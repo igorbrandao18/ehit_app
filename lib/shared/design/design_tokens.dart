@@ -20,6 +20,7 @@ class DesignTokens {
   static const double spaceUnit = 8.0;
   
   // Spacing scale
+  static const double spaceXXS = spaceUnit * 0.25; // 2px
   static const double spaceXS = spaceUnit * 0.5; // 4px
   static const double spaceSM = spaceUnit; // 8px
   static const double spaceMD = spaceUnit * 2; // 16px
@@ -36,6 +37,8 @@ class DesignTokens {
   static const double sectionSpacing = spaceXL; // 32px
   static const double cardSpacing = spaceMD; // 16px
   static const double itemSpacing = spaceSM; // 8px
+  static const double listHeaderSpacing = spaceUnit * 1.5; // 12px
+  static const double songItemSpacing = spaceXXS; // 2px
 
   // ============================================================================
   // BORDER RADIUS SYSTEM
@@ -106,6 +109,14 @@ class DesignTokens {
   static const double playerControlsHeight = 120.0;
   static const double playButtonSize = iconXL; // 48px
   static const double playButtonSizeLarge = iconXXL; // 64px
+
+  // ============================================================================
+  // IMAGE SIZES
+  // ============================================================================
+  
+  static const double songThumbnailSize = 50.0;
+  static const double artistImageSize = 180.0;
+  static const double albumArtSize = 280.0;
   static const double controlButtonSize = 40.0;
 
   // Input dimensions
@@ -347,4 +358,13 @@ class DesignTokens {
       return const EdgeInsets.symmetric(horizontal: screenPadding);
     }
   }
+
+  // ============================================================================
+  // ARTIST DETAIL PAGE
+  // ============================================================================
+  
+  static const double artistHeroHeight = 300.0;
+  static const int floatingParticlesCount = 20;
+  static const String songsListTitle = 'Lista de sons';
+  static const double trackNumberWidth = 24.0;
 }

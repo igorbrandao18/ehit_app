@@ -1,0 +1,123 @@
+// shared/widgets/music_components/song_list_item.dart
+
+import 'package:flutter/material.dart';
+import '../../../features/music_library/domain/entities/song.dart';
+import '../../design/design_tokens.dart';
+
+/// Componente para item individual da lista de músicas
+class SongListItem extends StatelessWidget {
+  final Song song;
+  final int index;
+  final VoidCallback onTap;
+
+  const SongListItem({
+    super.key,
+    required this.song,
+    required this.index,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: DesignTokens.spaceMD,
+          vertical: 8,
+        ),
+        child: Row(
+          children: [
+            _buildAlbumArt(),
+            const SizedBox(width: DesignTokens.spaceMD),
+            Expanded(
+              child: _buildSongInfo(),
+            ),
+            _buildMoreButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAlbumArt() {
+    return Container(
+      width: DesignTokens.songThumbnailSize,
+      height: DesignTokens.songThumbnailSize,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipOval(
+        child: Image.network(
+          song.imageUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade800,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.music_note,
+                color: Colors.grey,
+                size: 20,
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSongInfo() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          song.title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: DesignTokens.fontSizeMD,
+            fontWeight: FontWeight.w600,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: DesignTokens.songItemSpacing),
+        Text(
+          song.artist,
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: DesignTokens.fontSizeSM,
+            fontWeight: FontWeight.w400,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMoreButton() {
+    return GestureDetector(
+      onTap: () {
+        // TODO: Implementar menu de opções
+      },
+      child: Container(
+        padding: const EdgeInsets.all(DesignTokens.spaceSM),
+        child: const Icon(
+          Icons.more_vert,
+          color: Colors.white70,
+          size: DesignTokens.iconSM,
+        ),
+      ),
+    );
+  }
+}

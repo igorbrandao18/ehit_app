@@ -148,12 +148,12 @@ class CategoryDetailPage extends StatelessWidget {
   Widget _buildArtistListItem(BuildContext context, Map<String, String> artist, int rank) {
     return GestureDetector(
       onTap: () {
-        // TODO: Navigate to artist detail page
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Navegando para: ${artist['name']}'),
-            duration: const Duration(seconds: 1),
-          ),
+        // Navigate to artist detail page using GoRouter
+        context.pushNamed(
+          'artist-detail',
+          pathParameters: {
+            'artistId': artist['name']!.toLowerCase().replaceAll(' ', '_').replaceAll('&', '_'),
+          },
         );
       },
       child: Container(

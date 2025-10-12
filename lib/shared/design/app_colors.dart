@@ -28,6 +28,8 @@ class AppColors {
   // ACCENT COLORS
   // ============================================================================
   
+  static const Color primaryGreen = Color(0xFF1DB954); // Spotify green
+  
   static const Color accentYellow = Color(0xFFFFD700); // Gold for album titles
   static const Color accentBlue = Color(0xFF4169E1); // Blue for backgrounds
   static const Color accentGreen = Color(0xFF4CAF50); // Green for success

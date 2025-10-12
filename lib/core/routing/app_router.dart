@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../features/music_library/presentation/pages/home_page.dart';
 import '../../features/music_library/presentation/pages/category_detail_page.dart';
+import '../../features/music_library/presentation/pages/artist_detail_page.dart';
 import '../../features/music_library/presentation/controllers/music_library_controller.dart';
 import '../../shared/design/app_theme.dart';
 import 'app_routes.dart';
@@ -68,7 +69,7 @@ class AppRouter {
 
       // Artist detail route
       GoRoute(
-        path: AppRoutes.artistDetailPath(':artistId'),
+        path: '/artist/:artistId',
         name: 'artist-detail',
         builder: (context, state) {
           final artistId = state.pathParameters['artistId']!;
@@ -274,25 +275,6 @@ class ProfilePage extends StatelessWidget {
   }
 }
 
-class ArtistDetailPage extends StatelessWidget {
-  final String artistId;
-
-  const ArtistDetailPage({super.key, required this.artistId});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Artista: $artistId'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: Center(
-        child: Text('Detalhes do Artista: $artistId'),
-      ),
-    );
-  }
-}
 
 class AlbumDetailPage extends StatelessWidget {
   final String albumId;
