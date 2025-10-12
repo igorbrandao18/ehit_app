@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'shared/design/app_theme.dart';
 import 'core/injection/injection_container.dart' as di;
 import 'core/routing/app_router.dart';
+import 'core/supabase/supabase_config.dart';
 import 'features/music_player/presentation/controllers/music_player_controller.dart';
 import 'features/music_player/presentation/controllers/playlist_controller.dart';
 import 'features/music_library/presentation/controllers/music_library_controller.dart';
@@ -11,6 +12,9 @@ import 'features/authentication/presentation/controllers/auth_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize Supabase
+  await SupabaseConfig.initialize();
   
   // Initialize dependency injection
   await di.init();

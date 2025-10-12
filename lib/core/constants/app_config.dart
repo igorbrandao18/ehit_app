@@ -47,6 +47,19 @@ class AppConfig {
   static const Duration retryDelay = Duration(seconds: 1);
 
   // ============================================================================
+  // SUPABASE CONFIGURATION
+  // ============================================================================
+  
+  // TODO: Replace with your actual Supabase project URL and anon key
+  static const String supabaseUrl = 'https://your-project.supabase.co';
+  static const String supabaseAnonKey = 'your-anon-key-here';
+  
+  // Supabase storage buckets
+  static const String audioStorageBucket = 'audio-files';
+  static const String imageStorageBucket = 'images';
+  static const String profileImageBucket = 'profile-images';
+
+  // ============================================================================
   // AUDIO CONFIGURATION
   // ============================================================================
   

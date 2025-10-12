@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import '../models/user_model.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/constants/app_config.dart';
+import '../../../../core/supabase/supabase_auth_service.dart';
 
 /// Interface para fonte de dados remota de autenticação
 abstract class AuthRemoteDataSource {
@@ -77,11 +78,12 @@ abstract class AuthRemoteDataSource {
   Future<Map<String, dynamic>> getSecurityStats();
 }
 
-/// Implementação da fonte de dados remota de autenticação
+/// Implementação da fonte de dados remota de autenticação usando Supabase
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final Dio _dio;
+  final SupabaseAuthService _authService;
 
-  AuthRemoteDataSourceImpl(this._dio);
+  AuthRemoteDataSourceImpl(this._dio) : _authService = SupabaseAuthService();
 
   @override
   Future<UserModel> loginWithEmail({
@@ -90,16 +92,26 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     bool rememberMe = false,
   }) async {
     try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(seconds: 2)); // Simulate network delay
-      return _getMockUser();
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao fazer login: ${e.message}',
-        code: e.response?.statusCode,
+      final result = await _authService.signInWithEmail(
+        email: email,
+        password: password,
       );
+
+      if (result is Error) {
+        throw ServerFailure(
+          message: result.message,
+          code: result.code,
+        );
+      }
+
+      final user = (result as Success).data;
+      return UserModel.fromEntity(user);
+    } on ServerFailure {
+      rethrow;
     } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao fazer login: $e');
+      throw ServerFailure(
+        message: 'Erro inesperado ao fazer login: $e',
+      );
     }
   }
 
@@ -127,31 +139,47 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String? displayName,
   }) async {
     try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(seconds: 2));
-      return _getMockUser();
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao registrar usuário: ${e.message}',
-        code: e.response?.statusCode,
+      final result = await _authService.signUpWithEmail(
+        email: email,
+        password: password,
+        username: username,
+        displayName: displayName,
       );
+
+      if (result is Error) {
+        throw ServerFailure(
+          message: result.message,
+          code: result.code,
+        );
+      }
+
+      final user = (result as Success).data;
+      return UserModel.fromEntity(user);
+    } on ServerFailure {
+      rethrow;
     } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao registrar usuário: $e');
+      throw ServerFailure(
+        message: 'Erro inesperado ao registrar: $e',
+      );
     }
   }
 
   @override
   Future<void> logout() async {
     try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(seconds: 1));
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao fazer logout: ${e.message}',
-        code: e.response?.statusCode,
-      );
+      final result = await _authService.signOut();
+      if (result is Error) {
+        throw ServerFailure(
+          message: result.message,
+          code: result.code,
+        );
+      }
+    } on ServerFailure {
+      rethrow;
     } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao fazer logout: $e');
+      throw ServerFailure(
+        message: 'Erro inesperado ao fazer logout: $e',
+      );
     }
   }
 
