@@ -1,10 +1,10 @@
 // shared/widgets/base_components/app_button.dart
 import 'package:flutter/material.dart';
-import '../../themes/app_colors.dart';
-import '../../themes/app_text_styles.dart';
-import '../../themes/app_borders.dart';
-import '../../themes/app_shadows.dart';
-import '../../themes/app_animations.dart';
+import '../../design/app_colors.dart';
+import '../../design/app_text_styles.dart';
+import '../../design/design_tokens.dart';
+import '../../design/app_shadows.dart';
+import '../../design/app_borders.dart';
 
 enum AppButtonType { primary, secondary, outline, text }
 enum AppButtonSize { small, medium, large }
@@ -82,7 +82,7 @@ class _AppButtonState extends State<AppButton>
                 color: _getBackgroundColor(),
                 borderRadius: AppBorders.buttonBorderRadius,
                 border: _getBorder(),
-                boxShadow: AppShadows.getShadow(AppShadows.elevationSm),
+                boxShadow: AppShadows.buttonShadow,
               ),
               child: Center(
                 child: widget.isLoading
@@ -148,7 +148,7 @@ class _AppButtonState extends State<AppButton>
   Border? _getBorder() {
     switch (widget.type) {
       case AppButtonType.outline:
-        return Border.all(
+        return AppBorders.getBorder(
           color: AppColors.primaryRed,
           width: AppBorders.borderWidthNormal,
         );

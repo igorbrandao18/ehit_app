@@ -40,7 +40,6 @@ class _MusicCardState extends State<MusicCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-  bool _isHovered = false;
 
   @override
   void initState() {
@@ -50,8 +49,8 @@ class _MusicCardState extends State<MusicCard>
       vsync: this,
     );
     _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.95,
+      begin: 0.0,
+      end: 0.1,
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
@@ -91,7 +90,6 @@ class _MusicCardState extends State<MusicCard>
       onTapUp: _onTapUp,
       onTapCancel: _onTapCancel,
       onTap: () {
-        print('MusicCard onTap called');
         widget.onTap?.call();
       },
       child: AnimatedBuilder(
@@ -126,9 +124,9 @@ class _MusicCardState extends State<MusicCard>
                       ),
                     ),
                   
-                  // Dark overlay with centered text
-                  if (widget.showText)
-                    Positioned.fill(
+                    // Dark overlay with centered text
+                    if (widget.showText)
+                      Positioned.fill(
                         child: Container(
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -145,32 +143,33 @@ class _MusicCardState extends State<MusicCard>
                                 ? BorderRadius.circular(DesignTokens.radiusCircular)
                                 : BorderRadius.circular(DesignTokens.cardBorderRadius),
                           ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                DesignTokens.screenPadding, 
-                                DesignTokens.screenPadding, 
-                                DesignTokens.screenPadding, 
-                                DesignTokens.spaceLG
-                              ),
-                              child: Text(
-                                widget.title,
-                                style: AppTextStyles.bodyMedium.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  DesignTokens.screenPadding, 
+                                  DesignTokens.screenPadding, 
+                                  DesignTokens.screenPadding, 
+                                  DesignTokens.spaceLG
                                 ),
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
+                                child: Text(
+                                  widget.title,
+                                  style: AppTextStyles.bodyMedium.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           );
@@ -185,7 +184,6 @@ class _MusicCardState extends State<MusicCard>
       onTapUp: _onTapUp,
       onTapCancel: _onTapCancel,
       onTap: () {
-        print('MusicCard onTap called');
         widget.onTap?.call();
       },
       child: AnimatedBuilder(
@@ -201,102 +199,91 @@ class _MusicCardState extends State<MusicCard>
                 children: [
                   // Image container
                   Expanded(
-                    child: Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: widget.isCircular
-                              ? BorderRadius.circular(DesignTokens.radiusCircular)
-                              : BorderRadius.circular(DesignTokens.cardBorderRadius),
-                          child: Image.network(
-                            widget.imageUrl,
-                            width: widget.width,
-                            height: double.infinity,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                width: widget.width,
-                                height: double.infinity,
-                                color: AppColors.backgroundCard,
-                                child: Icon(
-                                  widget.isCircular ? Icons.person : Icons.music_note,
-                                  color: AppColors.textTertiary,
-                                  size: (widget.width ?? DesignTokens.artistCardSize) * 0.3,
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                        
-                        // Play button overlay
-                        if (widget.showPlayButton && widget.onPlay != null)
+                    flex: 3,
+                    child: ClipRRect(
+                      borderRadius: widget.isCircular
+                          ? BorderRadius.circular(DesignTokens.radiusCircular)
+                          : BorderRadius.circular(DesignTokens.cardBorderRadius),
+                      child: Stack(
+                        children: [
                           Positioned.fill(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.3),
-                                borderRadius: widget.isCircular
-                                    ? BorderRadius.circular(DesignTokens.radiusCircular)
-                                    : BorderRadius.circular(DesignTokens.cardBorderRadius),
-                              ),
-                              child: Center(
-                                child: GestureDetector(
-                                  onTap: widget.onPlay,
-                                  child: Container(
-                                    width: 48,
-                                    height: 48,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primaryRed,
-                                      shape: BoxShape.circle,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.2),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 2),
-                                        ),
-                                      ],
-                                    ),
-                                    child: const Icon(
-                                      Icons.play_arrow,
-                                      color: AppColors.textPrimary,
-                                      size: 24,
+                            child: Image.network(
+                              widget.imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  color: AppColors.backgroundCard,
+                                  child: Icon(
+                                    widget.isCircular ? Icons.person : Icons.music_note,
+                                    color: AppColors.textTertiary,
+                                    size: (widget.width ?? DesignTokens.artistCardSize) * 0.3,
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                          if (widget.showPlayButton)
+                            Positioned.fill(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withOpacity(0.3),
+                                  borderRadius: widget.isCircular
+                                      ? BorderRadius.circular(DesignTokens.radiusCircular)
+                                      : BorderRadius.circular(DesignTokens.cardBorderRadius),
+                                ),
+                                child: Center(
+                                  child: GestureDetector(
+                                    onTap: widget.onPlay,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(DesignTokens.spaceSM),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primaryRed,
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(
+                                        Icons.play_arrow,
+                                        color: Colors.white,
+                                        size: DesignTokens.iconMD,
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   
-                  // Text info - only show if showText is true
+                  // Text content
                   if (widget.showText) ...[
-                    if (!widget.isCircular) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        widget.title,
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                    SizedBox(height: DesignTokens.spaceSM),
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.title,
+                            style: AppTextStyles.bodyMedium.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          SizedBox(height: DesignTokens.spaceXS),
+                          Text(
+                            widget.artist,
+                            style: AppTextStyles.bodySmall.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        widget.artist,
-                        style: AppTextStyles.bodySmall,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ] else ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        widget.title,
-                        style: AppTextStyles.bodySmall,
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+                    ),
                   ],
                 ],
               ),

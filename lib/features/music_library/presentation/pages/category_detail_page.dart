@@ -9,6 +9,7 @@ import '../../../../shared/widgets/layout/loading_section.dart';
 import '../../../../shared/widgets/music_components/artist_card.dart';
 import '../../../../shared/design/design_tokens.dart';
 import '../controllers/music_library_controller.dart';
+import '../../domain/entities/artist.dart';
 
 /// Página de detalhes da categoria com lista de artistas
 class CategoryDetailPage extends StatelessWidget {
@@ -129,14 +130,14 @@ class CategoryDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildArtistListItem(BuildContext context, Map<String, String> artist, int rank) {
+  Widget _buildArtistListItem(BuildContext context, Artist artist, int rank) {
     return GestureDetector(
       onTap: () {
         // Navigate to artist detail page using GoRouter
         context.pushNamed(
           'artist-detail',
           pathParameters: {
-            'artistId': _getArtistId(artist['name']!),
+            'artistId': _getArtistId(artist.name),
           },
         );
       },
@@ -177,7 +178,7 @@ class CategoryDetailPage extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
-                artist['imageUrl']!,
+                artist.imageUrl,
                 width: 56,
                 height: 56,
                 fit: BoxFit.cover,
@@ -206,7 +207,7 @@ class CategoryDetailPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    artist['name']!,
+                    artist.name,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,

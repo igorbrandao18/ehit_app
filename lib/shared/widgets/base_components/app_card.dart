@@ -1,9 +1,9 @@
 // shared/widgets/base_components/app_card.dart
 import 'package:flutter/material.dart';
-import '../../themes/app_colors.dart';
-import '../../themes/app_borders.dart';
-import '../../themes/app_shadows.dart';
-import '../../themes/app_animations.dart';
+import '../../design/app_colors.dart';
+import '../../design/design_tokens.dart';
+import '../../design/app_shadows.dart';
+import '../../design/app_borders.dart';
 
 class AppCard extends StatefulWidget {
   final Widget child;
@@ -37,8 +37,17 @@ class _AppCardState extends State<AppCard>
   @override
   void initState() {
     super.initState();
-    _animationController = AppAnimations.createPlayerController(this);
-    _scaleAnimation = AppAnimations.createPlayerAnimation(_animationController);
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.98,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
   }
 
   @override
@@ -78,9 +87,9 @@ class _AppCardState extends State<AppCard>
               decoration: BoxDecoration(
                 color: widget.backgroundColor ?? AppColors.backgroundCard,
                 borderRadius: widget.borderRadius ?? AppBorders.cardBorderRadius,
-                boxShadow: AppShadows.getShadow(
-                  widget.elevation ?? AppShadows.elevationSm,
-                ),
+                boxShadow: widget.elevation != null 
+                    ? AppShadows.getShadow(widget.elevation!)
+                    : AppShadows.cardShadow,
               ),
               child: Padding(
                 padding: widget.padding ?? const EdgeInsets.all(16),

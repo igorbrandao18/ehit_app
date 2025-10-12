@@ -47,6 +47,9 @@ dependencies:
   # JSON Serialization
   json_annotation: ^4.8.1
   
+  # Equality
+  equatable: ^2.0.5
+  
   # Google Fonts (Spotify-style)
   google_fonts: ^6.1.0
   
@@ -61,6 +64,19 @@ dev_dependencies:
   # JSON Code Generation
   json_serializable: ^6.7.1
   build_runner: ^2.4.7
+  
+  # Testing Dependencies
+  mockito: ^5.4.4
+  integration_test:
+    sdk: flutter
+  
+  # Test Utilities
+  bloc_test: ^9.1.5
+  golden_toolkit: ^0.15.0
+  # patrol: ^3.6.0  # Temporarily disabled due to Android embedding v2 requirement
+  
+  # Equatable for value objects
+  equatable: ^2.0.5
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
