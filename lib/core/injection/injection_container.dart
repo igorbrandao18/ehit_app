@@ -12,6 +12,10 @@ import '../../features/music_library/data/datasources/music_local_datasource.dar
 import '../../features/music_player/data/datasources/playlist_remote_datasource.dart';
 import '../../features/music_player/data/datasources/playlist_local_datasource.dart';
 
+// Data Sources - Authentication
+import '../../features/authentication/data/datasources/auth_remote_datasource.dart';
+import '../../features/authentication/data/datasources/auth_local_datasource.dart';
+
 // Repositories - Music Library
 import '../../features/music_library/data/repositories/music_repository_impl.dart';
 import '../../features/music_library/domain/repositories/music_repository.dart';
@@ -19,6 +23,12 @@ import '../../features/music_library/domain/repositories/music_repository.dart';
 // Repositories - Music Player
 import '../../features/music_player/data/repositories/playlist_repository_impl.dart';
 import '../../features/music_player/domain/repositories/playlist_repository.dart' as playlist_repo;
+import '../../features/music_player/data/repositories/audio_player_repository_impl.dart';
+import '../../features/music_player/domain/repositories/audio_player_repository.dart';
+
+// Repositories - Authentication
+import '../../features/authentication/data/repositories/auth_repository_impl.dart';
+import '../../features/authentication/domain/repositories/auth_repository.dart';
 
 // Use Cases - Music Library
 import '../../features/music_library/domain/usecases/get_songs_usecase.dart';
@@ -27,14 +37,22 @@ import '../../features/music_library/domain/usecases/get_artists_usecase.dart';
 // Use Cases - Music Player
 import '../../features/music_player/domain/usecases/playlist_usecases.dart';
 
+// Use Cases - Authentication
+import '../../features/authentication/domain/usecases/auth_usecases.dart';
+
 // Controllers
 import '../../features/music_library/presentation/controllers/music_library_controller.dart';
 import '../../features/music_library/presentation/controllers/artist_detail_controller.dart';
 import '../../features/music_player/presentation/controllers/music_player_controller.dart';
 import '../../features/music_player/presentation/controllers/playlist_controller.dart';
+import '../../features/authentication/presentation/controllers/auth_controller.dart';
 
 // Constants
 import '../constants/app_constants.dart';
+
+// Services
+import '../audio/offline_audio_service.dart';
+import '../social/social_service.dart';
 
 /// Container de injeção de dependências
 final GetIt sl = GetIt.instance;
@@ -59,6 +77,16 @@ Future<void> init() async {
   });
 
   // ============================================================================
+  // SERVICES
+  // ============================================================================
+  
+  // Offline Audio Service
+  sl.registerLazySingleton<OfflineAudioService>(() => OfflineAudioService());
+
+  // Social Service
+  sl.registerLazySingleton<SocialService>(() => SocialService());
+
+  // ============================================================================
   // DATA SOURCES
   // ============================================================================
   
@@ -80,6 +108,15 @@ Future<void> init() async {
     () => PlaylistLocalDataSourceImpl(sharedPreferences: sl<SharedPreferences>()),
   );
 
+  // Authentication Data Sources
+  sl.registerLazySingleton<AuthRemoteDataSource>(
+    () => AuthRemoteDataSourceImpl(sl<Dio>()),
+  );
+
+  sl.registerLazySingleton<AuthLocalDataSource>(
+    () => AuthLocalDataSourceImpl(sharedPreferences: sl<SharedPreferences>()),
+  );
+
   // ============================================================================
   // REPOSITORIES
   // ============================================================================
@@ -97,6 +134,18 @@ Future<void> init() async {
     () => PlaylistRepositoryImpl(
       remoteDataSource: sl<PlaylistRemoteDataSource>(),
       localDataSource: sl<PlaylistLocalDataSource>(),
+    ),
+  );
+
+  sl.registerLazySingleton<AudioPlayerRepository>(
+    () => AudioPlayerRepositoryImpl(),
+  );
+
+  // Authentication Repositories
+  sl.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(
+      remoteDataSource: sl<AuthRemoteDataSource>(),
+      localDataSource: sl<AuthLocalDataSource>(),
     ),
   );
 
@@ -131,6 +180,23 @@ Future<void> init() async {
   sl.registerLazySingleton(() => FollowPlaylistUseCase(sl<playlist_repo.PlaylistRepository>()));
   sl.registerLazySingleton(() => UnfollowPlaylistUseCase(sl<playlist_repo.PlaylistRepository>()));
 
+  // Authentication Use Cases
+  sl.registerLazySingleton(() => LoginWithEmailUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => LoginWithBiometricUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => RegisterUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => LogoutUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => SendEmailVerificationUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => VerifyEmailUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => RequestPasswordResetUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => ResetPasswordUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => UpdateProfileUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => ChangePasswordUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => GetCurrentUserUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => GetAuthStateUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => IsAuthenticatedUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => IsBiometricAvailableUseCase(sl<AuthRepository>()));
+  sl.registerLazySingleton(() => ToggleBiometricAuthUseCase(sl<AuthRepository>()));
+
   // ============================================================================
   // CONTROLLERS
   // ============================================================================
@@ -161,6 +227,25 @@ Future<void> init() async {
     removeSongFromPlaylistUseCase: sl<RemoveSongFromPlaylistUseCase>(),
     followPlaylistUseCase: sl<FollowPlaylistUseCase>(),
     unfollowPlaylistUseCase: sl<UnfollowPlaylistUseCase>(),
+  ));
+
+  // Authentication Controllers
+  sl.registerLazySingleton(() => AuthController(
+    loginWithEmailUseCase: sl<LoginWithEmailUseCase>(),
+    loginWithBiometricUseCase: sl<LoginWithBiometricUseCase>(),
+    registerUseCase: sl<RegisterUseCase>(),
+    logoutUseCase: sl<LogoutUseCase>(),
+    sendEmailVerificationUseCase: sl<SendEmailVerificationUseCase>(),
+    verifyEmailUseCase: sl<VerifyEmailUseCase>(),
+    requestPasswordResetUseCase: sl<RequestPasswordResetUseCase>(),
+    resetPasswordUseCase: sl<ResetPasswordUseCase>(),
+    updateProfileUseCase: sl<UpdateProfileUseCase>(),
+    changePasswordUseCase: sl<ChangePasswordUseCase>(),
+    getCurrentUserUseCase: sl<GetCurrentUserUseCase>(),
+    getAuthStateUseCase: sl<GetAuthStateUseCase>(),
+    isAuthenticatedUseCase: sl<IsAuthenticatedUseCase>(),
+    isBiometricAvailableUseCase: sl<IsBiometricAvailableUseCase>(),
+    toggleBiometricAuthUseCase: sl<ToggleBiometricAuthUseCase>(),
   ));
 }
 

@@ -7,6 +7,7 @@ import 'core/routing/app_router.dart';
 import 'features/music_player/presentation/controllers/music_player_controller.dart';
 import 'features/music_player/presentation/controllers/playlist_controller.dart';
 import 'features/music_library/presentation/controllers/music_library_controller.dart';
+import 'features/authentication/presentation/controllers/auth_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,7 @@ class EhitApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => di.sl<AuthController>()),
         ChangeNotifierProvider(create: (_) => di.sl<MusicPlayerController>()),
         ChangeNotifierProvider(create: (_) => di.sl<PlaylistController>()..initialize()),
         ChangeNotifierProvider(create: (_) => di.sl<MusicLibraryController>()..initialize()),

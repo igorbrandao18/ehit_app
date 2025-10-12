@@ -80,7 +80,7 @@ class AppConfig {
   // ============================================================================
   
   static const bool enableOfflineMode = true;
-  static const bool enableSocialFeatures = false; // TODO: Enable when implemented
+  static const bool enableSocialFeatures = true; // ✅ Implemented
   static const bool enablePushNotifications = false; // TODO: Enable when implemented
   static const bool enableBiometricAuth = false; // TODO: Enable when implemented
 

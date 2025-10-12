@@ -106,17 +106,41 @@ class SongListItem extends StatelessWidget {
   }
 
   Widget _buildDownloadButton() {
-    return GestureDetector(
-      onTap: () {
-        // TODO: Implementar download da música para offline
+    return Consumer<MusicPlayerController>(
+      builder: (context, playerController, child) {
+        return FutureBuilder<bool>(
+          future: _isSongAvailableOffline(),
+          builder: (context, snapshot) {
+            final isAvailableOffline = snapshot.data ?? false;
+            
+            return GestureDetector(
+              onTap: () => _handleDownloadTap(),
+              child: Container(
+                padding: const EdgeInsets.all(DesignTokens.spaceSM),
+                child: Icon(
+                  isAvailableOffline ? Icons.check_circle : Icons.download,
+                  color: isAvailableOffline ? Colors.green : Colors.white70,
+                  size: DesignTokens.iconSM,
+                ),
+              ),
+            );
+          },
+        );
       },
-      child: Container(
-        padding: const EdgeInsets.all(DesignTokens.spaceSM),
-        child: const Icon(
-          Icons.download,
-          color: Colors.white70,
-          size: DesignTokens.iconSM,
-        ),
+    );
+  }
+
+  Future<bool> _isSongAvailableOffline() async {
+    // TODO: Implementar verificação real usando AudioPlayerRepository
+    return false;
+  }
+
+  void _handleDownloadTap() async {
+    // TODO: Implementar download usando OfflineAudioService
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Download de "${song.title}" iniciado'),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
