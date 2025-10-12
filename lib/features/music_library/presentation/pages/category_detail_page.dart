@@ -73,27 +73,7 @@ class CategoryDetailPage extends StatelessWidget {
   }
 
   Widget _buildHeaderSection() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Category description
-          Consumer<MusicLibraryController>(
-            builder: (context, controller, child) {
-              return Text(
-                '${controller.categoryArtists.length} artistas nesta categoria',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.white70,
-                  fontWeight: FontWeight.w400,
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
+    return const SizedBox.shrink();
   }
 
   Widget _buildArtistsSection() {
@@ -117,13 +97,17 @@ class CategoryDetailPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Section header
-              const Text(
-                'Artistas',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.white,
-                ),
+              Consumer<MusicLibraryController>(
+                builder: (context, controller, child) {
+                  return Text(
+                    '${controller.categoryArtists.length} artistas',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white70,
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 16),
               
