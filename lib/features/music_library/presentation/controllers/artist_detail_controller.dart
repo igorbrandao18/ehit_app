@@ -25,6 +25,9 @@ class ArtistDetailController extends ChangeNotifier {
       _error = null;
       notifyListeners();
 
+      // Debug: verificar qual artistId está chegando
+      debugPrint('ArtistDetailController: Loading artist with ID: $artistId');
+
       // Simula delay de carregamento
       await Future.delayed(const Duration(milliseconds: 800));
 
@@ -43,9 +46,12 @@ class ArtistDetailController extends ChangeNotifier {
 
   /// Busca artista mockado baseado no ID
   Artist? _getMockArtist(String artistId) {
+    debugPrint('ArtistDetailController: Looking for artist with ID: $artistId');
+    
+    // Mock de artistas com IDs numéricos simples
     final mockArtists = {
-      'marilia_mendonca': Artist(
-        id: 'marilia_mendonca',
+      '1': Artist(
+        id: '1',
         name: 'Marília Mendonça',
         imageUrl: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400',
         bio: 'Cantora e compositora brasileira de música sertaneja, conhecida como a "Rainha da Sofrência".',
@@ -54,8 +60,8 @@ class ArtistDetailController extends ChangeNotifier {
         genres: ['Sertanejo', 'Sertanejo Universitário', 'MPB'],
         followers: 2500000,
       ),
-      'ze_neto': Artist(
-        id: 'ze_neto',
+      '2': Artist(
+        id: '2',
         name: 'Zé Neto & Cristiano',
         imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
         bio: 'Dupla sertaneja brasileira formada por Zé Neto e Cristiano, uma das mais populares do país.',
@@ -64,8 +70,8 @@ class ArtistDetailController extends ChangeNotifier {
         genres: ['Sertanejo', 'Sertanejo Universitário'],
         followers: 1800000,
       ),
-      'cristiano': Artist(
-        id: 'cristiano',
+      '3': Artist(
+        id: '3',
         name: 'Cristiano Araújo',
         imageUrl: 'https://images.unsplash.com/photo-1471478331149-c72f17e33c73?w=400',
         bio: 'Cantor e compositor brasileiro de música sertaneja, conhecido por suas baladas românticas.',
@@ -74,8 +80,8 @@ class ArtistDetailController extends ChangeNotifier {
         genres: ['Sertanejo', 'Sertanejo Romântico'],
         followers: 1200000,
       ),
-      'ana_castela': Artist(
-        id: 'ana_castela',
+      '4': Artist(
+        id: '4',
         name: 'Ana Castela',
         imageUrl: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400',
         bio: 'Cantora brasileira de música sertaneja, conhecida por hits como "Pipoco" e "Boiadeira".',
@@ -86,7 +92,16 @@ class ArtistDetailController extends ChangeNotifier {
       ),
     };
 
-    return mockArtists[artistId] ?? _getDefaultArtist(artistId);
+    // Buscar artista no mock pelo ID
+    final artist = mockArtists[artistId];
+    if (artist != null) {
+      debugPrint('ArtistDetailController: Found artist in mock: ${artist.name}');
+      debugPrint('ArtistDetailController: Artist imageUrl: ${artist.imageUrl}');
+      return artist;
+    }
+
+    debugPrint('ArtistDetailController: Artist not found in mock, using default: $artistId');
+    return _getDefaultArtist(artistId);
   }
 
   /// Retorna artista padrão quando não encontrado
@@ -95,10 +110,21 @@ class ArtistDetailController extends ChangeNotifier {
       return word.isNotEmpty ? word[0].toUpperCase() + word.substring(1) : word;
     }).join(' ');
 
+    // Mapear artistId para imagem correta baseado no nome
+    String imageUrl = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400'; // Default
+    
+    if (artistId.contains('marilia') || artistId.contains('mendonca')) {
+      imageUrl = 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400';
+    } else if (artistId.contains('ze_neto') || artistId.contains('cristiano')) {
+      imageUrl = 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400';
+    } else if (artistId.contains('ana_castela')) {
+      imageUrl = 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400';
+    }
+
     return Artist(
       id: artistId,
       name: name,
-      imageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+      imageUrl: imageUrl,
       bio: 'Artista brasileiro de música sertaneja.',
       totalSongs: 52,
       totalDuration: '2h 45min',

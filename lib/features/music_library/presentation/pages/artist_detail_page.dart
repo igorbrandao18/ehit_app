@@ -82,39 +82,13 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       leading: IconButton(
-        icon: Container(
-          padding: const EdgeInsets.all(DesignTokens.spaceSM),
-          decoration: BoxDecoration(
-            color: Colors.black.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(DesignTokens.radiusXL),
-          ),
-          child: const Icon(
-            Icons.arrow_back_ios,
-            color: Colors.white,
-            size: DesignTokens.iconSM,
-          ),
+        icon: const Icon(
+          Icons.arrow_back_ios,
+          color: Colors.white,
+          size: DesignTokens.iconMD,
         ),
         onPressed: () => context.pop(),
       ),
-      actions: [
-        IconButton(
-          icon: Container(
-            padding: const EdgeInsets.all(DesignTokens.spaceSM),
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.3),
-              borderRadius: BorderRadius.circular(DesignTokens.radiusXL),
-            ),
-            child: const Icon(
-              Icons.more_vert,
-              color: Colors.white,
-              size: DesignTokens.iconSM,
-            ),
-          ),
-          onPressed: () {
-            // TODO: Implementar menu de opções
-          },
-        ),
-      ],
     );
   }
 

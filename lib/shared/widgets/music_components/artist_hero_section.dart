@@ -58,7 +58,23 @@ class ArtistHeroSection extends StatelessWidget {
             child: Image.network(
               artist.imageUrl,
               fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return Container(
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade800,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  ),
+                );
+              },
               errorBuilder: (context, error, stackTrace) {
+                debugPrint('ArtistHeroSection: Error loading image: ${artist.imageUrl}');
+                debugPrint('ArtistHeroSection: Error: $error');
                 return Container(
                   decoration: BoxDecoration(
                     color: Colors.grey.shade800,

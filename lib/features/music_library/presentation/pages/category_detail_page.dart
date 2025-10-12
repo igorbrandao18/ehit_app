@@ -152,7 +152,7 @@ class CategoryDetailPage extends StatelessWidget {
         context.pushNamed(
           'artist-detail',
           pathParameters: {
-            'artistId': artist['name']!.toLowerCase().replaceAll(' ', '_').replaceAll('&', '_'),
+            'artistId': _getArtistId(artist['name']!),
           },
         );
       },
@@ -264,6 +264,22 @@ class CategoryDetailPage extends StatelessWidget {
     // Generate random song count between 15-150
     final counts = [15, 23, 28, 34, 42, 51, 67, 78, 89, 95, 112, 134, 147];
     return counts[rank % counts.length].toString();
+  }
+
+  String _getArtistId(String artistName) {
+    // Mapear nome do artista para ID numérico simples
+    switch (artistName) {
+      case 'Marília Mendonça':
+        return '1';
+      case 'Zé Neto & Cristiano':
+        return '2';
+      case 'Cristiano Araújo':
+        return '3';
+      case 'Ana Castela':
+        return '4';
+      default:
+        return '1'; // Default para Marília Mendonça
+    }
   }
 }
 
