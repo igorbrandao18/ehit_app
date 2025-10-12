@@ -33,7 +33,7 @@ class SongListItem extends StatelessWidget {
             Expanded(
               child: _buildSongInfo(),
             ),
-            _buildMoreButton(),
+            _buildDownloadButton(),
           ],
         ),
       ),
@@ -105,15 +105,15 @@ class SongListItem extends StatelessWidget {
     );
   }
 
-  Widget _buildMoreButton() {
+  Widget _buildDownloadButton() {
     return GestureDetector(
       onTap: () {
-        // TODO: Implementar menu de opções
+        // TODO: Implementar download da música para offline
       },
       child: Container(
         padding: const EdgeInsets.all(DesignTokens.spaceSM),
         child: const Icon(
-          Icons.more_vert,
+          Icons.download,
           color: Colors.white70,
           size: DesignTokens.iconSM,
         ),
