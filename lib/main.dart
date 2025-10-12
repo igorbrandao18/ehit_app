@@ -5,6 +5,7 @@ import 'shared/design/app_theme.dart';
 import 'core/injection/injection_container.dart' as di;
 import 'core/routing/app_router.dart';
 import 'features/music_player/presentation/controllers/music_player_controller.dart';
+import 'features/music_player/presentation/controllers/playlist_controller.dart';
 import 'features/music_library/presentation/controllers/music_library_controller.dart';
 
 void main() async {
@@ -24,6 +25,7 @@ class EhitApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => di.sl<MusicPlayerController>()),
+        ChangeNotifierProvider(create: (_) => di.sl<PlaylistController>()..initialize()),
         ChangeNotifierProvider(create: (_) => di.sl<MusicLibraryController>()..initialize()),
       ],
       child: MaterialApp.router(

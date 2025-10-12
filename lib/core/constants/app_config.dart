@@ -21,6 +21,7 @@ class AppConfig {
   static const String defaultAlbumArt = 'https://via.placeholder.com/300x300/333333/FFFFFF?text=Album';
   static const String defaultArtistImage = 'https://via.placeholder.com/300x300/333333/FFFFFF?text=Artist';
   static const String defaultPlaylistImage = 'https://via.placeholder.com/300x300/333333/FFFFFF?text=Playlist';
+  static const String defaultPlaylistImageUrl = 'https://via.placeholder.com/300x300/333333/FFFFFF?text=Playlist';
   
   // Sample Images for Development
   static const String sampleArtistImage1 = 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400';
