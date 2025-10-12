@@ -186,7 +186,8 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
 
   void _onSongTap(Song song) {
     _controller.playSong(song);
-    // TODO: Implementar navegação para player
+    // Navegar para o player
+    context.pushNamed('player');
   }
 
   void _onShuffleTap() {
