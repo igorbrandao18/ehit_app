@@ -189,33 +189,24 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
   }
 
   Widget _buildContent(ArtistDetailController controller) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // Hero section
-          ArtistHeroSection(
-            artist: controller.artist!,
-          ),
+    return Column(
+      children: [
+        // Hero section (fixed)
+        ArtistHeroSection(
+          artist: controller.artist!,
+        ),
 
-          // Songs list section
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DesignTokens.screenPadding,
-              vertical: 0,
-            ),
-            child: SongsListSection(
-              songs: controller.songs,
-              artistName: controller.artist!.name,
-              onSongTap: (song) => _onSongTap(song),
-              onShuffleTap: () => _onShuffleTap(),
-              onRepeatTap: () => _onRepeatTap(),
-            ),
+        // Songs list section (scrollable)
+        Expanded(
+          child: SongsListSection(
+            songs: controller.songs,
+            artistName: controller.artist!.name,
+            onSongTap: (song) => _onSongTap(song),
+            onShuffleTap: () => _onShuffleTap(),
+            onRepeatTap: () => _onRepeatTap(),
           ),
-
-          // Bottom padding
-          const SizedBox(height: DesignTokens.miniPlayerHeight + DesignTokens.spaceXL),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

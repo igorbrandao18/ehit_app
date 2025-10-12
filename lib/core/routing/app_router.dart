@@ -16,40 +16,32 @@ class AppRouter {
     initialLocation: AppRoutes.home,
     debugLogDiagnostics: true,
     routes: [
-      // Main shell route with bottom navigation
-      ShellRoute(
-        builder: (context, state, child) {
-          return MainPage(child: child);
-        },
-        routes: [
-          // Home route
-          GoRoute(
-            path: AppRoutes.home,
-            name: 'home',
-            builder: (context, state) => const HomePage(),
-          ),
-          
-          // Search route
-          GoRoute(
-            path: AppRoutes.search,
-            name: 'search',
-            builder: (context, state) => const SearchPage(),
-          ),
-          
-          // Library route
-          GoRoute(
-            path: AppRoutes.library,
-            name: 'library',
-            builder: (context, state) => const LibraryPage(),
-          ),
-          
-          // Profile route
-          GoRoute(
-            path: AppRoutes.profile,
-            name: 'profile',
-            builder: (context, state) => const ProfilePage(),
-          ),
-        ],
+      // Home route
+      GoRoute(
+        path: AppRoutes.home,
+        name: 'home',
+        builder: (context, state) => const HomePage(),
+      ),
+      
+      // Search route
+      GoRoute(
+        path: AppRoutes.search,
+        name: 'search',
+        builder: (context, state) => const SearchPage(),
+      ),
+      
+      // Library route
+      GoRoute(
+        path: AppRoutes.library,
+        name: 'library',
+        builder: (context, state) => const LibraryPage(),
+      ),
+      
+      // Profile route
+      GoRoute(
+        path: AppRoutes.profile,
+        name: 'profile',
+        builder: (context, state) => const ProfilePage(),
       ),
 
       // Category detail route (full screen)

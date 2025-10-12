@@ -24,7 +24,7 @@ class SongListItem extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(
           horizontal: DesignTokens.spaceMD,
-          vertical: 8,
+          vertical: DesignTokens.spaceSM,
         ),
         child: Row(
           children: [

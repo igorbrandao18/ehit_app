@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../features/music_library/domain/entities/song.dart';
 import '../../design/design_tokens.dart';
 import '../../design/app_colors.dart';
+import '../../utils/responsive_utils.dart';
 import 'song_list_item.dart';
 
 /// Componente para exibir lista de músicas do artista
@@ -27,39 +28,36 @@ class SongsListSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildSectionHeader(),
-          const SizedBox(height: DesignTokens.listHeaderSpacing),
-          _buildSongsList(),
-        ],
+      children: [
+        _buildSectionHeader(context),
+        Expanded(
+          child: _buildSongsList(context),
+        ),
+      ],
     );
   }
 
-  Widget _buildSectionHeader() {
+  Widget _buildSectionHeader(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: DesignTokens.spaceMD),
+      padding: EdgeInsets.symmetric(
+        horizontal: ResponsiveUtils.getResponsiveSpacing(context, mobile: 16, tablet: 20, desktop: 24),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
+          Text(
             'Lista de sons',
             style: TextStyle(
               color: Colors.white,
-              fontSize: DesignTokens.fontSizeLG,
+              fontSize: ResponsiveUtils.getResponsiveFontSize(context, mobile: 20, tablet: 22, desktop: 24),
               fontWeight: FontWeight.w700,
             ),
           ),
           Row(
             children: [
-              _buildActionButton(
-                icon: Icons.shuffle,
-                onTap: onShuffleTap,
-              ),
-              const SizedBox(width: DesignTokens.spaceSM),
-              _buildActionButton(
-                icon: Icons.repeat,
-                onTap: onRepeatTap,
-              ),
+              _buildActionButton(context, icon: Icons.shuffle, onTap: onShuffleTap),
+              SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, mobile: 8, tablet: 10, desktop: 12)),
+              _buildActionButton(context, icon: Icons.repeat, onTap: onRepeatTap),
             ],
           ),
         ],
@@ -67,49 +65,51 @@ class SongsListSection extends StatelessWidget {
     );
   }
 
-  Widget _buildActionButton({
+  Widget _buildActionButton(BuildContext context, {
     required IconData icon,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(DesignTokens.spaceSM),
+        padding: EdgeInsets.all(ResponsiveUtils.getResponsiveSpacing(context, mobile: 8, tablet: 10, desktop: 12)),
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(DesignTokens.radiusSM),
+          borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveSpacing(context, mobile: 8, tablet: 10, desktop: 12)),
         ),
         child: Icon(
           icon,
           color: Colors.white,
-          size: DesignTokens.iconMD,
+          size: ResponsiveUtils.getResponsiveIconSize(context, mobile: 20, tablet: 24, desktop: 28),
         ),
       ),
     );
   }
 
-  Widget _buildSongsList() {
+  Widget _buildSongsList(BuildContext context) {
     if (songs.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'Nenhuma música encontrada',
           style: TextStyle(
             color: Colors.white70,
-            fontSize: DesignTokens.fontSizeMD,
+            fontSize: ResponsiveUtils.getResponsiveFontSize(context, mobile: 16, tablet: 18, desktop: 20),
           ),
         ),
       );
     }
 
-    return Column(
-      children: songs.map((song) {
-        final index = songs.indexOf(song) + 1;
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      itemCount: songs.length,
+      itemBuilder: (context, index) {
+        final song = songs[index];
         return SongListItem(
           song: song,
-          index: index,
+          index: index + 1,
           onTap: () => onSongTap(song),
         );
-      }).toList(),
+      },
     );
   }
 }
