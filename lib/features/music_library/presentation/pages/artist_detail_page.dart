@@ -8,6 +8,7 @@ import '../../../../shared/design/app_colors.dart';
 import '../../../../shared/widgets/music_components/artist_hero_section.dart';
 import '../../../../shared/widgets/music_components/songs_list_section.dart';
 import '../../../../core/audio/audio_player_service.dart';
+import '../../../../core/injection/injection_container.dart' as di;
 import '../controllers/artist_detail_controller.dart';
 import '../../domain/entities/song.dart';
 
@@ -30,7 +31,7 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
   @override
   void initState() {
     super.initState();
-    _controller = ArtistDetailController();
+    _controller = di.sl<ArtistDetailController>();
     _loadArtistData();
   }
 

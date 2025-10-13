@@ -137,7 +137,7 @@ class CategoryDetailPage extends StatelessWidget {
         context.pushNamed(
           'artist-detail',
           pathParameters: {
-            'artistId': _getArtistId(artist.name),
+            'artistId': artist.id,
           },
         );
       },
@@ -251,20 +251,5 @@ class CategoryDetailPage extends StatelessWidget {
     return counts[rank % counts.length].toString();
   }
 
-  String _getArtistId(String artistName) {
-    // Mapear nome do artista para ID numérico simples
-    switch (artistName) {
-      case 'Marília Mendonça':
-        return '1';
-      case 'Zé Neto & Cristiano':
-        return '2';
-      case 'Cristiano Araújo':
-        return '3';
-      case 'Ana Castela':
-        return '4';
-      default:
-        return '1'; // Default para Marília Mendonça
-    }
-  }
 }
 

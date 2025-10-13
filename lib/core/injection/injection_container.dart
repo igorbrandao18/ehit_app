@@ -233,7 +233,10 @@ Future<void> init() async {
     getPopularArtistsUseCase: sl<GetPopularArtistsUseCase>(),
   ));
 
-  sl.registerLazySingleton(() => ArtistDetailController());
+  sl.registerLazySingleton(() => ArtistDetailController(
+    getArtistByIdUseCase: sl(),
+    getSongsByArtistUseCase: sl(),
+  ));
 
   // Music Player Controllers
   sl.registerLazySingleton(() => MusicPlayerController());
