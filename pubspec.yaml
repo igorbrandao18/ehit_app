@@ -64,6 +64,9 @@ dependencies:
   
   # Secure storage for sensitive data
   flutter_secure_storage: ^9.0.0
+  
+  # Audio Player
+  just_audio: ^0.9.36
 
 dev_dependencies:
   flutter_test:

@@ -159,19 +159,19 @@ class ArtistDetailController extends ChangeNotifier {
 
   /// Reproduz uma música
   void playSong(Song song) {
-    // TODO: Implementar reprodução de música
+    // A reprodução será feita pelo AudioPlayerService via Provider
     debugPrint('Reproduzindo: ${song.title} - ${song.artist}');
   }
 
   /// Reproduz todas as músicas em ordem aleatória
   void shufflePlay() {
-    // TODO: Implementar reprodução aleatória
+    // A reprodução será feita pelo AudioPlayerService via Provider
     debugPrint('Reproduzindo músicas em ordem aleatória');
   }
 
   /// Reproduz todas as músicas em loop
   void repeatPlay() {
-    // TODO: Implementar reprodução em loop
+    // A reprodução será feita pelo AudioPlayerService via Provider
     debugPrint('Reproduzindo músicas em loop');
   }
 

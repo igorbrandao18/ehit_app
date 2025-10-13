@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../shared/design/app_colors.dart';
+import '../../../../core/audio/audio_player_service.dart';
 import '../controllers/music_player_controller.dart';
 
 class PlayerPage extends StatelessWidget {
@@ -17,8 +18,8 @@ class PlayerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MusicPlayerController>(
-      builder: (context, playerController, child) {
+    return Consumer<AudioPlayerService>(
+      builder: (context, audioPlayer, child) {
         return Scaffold(
           backgroundColor: const Color(0xFF8B0000), // Vermelho escuro como na imagem
           body: SafeArea(
@@ -60,12 +61,12 @@ class PlayerPage extends StatelessWidget {
                           SizedBox(height: MediaQuery.of(context).size.height * 0.04), // 4% da altura
                           
                           // Progress bar
-                          _buildProgressBar(context, playerController),
+                          _buildProgressBar(context, audioPlayer),
                           
                           const Spacer(),
                           
                           // Controles do player
-                          _buildPlayerControls(context, playerController),
+                          _buildPlayerControls(context, audioPlayer),
                           
                           SizedBox(height: MediaQuery.of(context).size.height * 0.04), // 4% da altura
                         ],
@@ -117,8 +118,10 @@ class PlayerPage extends StatelessWidget {
   }
 
   Widget _buildAlbumArt(BuildContext context) {
+    final audioPlayer = Provider.of<AudioPlayerService>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final albumSize = screenWidth * 0.6; // 60% da largura da tela
+    final imageUrl = audioPlayer.currentSong?.imageUrl ?? '';
     
     return Container(
       width: albumSize,
@@ -134,28 +137,41 @@ class PlayerPage extends StatelessWidget {
         ],
       ),
       child: ClipOval(
-        child: Image.network(
-          'https://example.com/album-art.jpg', // URL temporária
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return Container(
-              decoration: const BoxDecoration(
-                color: Colors.grey,
-                shape: BoxShape.circle,
+        child: imageUrl.isNotEmpty
+            ? Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    decoration: const BoxDecoration(
+                      color: Colors.grey,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.music_note,
+                      color: Colors.white,
+                      size: albumSize * 0.3,
+                    ),
+                  );
+                },
+              )
+            : Container(
+                decoration: const BoxDecoration(
+                  color: Colors.grey,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.music_note,
+                  color: Colors.white,
+                  size: albumSize * 0.3,
+                ),
               ),
-              child: Icon(
-                Icons.music_note,
-                color: Colors.white,
-                size: albumSize * 0.3, // 30% do tamanho do album
-              ),
-            );
-          },
-        ),
       ),
     );
   }
 
   Widget _buildSongInfo(BuildContext context) {
+    final audioPlayer = Provider.of<AudioPlayerService>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final titleFontSize = screenWidth * 0.06; // 6% da largura
     final artistFontSize = screenWidth * 0.045; // 4.5% da largura
@@ -163,32 +179,31 @@ class PlayerPage extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'Leão',
+          audioPlayer.currentSong?.title ?? 'Sem música',
           style: TextStyle(
             color: Colors.white,
             fontSize: titleFontSize,
             fontWeight: FontWeight.bold,
           ),
+          textAlign: TextAlign.center,
         ),
         SizedBox(height: screenWidth * 0.02), // 2% da largura
         Text(
-          'Marília Mendonça',
+          audioPlayer.currentSong?.artist ?? 'Artista desconhecido',
           style: TextStyle(
             color: Colors.white70,
             fontSize: artistFontSize,
             fontWeight: FontWeight.w400,
           ),
+          textAlign: TextAlign.center,
         ),
       ],
     );
   }
 
-  Widget _buildProgressBar(BuildContext context, MusicPlayerController controller) {
-    final progress = controller.duration.inMilliseconds > 0
-        ? controller.position.inMilliseconds / controller.duration.inMilliseconds
-        : 0.0;
-    
-    final remaining = controller.duration - controller.position;
+  Widget _buildProgressBar(BuildContext context, AudioPlayerService audioPlayer) {
+    final progress = audioPlayer.progress;
+    final remaining = audioPlayer.duration - audioPlayer.position;
     
     return Column(
       children: [
@@ -204,9 +219,9 @@ class PlayerPage extends StatelessWidget {
             value: progress.clamp(0.0, 1.0),
             onChanged: (value) {
               final newPosition = Duration(
-                milliseconds: (value * controller.duration.inMilliseconds).round(),
+                milliseconds: (value * audioPlayer.duration.inMilliseconds).round(),
               );
-              controller.seekTo(newPosition);
+              audioPlayer.seek(newPosition);
             },
           ),
         ),
@@ -216,7 +231,7 @@ class PlayerPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                _formatDuration(controller.position),
+                _formatDuration(audioPlayer.position),
                 style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 14,
@@ -236,7 +251,7 @@ class PlayerPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPlayerControls(BuildContext context, MusicPlayerController controller) {
+  Widget _buildPlayerControls(BuildContext context, AudioPlayerService audioPlayer) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -244,21 +259,17 @@ class PlayerPage extends StatelessWidget {
         _buildControlButton(
           context: context,
           icon: Icons.skip_previous,
-          onTap: () {
-            // TODO: Implementar música anterior
-          },
+          onTap: () => audioPlayer.previous(),
         ),
         
         // Botão play/pause principal
-        _buildMainControlButton(context, controller),
+        _buildMainControlButton(context, audioPlayer),
         
         // Botão próximo
         _buildControlButton(
           context: context,
           icon: Icons.skip_next,
-          onTap: () {
-            // TODO: Implementar próxima música
-          },
+          onTap: () => audioPlayer.next(),
         ),
       ],
     );
@@ -291,14 +302,14 @@ class PlayerPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMainControlButton(BuildContext context, MusicPlayerController controller) {
+  Widget _buildMainControlButton(BuildContext context, AudioPlayerService audioPlayer) {
     final screenWidth = MediaQuery.of(context).size.width;
     final buttonSize = screenWidth * 0.2; // 20% da largura
     final iconSize = screenWidth * 0.1; // 10% da largura
     
     return GestureDetector(
       onTap: () {
-        controller.togglePlayPause();
+        audioPlayer.togglePlayPause();
       },
       child: Container(
         width: buttonSize,
@@ -308,7 +319,7 @@ class PlayerPage extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: Icon(
-          controller.isPlaying ? Icons.pause : Icons.play_arrow,
+          audioPlayer.isPlaying ? Icons.pause : Icons.play_arrow,
           color: Colors.white,
           size: iconSize,
         ),

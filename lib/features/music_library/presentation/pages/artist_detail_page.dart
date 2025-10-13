@@ -7,6 +7,7 @@ import '../../../../shared/design/design_tokens.dart';
 import '../../../../shared/design/app_colors.dart';
 import '../../../../shared/widgets/music_components/artist_hero_section.dart';
 import '../../../../shared/widgets/music_components/songs_list_section.dart';
+import '../../../../core/audio/audio_player_service.dart';
 import '../controllers/artist_detail_controller.dart';
 import '../../domain/entities/song.dart';
 
@@ -185,18 +186,31 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
   }
 
   void _onSongTap(Song song) {
-    _controller.playSong(song);
+    // Usa o AudioPlayerService para tocar a música
+    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
+    audioPlayer.playSong(song);
+    
     // Navegar para o player
     context.pushNamed('player');
   }
 
   void _onShuffleTap() {
-    _controller.shufflePlay();
-    // TODO: Implementar reprodução aleatória
+    // Usa o AudioPlayerService para tocar todas as músicas em ordem aleatória
+    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
+    final songs = _controller.songs;
+    if (songs.isNotEmpty) {
+      audioPlayer.playPlaylist(songs..shuffle());
+      context.pushNamed('player');
+    }
   }
 
   void _onRepeatTap() {
-    _controller.repeatPlay();
-    // TODO: Implementar reprodução em loop
+    // Usa o AudioPlayerService para tocar todas as músicas
+    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
+    final songs = _controller.songs;
+    if (songs.isNotEmpty) {
+      audioPlayer.playPlaylist(songs);
+      context.pushNamed('player');
+    }
   }
 }
