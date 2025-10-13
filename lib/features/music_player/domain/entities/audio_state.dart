@@ -94,83 +94,6 @@ class AudioState extends Equatable {
     );
   }
 
-  /// Verifica se há uma música atual
-  bool get hasCurrentSong => currentSong != null;
-
-  /// Verifica se há músicas na fila
-  bool get hasQueue => queue.isNotEmpty;
-
-  /// Verifica se pode ir para a próxima música
-  bool get canGoNext {
-    if (!hasQueue) return false;
-    if (isShuffled) return true;
-    if (repeatMode == RepeatMode.one) return true;
-    return currentIndex < queue.length - 1;
-  }
-
-  /// Verifica se pode ir para a música anterior
-  bool get canGoPrevious {
-    if (!hasQueue) return false;
-    if (isShuffled) return true;
-    if (repeatMode == RepeatMode.one) return true;
-    return currentIndex > 0;
-  }
-
-  /// Obtém a próxima música na fila
-  Song? get nextSong {
-    if (!hasQueue) return null;
-    if (isShuffled) {
-      final shuffledIndex = (currentIndex + 1) % queue.length;
-      return queue[shuffledIndex];
-    }
-    if (repeatMode == RepeatMode.one) return currentSong;
-    if (currentIndex < queue.length - 1) {
-      return queue[currentIndex + 1];
-    }
-    if (repeatMode == RepeatMode.all) {
-      return queue[0];
-    }
-    return null;
-  }
-
-  /// Obtém a música anterior na fila
-  Song? get previousSong {
-    if (!hasQueue) return null;
-    if (isShuffled) {
-      final shuffledIndex = currentIndex > 0 ? currentIndex - 1 : queue.length - 1;
-      return queue[shuffledIndex];
-    }
-    if (repeatMode == RepeatMode.one) return currentSong;
-    if (currentIndex > 0) {
-      return queue[currentIndex - 1];
-    }
-    if (repeatMode == RepeatMode.all) {
-      return queue[queue.length - 1];
-    }
-    return null;
-  }
-
-  /// Calcula o progresso da música (0.0 a 1.0)
-  double get progress {
-    if (duration.inMilliseconds == 0) return 0.0;
-    return position.inMilliseconds / duration.inMilliseconds;
-  }
-
-  /// Verifica se está tocando
-  bool get isPlaying => playerState == AudioPlayerState.playing;
-
-  /// Verifica se está pausado
-  bool get isPaused => playerState == AudioPlayerState.paused;
-
-  /// Verifica se está parado
-  bool get isStopped => playerState == AudioPlayerState.stopped;
-
-  /// Verifica se está carregando
-  bool get isBuffering => playerState == AudioPlayerState.buffering;
-
-  /// Verifica se há erro
-  bool get hasError => playerState == AudioPlayerState.error;
-
   @override
   List<Object?> get props => [
         playerState,
@@ -186,9 +109,4 @@ class AudioState extends Equatable {
         errorMessage,
         isOfflineMode,
       ];
-
-  @override
-  String toString() {
-    return 'AudioState(playerState: $playerState, currentSong: ${currentSong?.title}, position: $position, duration: $duration)';
-  }
 }

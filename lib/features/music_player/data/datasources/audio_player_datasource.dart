@@ -1,12 +1,11 @@
-// features/music_player/domain/repositories/audio_player_repository.dart
+// features/music_player/data/datasources/audio_player_datasource.dart
 
 import '../../../../core/utils/result.dart';
-import '../entities/audio_state.dart';
 import '../../../music_library/domain/entities/song.dart';
 
-/// Interface para operações do player de áudio
-abstract class AudioPlayerRepository {
-  /// Inicializa o player
+/// Interface para data source de reprodução de áudio
+abstract class AudioPlayerDataSource {
+  /// Inicializa o player de áudio
   Future<Result<void>> initialize();
   
   /// Libera recursos do player
@@ -14,9 +13,6 @@ abstract class AudioPlayerRepository {
   
   /// Toca uma música específica
   Future<Result<void>> playSong(Song song);
-  
-  /// Toca uma lista de músicas
-  Future<Result<void>> playQueue(List<Song> songs, {int startIndex = 0});
   
   /// Pausa a reprodução
   Future<Result<void>> pause();
@@ -27,12 +23,6 @@ abstract class AudioPlayerRepository {
   /// Para a reprodução
   Future<Result<void>> stop();
   
-  /// Vai para a próxima música
-  Future<Result<void>> next();
-  
-  /// Vai para a música anterior
-  Future<Result<void>> previous();
-  
   /// Define a posição da música
   Future<Result<void>> seekTo(Duration position);
   
@@ -41,15 +31,6 @@ abstract class AudioPlayerRepository {
   
   /// Liga/desliga o mute
   Future<Result<void>> setMuted(bool muted);
-  
-  /// Ativa/desativa o modo shuffle
-  Future<Result<void>> setShuffled(bool shuffled);
-  
-  /// Define o modo de repetição
-  Future<Result<void>> setRepeatMode(RepeatMode repeatMode);
-  
-  /// Obtém o estado atual do player
-  Future<Result<AudioState>> getCurrentState();
   
   /// Obtém a posição atual
   Future<Result<Duration>> getCurrentPosition();
@@ -69,12 +50,12 @@ abstract class AudioPlayerRepository {
   /// Verifica se está mutado
   Future<Result<bool>> isMuted();
   
-  /// Verifica se está em modo shuffle
-  Future<Result<bool>> isShuffled();
+  /// Stream do estado de reprodução
+  Stream<bool> get playingStateStream;
   
-  /// Obtém o modo de repetição atual
-  Future<Result<RepeatMode>> getRepeatMode();
+  /// Stream da posição atual
+  Stream<Duration> get positionStream;
   
-  /// Stream do estado do player
-  Stream<AudioState> get audioStateStream;
+  /// Stream da duração atual
+  Stream<Duration?> get durationStream;
 }

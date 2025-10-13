@@ -11,6 +11,8 @@ import '../../features/music_library/data/datasources/music_local_datasource.dar
 // Data Sources - Music Player
 import '../../features/music_player/data/datasources/playlist_remote_datasource.dart';
 import '../../features/music_player/data/datasources/playlist_local_datasource.dart';
+import '../../features/music_player/data/datasources/just_audio_datasource.dart';
+import '../../features/music_player/data/datasources/audio_player_datasource.dart';
 
 // Data Sources - Authentication
 import '../../features/authentication/data/datasources/auth_remote_datasource.dart';
@@ -36,6 +38,9 @@ import '../../features/music_library/domain/usecases/get_artists_usecase.dart';
 
 // Use Cases - Music Player
 import '../../features/music_player/domain/usecases/playlist_usecases.dart';
+import '../../features/music_player/domain/usecases/play_song_usecase.dart';
+import '../../features/music_player/domain/usecases/play_queue_usecase.dart';
+import '../../features/music_player/domain/usecases/audio_player_usecases.dart';
 
 // Use Cases - Authentication
 import '../../features/authentication/domain/usecases/auth_usecases.dart';
@@ -45,6 +50,7 @@ import '../../features/music_library/presentation/controllers/music_library_cont
 import '../../features/music_library/presentation/controllers/artist_detail_controller.dart';
 import '../../features/music_player/presentation/controllers/music_player_controller.dart';
 import '../../features/music_player/presentation/controllers/playlist_controller.dart';
+import '../../features/music_player/presentation/controllers/audio_player_controller.dart';
 import '../../features/authentication/presentation/controllers/auth_controller.dart';
 
 // Constants
@@ -108,6 +114,11 @@ Future<void> init() async {
     () => PlaylistLocalDataSourceImpl(sharedPreferences: sl<SharedPreferences>()),
   );
 
+  // Audio Player Data Sources
+  sl.registerLazySingleton<AudioPlayerDataSource>(
+    () => JustAudioDataSource(),
+  );
+
   // Authentication Data Sources
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(sl<Dio>()),
@@ -142,7 +153,7 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton<AudioPlayerRepository>(
-    () => AudioPlayerRepositoryImpl(),
+    () => AudioPlayerRepositoryImpl(sl<AudioPlayerDataSource>()),
   );
 
   // Authentication Repositories
@@ -183,6 +194,15 @@ Future<void> init() async {
   sl.registerLazySingleton(() => RemoveSongFromPlaylistUseCase(sl<playlist_repo.PlaylistRepository>()));
   sl.registerLazySingleton(() => FollowPlaylistUseCase(sl<playlist_repo.PlaylistRepository>()));
   sl.registerLazySingleton(() => UnfollowPlaylistUseCase(sl<playlist_repo.PlaylistRepository>()));
+
+  // Music Player Use Cases - Audio Player
+  sl.registerLazySingleton(() => PlaySongUseCase(sl<AudioPlayerRepository>()));
+  sl.registerLazySingleton(() => PlayQueueUseCase(sl<AudioPlayerRepository>()));
+  sl.registerLazySingleton(() => TogglePlayPauseUseCase(sl<AudioPlayerRepository>()));
+  sl.registerLazySingleton(() => NextSongUseCase(sl<AudioPlayerRepository>()));
+  sl.registerLazySingleton(() => PreviousSongUseCase(sl<AudioPlayerRepository>()));
+  sl.registerLazySingleton(() => SeekToPositionUseCase(sl<AudioPlayerRepository>()));
+  sl.registerLazySingleton(() => GetAudioStateUseCase(sl<AudioPlayerRepository>()));
 
   // Authentication Use Cases
   sl.registerLazySingleton(() => LoginWithEmailUseCase(sl<AuthRepository>()));
@@ -231,6 +251,17 @@ Future<void> init() async {
     removeSongFromPlaylistUseCase: sl<RemoveSongFromPlaylistUseCase>(),
     followPlaylistUseCase: sl<FollowPlaylistUseCase>(),
     unfollowPlaylistUseCase: sl<UnfollowPlaylistUseCase>(),
+  ));
+
+  sl.registerLazySingleton(() => AudioPlayerController(
+    playSongUseCase: sl<PlaySongUseCase>(),
+    playQueueUseCase: sl<PlayQueueUseCase>(),
+    togglePlayPauseUseCase: sl<TogglePlayPauseUseCase>(),
+    nextSongUseCase: sl<NextSongUseCase>(),
+    previousSongUseCase: sl<PreviousSongUseCase>(),
+    seekToPositionUseCase: sl<SeekToPositionUseCase>(),
+    getAudioStateUseCase: sl<GetAudioStateUseCase>(),
+    audioPlayerRepository: sl<AudioPlayerRepository>(),
   ));
 
   // Authentication Controllers
