@@ -137,8 +137,20 @@ class ArtistDetailController extends ChangeNotifier {
   List<Song> _getMockSongs(String artistName) {
     final songs = <Song>[];
     final now = DateTime.now();
+    
+    // URLs de áudio reais do SoundHelix
+    final audioUrls = [
+      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
+      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
+      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
+      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
+      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3',
+      'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3',
+    ];
 
-    for (int i = 1; i <= 15; i++) {
+    for (int i = 1; i <= 8; i++) {
       songs.add(Song(
         id: 'song_${artistName.toLowerCase().replaceAll(' ', '_')}_$i',
         title: 'Música $i',
@@ -146,7 +158,7 @@ class ArtistDetailController extends ChangeNotifier {
         album: 'Álbum ${(i % 3) + 1}',
         duration: '${3 + (i % 3)}:${(i * 7) % 60}',
         imageUrl: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=300',
-        audioUrl: 'https://example.com/audio_$i.mp3',
+        audioUrl: audioUrls[(i - 1) % audioUrls.length], // Usa URLs reais
         isExplicit: i % 4 == 0,
         releaseDate: now.subtract(Duration(days: i * 30)),
         playCount: 1000000 - (i * 50000),

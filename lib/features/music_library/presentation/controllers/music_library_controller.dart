@@ -21,6 +21,7 @@ class MusicLibraryController extends ChangeNotifier {
   String _selectedCategory = '';
   bool _isLoading = false;
   String? _errorMessage;
+  bool _isDisposed = false;
 
   // Constructor
   MusicLibraryController({
@@ -238,16 +239,25 @@ class MusicLibraryController extends ChangeNotifier {
   // ============================================================================
 
   void _setLoading(bool loading) {
+    if (_isDisposed) return;
     _isLoading = loading;
     notifyListeners();
   }
 
   void _setError(String error) {
+    if (_isDisposed) return;
     _errorMessage = error;
     notifyListeners();
   }
 
   void _clearError() {
+    if (_isDisposed) return;
     _errorMessage = null;
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
   }
 }
