@@ -17,6 +17,7 @@ SongModel _$SongModelFromJson(Map<String, dynamic> json) => SongModel(
       isExplicit: json['isExplicit'] as bool,
       releaseDate: DateTime.parse(json['releaseDate'] as String),
       playCount: (json['playCount'] as num).toInt(),
+      genre: json['genre'] as String,
     );
 
 Map<String, dynamic> _$SongModelToJson(SongModel instance) => <String, dynamic>{
@@ -30,4 +31,5 @@ Map<String, dynamic> _$SongModelToJson(SongModel instance) => <String, dynamic>{
       'isExplicit': instance.isExplicit,
       'releaseDate': instance.releaseDate.toIso8601String(),
       'playCount': instance.playCount,
+      'genre': instance.genre,
     };

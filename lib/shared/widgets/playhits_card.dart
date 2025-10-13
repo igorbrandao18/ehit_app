@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import '../design/design_tokens.dart';
 import '../design/app_colors.dart';
+import '../utils/image_utils.dart';
 import '../design/app_text_styles.dart';
 
 class PlayHitsCard extends StatefulWidget {
@@ -107,19 +108,17 @@ class _PlayHitsCardState extends State<PlayHitsCard>
                   children: [
                     // Image
                     Positioned.fill(
-                      child: Image.network(
+                      child: ImageUtils.buildNetworkImage(
                         widget.imageUrl,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: AppColors.backgroundCard,
-                            child: const Icon(
-                              Icons.music_note,
-                              color: AppColors.textTertiary,
-                              size: 48,
-                            ),
-                          );
-                        },
+                        fallbackWidget: Container(
+                          color: AppColors.backgroundCard,
+                          child: const Icon(
+                            Icons.music_note,
+                            color: AppColors.textTertiary,
+                            size: 48,
+                          ),
+                        ),
                       ),
                     ),
                     

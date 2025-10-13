@@ -19,6 +19,7 @@ class SongModel extends Song {
     required super.isExplicit,
     required super.releaseDate,
     required super.playCount,
+    required super.genre,
   });
 
   /// Cria SongModel a partir de JSON
@@ -40,6 +41,7 @@ class SongModel extends Song {
       isExplicit: song.isExplicit,
       releaseDate: song.releaseDate,
       playCount: song.playCount,
+      genre: song.genre,
     );
   }
 
@@ -56,6 +58,7 @@ class SongModel extends Song {
       isExplicit: isExplicit,
       releaseDate: releaseDate,
       playCount: playCount,
+      genre: genre,
     );
   }
 
@@ -72,6 +75,7 @@ class SongModel extends Song {
       isExplicit: map['isExplicit'] as bool? ?? false,
       releaseDate: DateTime.tryParse(map['releaseDate'] as String? ?? '') ?? DateTime.now(),
       playCount: map['playCount'] as int? ?? 0,
+      genre: map['genre'] as String? ?? 'Pop',
     );
   }
 
@@ -88,6 +92,7 @@ class SongModel extends Song {
       'isExplicit': isExplicit,
       'releaseDate': releaseDate.toIso8601String(),
       'playCount': playCount,
+      'genre': genre,
     };
   }
 }

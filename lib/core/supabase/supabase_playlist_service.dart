@@ -564,6 +564,7 @@ class SupabasePlaylistService {
           isExplicit: songData['is_explicit'] ?? false,
           playCount: songData['play_count'] ?? 0,
           releaseDate: DateTime.parse(songData['created_at'] ?? DateTime.now().toIso8601String()),
+          genre: songData['genre'] ?? 'Pop',
         );
       }));
     }

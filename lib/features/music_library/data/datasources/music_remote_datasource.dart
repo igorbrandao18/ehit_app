@@ -258,6 +258,7 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
         isExplicit: false,
         releaseDate: DateTime(2023),
         playCount: 1000000,
+        genre: 'Sertanejo',
       ),
       SongModel(
         id: '2',
@@ -270,6 +271,7 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
         isExplicit: false,
         releaseDate: DateTime(2023),
         playCount: 800000,
+        genre: 'Sertanejo',
       ),
       // Adicionar mais músicas mock conforme necessário
     ];

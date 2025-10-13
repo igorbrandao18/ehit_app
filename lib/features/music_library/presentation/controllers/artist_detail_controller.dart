@@ -150,6 +150,7 @@ class ArtistDetailController extends ChangeNotifier {
         isExplicit: i % 4 == 0,
         releaseDate: now.subtract(Duration(days: i * 30)),
         playCount: 1000000 - (i * 50000),
+        genre: 'Pop',
       ));
     }
 

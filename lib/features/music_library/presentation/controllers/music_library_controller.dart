@@ -17,6 +17,7 @@ class MusicLibraryController extends ChangeNotifier {
   List<Map<String, String>> _playHits = [];
   List<Artist> _artists = [];
   List<Artist> _categoryArtists = [];
+  Map<String, String> _categoryImages = {}; // Cache das imagens das categorias
   String _selectedCategory = '';
   bool _isLoading = false;
   String? _errorMessage;
@@ -54,6 +55,7 @@ class MusicLibraryController extends ChangeNotifier {
       await Future.wait([
         _loadPlayHits(),
         _loadArtists(),
+        _loadCategoryImages(),
       ]);
     } catch (e) {
       _setError('Erro ao carregar dados: $e');
@@ -62,7 +64,7 @@ class MusicLibraryController extends ChangeNotifier {
     }
   }
 
-  /// Carrega PlayHITS (categorias musicais)
+  /// Carrega PlayHITS (gêneros musicais)
   Future<void> _loadPlayHits() async {
     final result = await _getPopularSongsUseCase();
     
@@ -72,8 +74,7 @@ class MusicLibraryController extends ChangeNotifier {
       },
       error: (message, code) {
         _setError('Erro ao carregar PlayHITS: $message');
-        // Fallback para dados mock em caso de erro
-        _playHits = _getMockPlayHits();
+        _playHits = [];
       },
     );
   }
@@ -88,89 +89,147 @@ class MusicLibraryController extends ChangeNotifier {
       },
       error: (message, code) {
         _setError('Erro ao carregar artistas: $message');
-        // Fallback para dados mock em caso de erro
-        _artists = _getMockArtists();
+        _artists = [];
       },
     );
   }
 
-  /// Converte lista de músicas para formato PlayHITS
+  /// Carrega imagens das categorias do Supabase
+  Future<void> _loadCategoryImages() async {
+    try {
+      // Simula busca das categorias (em um app real, você criaria um use case para isso)
+      _categoryImages = {
+        'pop': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop',
+        'rock': 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=400&fit=crop',
+        'hip-hop': 'https://images.unsplash.com/photo-1471478331149-c72f17e33c73?w=400&h=400&fit=crop',
+      };
+      debugPrint('📸 Imagens das categorias carregadas: ${_categoryImages.keys.join(', ')}');
+    } catch (e) {
+      debugPrint('❌ Erro ao carregar imagens das categorias: $e');
+      _categoryImages = {};
+    }
+  }
+
+  /// Converte lista de músicas para formato PlayHITS agrupadas por GÊNERO
   List<Map<String, String>> _convertSongsToPlayHits(List<Song> songs) {
-    // Agrupa músicas por gênero/artista para criar categorias
-    final Map<String, List<Song>> groupedSongs = {};
+    debugPrint('🎵 Processando ${songs.length} músicas para criar PlayHITS por GÊNERO...');
+    
+    // Agrupa músicas por GÊNERO (não categoria)
+    final Map<String, List<Song>> groupedByGenre = {};
     
     for (final song in songs) {
-      final category = _getCategoryFromSong(song);
-      groupedSongs.putIfAbsent(category, () => []).add(song);
+      final genre = _getGenreFromSong(song);
+      groupedByGenre.putIfAbsent(genre, () => []).add(song);
     }
 
-    return groupedSongs.entries.map((entry) {
-      final category = entry.key;
-      final categorySongs = entry.value;
-      final artists = categorySongs.map((s) => s.artist).toSet().join(', ');
+    debugPrint('📊 Gêneros encontrados: ${groupedByGenre.keys.join(', ')}');
+
+    return groupedByGenre.entries.map((entry) {
+      final genre = entry.key;
+      final genreSongs = entry.value;
+      final artists = genreSongs.map((s) => s.artist).toSet().join(', ');
+      
+      debugPrint('🎯 Criando PlayHit para GÊNERO: $genre com ${genreSongs.length} músicas');
       
       return {
-        'title': category,
-        'artist': artists,
-        'imageUrl': categorySongs.first.imageUrl,
+        'title': genre,  // Nome do gênero musical
+        'artist': artists,  // Artistas desse gênero
+        'imageUrl': _getGenreImageUrl(genre, genreSongs),
       };
     }).toList();
   }
 
-  /// Determina categoria baseada na música
-  String _getCategoryFromSong(Song song) {
-    // Lógica simples baseada no nome do artista
-    final artist = song.artist.toLowerCase();
-    
-    if (artist.contains('marília') || artist.contains('zé neto') || artist.contains('gusttavo')) {
-      return AppConstants.sertanejoCategory;
-    } else if (artist.contains('mc') || artist.contains('anitta')) {
-      return AppConstants.funkCategory;
-    } else if (artist.contains('caetano') || artist.contains('gilberto') || artist.contains('chico')) {
-      return AppConstants.mpbCategory;
-    } else {
-      return AppConstants.popCategory;
-    }
+  /// Obtém o gênero musical da música (vem diretamente do Supabase)
+  String _getGenreFromSong(Song song) {
+    debugPrint('🎵 "${song.title}" por ${song.artist} → ${song.genre} (do Supabase)');
+    return song.genre;
   }
 
-  /// Recarrega os dados
+  /// Obtém URL da imagem para o gênero musical (agora busca das categorias)
+  String _getGenreImageUrl(String genre, List<Song> genreSongs) {
+    debugPrint('🖼️ Buscando imagem para gênero: $genre');
+    
+    // Primeiro, tenta buscar a imagem da categoria
+    if (_categoryImages.containsKey(genre) && _categoryImages[genre]!.isNotEmpty) {
+      debugPrint('✅ Imagem encontrada na categoria: ${_categoryImages[genre]}');
+      return _categoryImages[genre]!;
+    }
+    
+    // Fallback: tenta encontrar um artista representativo do gênero
+    final genreArtist = _artists.firstWhere(
+      (artist) => artist.genres.contains(genre),
+      orElse: () => Artist(
+        id: '', name: '', imageUrl: '', bio: '', totalSongs: 0,
+        totalDuration: '', genres: [], followers: 0,
+      ),
+    );
+
+    // Se encontrou um artista com imagem, usa a imagem do artista
+    if (genreArtist.imageUrl.isNotEmpty) {
+      debugPrint('✅ Imagem encontrada no artista: ${genreArtist.name}');
+      return genreArtist.imageUrl;
+    }
+
+    // Senão, usa a imagem da música mais popular do gênero
+    if (genreSongs.isNotEmpty) {
+      genreSongs.sort((a, b) => b.playCount.compareTo(a.playCount));
+      debugPrint('✅ Imagem encontrada na música: ${genreSongs.first.title}');
+      return genreSongs.first.imageUrl;
+    }
+
+    // Fallback para uma imagem padrão
+    debugPrint('⚠️ Usando imagem padrão para gênero: $genre');
+    return 'https://via.placeholder.com/300x300/333333/ffffff?text=${genre.toUpperCase()}';
+  }
+
+  /// Recarrega os dados (limpa cache e busca dados novos)
   Future<void> refresh() async {
-    await loadData();
+    await forceReload();
   }
 
   /// Força recarregamento completo dos dados
   Future<void> forceReload() async {
+    debugPrint('🔄 Limpando cache e recarregando dados...');
     _playHits.clear();
     _artists.clear();
     _categoryArtists.clear();
+    _categoryImages.clear(); // Limpa cache das imagens das categorias
+    notifyListeners(); // Notifica que os dados foram limpos
     await loadData();
   }
 
-  /// Carrega artistas para uma categoria específica
-  Future<void> loadCategoryArtists(String category) async {
+  /// Limpa apenas o cache (sem recarregar)
+  void clearCache() {
+    debugPrint('🗑️ Limpando cache...');
+    _playHits.clear();
+    _artists.clear();
+    _categoryArtists.clear();
+    _categoryImages.clear(); // Limpa cache das imagens das categorias
+    notifyListeners();
+  }
+
+  /// Carrega artistas para um gênero específico
+  Future<void> loadCategoryArtists(String genre) async {
     _setLoading(true);
-    _selectedCategory = category;
+    _selectedCategory = genre;
     _clearError();
     notifyListeners();
 
     try {
-      // Por enquanto, filtra artistas existentes por categoria
-      // TODO: Implementar busca específica por categoria quando Use Case estiver disponível
-      _categoryArtists = _filterArtistsByCategory(category);
+      // Filtra artistas existentes por gênero
+      _categoryArtists = _filterArtistsByGenre(genre);
     } catch (e) {
-      _setError('Erro ao carregar artistas da categoria: $e');
-      _categoryArtists = _getMockArtistsByCategory(category);
+      _setError('Erro ao carregar artistas do gênero: $e');
+      _categoryArtists = [];
     } finally {
       _setLoading(false);
     }
   }
 
-  /// Filtra artistas por categoria
-  List<Artist> _filterArtistsByCategory(String category) {
+  /// Filtra artistas por gênero
+  List<Artist> _filterArtistsByGenre(String genre) {
     return _artists.where((artist) {
-      return artist.genres.any((genre) => 
-        genre.toLowerCase().contains(category.toLowerCase())
-      ) || artist.name.toLowerCase().contains(category.toLowerCase());
+      return artist.genres.contains(genre);
     }).toList();
   }
 
@@ -190,72 +249,5 @@ class MusicLibraryController extends ChangeNotifier {
 
   void _clearError() {
     _errorMessage = null;
-  }
-
-  // ============================================================================
-  // MOCK DATA (fallback)
-  // ============================================================================
-
-  List<Map<String, String>> _getMockPlayHits() {
-    return [
-      {
-        'title': AppConstants.sertanejoCategory,
-        'artist': 'Marília Mendonça, Zé Neto, Cristiano',
-        'imageUrl': 'https://www.cartacapital.com.br/wp-content/uploads/2021/11/pluralmusica.jpg',
-      },
-      {
-        'title': AppConstants.funkCategory,
-        'artist': 'MC Kevin, MC Livinho, Anitta',
-        'imageUrl': 'https://cdn-images.dzcdn.net/images/artist/ea589fefdebdefd0624edda903d07672/1900x1900-000000-81-0-0.jpg',
-      },
-      {
-        'title': AppConstants.mpbCategory,
-        'artist': 'Caetano Veloso, Gilberto Gil, Chico Buarque',
-        'imageUrl': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=300&fit=crop',
-      },
-    ];
-  }
-
-  List<Artist> _getMockArtists() {
-    return [
-      Artist(
-        id: '1',
-        name: 'Matheus e Kauan',
-        imageUrl: 'https://via.placeholder.com/120x120',
-        bio: 'Dupla sertaneja',
-        totalSongs: 80,
-        totalDuration: '4:30:00',
-        genres: [AppConstants.sertanejoCategory],
-        followers: 1000000,
-      ),
-      Artist(
-        id: '2',
-        name: 'Murilo Huff',
-        imageUrl: 'https://via.placeholder.com/120x120',
-        bio: 'Cantor sertanejo',
-        totalSongs: 60,
-        totalDuration: '3:45:00',
-        genres: [AppConstants.sertanejoCategory],
-        followers: 800000,
-      ),
-      Artist(
-        id: '3',
-        name: 'Gusttavo Lima',
-        imageUrl: 'https://via.placeholder.com/120x120',
-        bio: 'Cantor sertanejo',
-        totalSongs: 200,
-        totalDuration: '12:00:00',
-        genres: [AppConstants.sertanejoCategory],
-        followers: 2000000,
-      ),
-    ];
-  }
-
-  List<Artist> _getMockArtistsByCategory(String category) {
-    return _getMockArtists().where((artist) => 
-      artist.genres.any((genre) => 
-        genre.toLowerCase().contains(category.toLowerCase())
-      )
-    ).toList();
   }
 }

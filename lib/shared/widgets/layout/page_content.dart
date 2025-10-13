@@ -10,6 +10,7 @@ class PageContent extends StatelessWidget {
   final MainAxisAlignment mainAxisAlignment;
   final bool isScrollable;
   final ScrollPhysics? physics;
+  final Future<void> Function()? onRefresh;
 
   const PageContent({
     super.key,
@@ -19,6 +20,7 @@ class PageContent extends StatelessWidget {
     this.mainAxisAlignment = MainAxisAlignment.start,
     this.isScrollable = true,
     this.physics,
+    this.onRefresh,
   });
 
   @override
@@ -38,14 +40,24 @@ class PageContent extends StatelessWidget {
       );
     }
 
-    return SafeArea(
-      child: SingleChildScrollView(
-        physics: physics,
-        child: Padding(
-          padding: padding ?? EdgeInsets.zero,
-          child: content,
-        ),
+    final scrollView = SingleChildScrollView(
+      physics: physics,
+      child: Padding(
+        padding: padding ?? EdgeInsets.zero,
+        child: content,
       ),
     );
+
+    // Se tem função de refresh, envolve com RefreshIndicator
+    if (onRefresh != null) {
+      return SafeArea(
+        child: RefreshIndicator(
+          onRefresh: onRefresh!,
+          child: scrollView,
+        ),
+      );
+    }
+
+    return SafeArea(child: scrollView);
   }
 }

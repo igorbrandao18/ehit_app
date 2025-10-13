@@ -12,6 +12,7 @@ class Song {
   final bool isExplicit;
   final DateTime releaseDate;
   final int playCount;
+  final String genre;
 
   const Song({
     required this.id,
@@ -24,6 +25,7 @@ class Song {
     required this.isExplicit,
     required this.releaseDate,
     required this.playCount,
+    required this.genre,
   });
 
   /// Cria uma cópia da música com campos modificados
@@ -38,6 +40,7 @@ class Song {
     bool? isExplicit,
     DateTime? releaseDate,
     int? playCount,
+    String? genre,
   }) {
     return Song(
       id: id ?? this.id,
@@ -50,6 +53,7 @@ class Song {
       isExplicit: isExplicit ?? this.isExplicit,
       releaseDate: releaseDate ?? this.releaseDate,
       playCount: playCount ?? this.playCount,
+      genre: genre ?? this.genre,
     );
   }
 

@@ -20,7 +20,7 @@ class SupabaseMusicService {
           .from('songs')
           .select('''
             *,
-            artists!inner(*),
+            artists(*),
             albums(*)
           ''')
           .order('created_at', ascending: false);
@@ -41,7 +41,7 @@ class SupabaseMusicService {
           .from('songs')
           .select('''
             *,
-            artists!inner(*),
+            artists(*),
             albums(*)
           ''')
           .eq('id', id)
@@ -63,7 +63,7 @@ class SupabaseMusicService {
           .from('songs')
           .select('''
             *,
-            artists!inner(*),
+            artists(*),
             albums(*)
           ''')
           .eq('artist_id', artistId)
@@ -85,7 +85,7 @@ class SupabaseMusicService {
           .from('songs')
           .select('''
             *,
-            artists!inner(*),
+            artists(*),
             albums(*)
           ''')
           .order('play_count', ascending: false)
@@ -107,7 +107,7 @@ class SupabaseMusicService {
           .from('songs')
           .select('''
             *,
-            artists!inner(*),
+            artists(*),
             albums(*)
           ''')
           .order('created_at', ascending: false)
@@ -129,7 +129,7 @@ class SupabaseMusicService {
           .from('songs')
           .select('''
             *,
-            artists!inner(*),
+            artists(*),
             albums(*)
           ''')
           .or('title.ilike.%$query%,artist_id.in.(select id from artists where name.ilike.%$query%)')
@@ -316,7 +316,7 @@ class SupabaseMusicService {
       final response = await SupabaseConfig.client
           .from('artist_follows')
           .select('''
-            artists!inner(*)
+            artists(*)
           ''')
           .eq('user_id', currentUser.id);
 
@@ -392,7 +392,7 @@ class SupabaseMusicService {
           .select('''
             songs!inner(
               *,
-              artists!inner(*),
+              artists(*),
               albums(*)
             )
           ''')
@@ -440,13 +440,13 @@ class SupabaseMusicService {
 
   /// Map database data to Song entity
   Song _mapSongFromData(Map<String, dynamic> data) {
-    final artist = data['artists'] as Map<String, dynamic>;
+    final artist = data['artists'] as Map<String, dynamic>?;
     final album = data['albums'] as Map<String, dynamic>?;
 
     return Song(
       id: data['id'],
       title: data['title'],
-      artist: artist['name'],
+      artist: artist?['name'] ?? 'Unknown Artist',
       album: album?['title'] ?? 'Unknown Album',
       duration: _formatDuration(data['duration'] ?? 0),
       imageUrl: data['image_url'] ?? '',
@@ -454,6 +454,7 @@ class SupabaseMusicService {
       isExplicit: data['is_explicit'] ?? false,
       playCount: data['play_count'] ?? 0,
       releaseDate: DateTime.parse(data['created_at'] ?? DateTime.now().toIso8601String()),
+      genre: data['genre'] ?? 'Pop',
     );
   }
 
@@ -463,7 +464,7 @@ class SupabaseMusicService {
       id: data['id'],
       name: data['name'],
       bio: data['bio'] ?? '',
-      imageUrl: data['image_url'] ?? '',
+      imageUrl: data['avatar_url'] ?? '', // Corrigido: avatar_url em vez de image_url
       totalSongs: data['total_songs'] ?? 0,
       totalDuration: _formatDuration(data['total_duration'] ?? 0),
       genres: List<String>.from(data['genres'] ?? []),
