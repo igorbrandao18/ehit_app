@@ -188,6 +188,14 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
   void _onSongTap(Song song) {
     // Usa o AudioPlayerController para tocar a música
     final audioPlayer = Provider.of<AudioPlayerController>(context, listen: false);
+    final songs = _controller.songs;
+    
+    // Configura a playlist com todas as músicas do artista antes de tocar
+    if (songs.isNotEmpty) {
+      audioPlayer.setPlaylist(songs);
+      print('🎵 Playlist configurada com ${songs.length} músicas do artista');
+    }
+    
     audioPlayer.playSong(song);
     
     // Navegar para o player

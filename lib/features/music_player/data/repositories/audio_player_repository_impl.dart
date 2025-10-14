@@ -78,6 +78,17 @@ class AudioPlayerRepositoryImpl implements AudioPlayerRepository {
       _currentSong = song;
       _currentSongController.add(_currentSong);
       
+      // Se não há playlist ou a música não está na playlist atual, criar uma playlist com esta música
+      if (_playlist.isEmpty || !_playlist.contains(song)) {
+        _playlist = [song];
+        _currentIndex = 0;
+        print('🎵 Criada playlist com 1 música');
+      } else {
+        // Se a música já está na playlist, atualizar o índice
+        _currentIndex = _playlist.indexOf(song);
+        print('🎵 Música encontrada na playlist no índice $_currentIndex de ${_playlist.length}');
+      }
+      
       await _audioPlayer.setUrl(song.audioUrl);
       await _audioPlayer.play();
       
@@ -131,13 +142,20 @@ class AudioPlayerRepositoryImpl implements AudioPlayerRepository {
   @override
   Future<Result<void>> next() async {
     try {
+      print('🎵 Tentando próxima música...');
+      print('🎵 Playlist tem ${_playlist.length} músicas, índice atual: $_currentIndex');
+      
       if (_playlist.isNotEmpty && _currentIndex < _playlist.length - 1) {
         _currentIndex++;
         final nextSong = _playlist[_currentIndex];
+        print('🎵 Avançando para: ${nextSong.title} - ${nextSong.artist}');
         return await playSong(nextSong);
+      } else {
+        print('🎵 Não há próxima música disponível');
+        return const Success(null);
       }
-      return const Success(null);
     } catch (e) {
+      print('❌ Erro ao avançar música: $e');
       return Error<void>(
         message: 'Erro ao avançar música: $e',
       );
@@ -147,13 +165,20 @@ class AudioPlayerRepositoryImpl implements AudioPlayerRepository {
   @override
   Future<Result<void>> previous() async {
     try {
+      print('🎵 Tentando música anterior...');
+      print('🎵 Playlist tem ${_playlist.length} músicas, índice atual: $_currentIndex');
+      
       if (_playlist.isNotEmpty && _currentIndex > 0) {
         _currentIndex--;
         final previousSong = _playlist[_currentIndex];
+        print('🎵 Voltando para: ${previousSong.title} - ${previousSong.artist}');
         return await playSong(previousSong);
+      } else {
+        print('🎵 Não há música anterior disponível');
+        return const Success(null);
       }
-      return const Success(null);
     } catch (e) {
+      print('❌ Erro ao retroceder música: $e');
       return Error<void>(
         message: 'Erro ao retroceder música: $e',
       );

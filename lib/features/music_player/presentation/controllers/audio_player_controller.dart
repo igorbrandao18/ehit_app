@@ -226,6 +226,23 @@ class AudioPlayerController extends ChangeNotifier {
     );
   }
   
+  /// Set playlist for navigation
+  Future<void> setPlaylist(List<Song> songs) async {
+    _clearError();
+    
+    final result = await _repository.setPlaylist(songs);
+    
+    result.when(
+      success: (_) {
+        debugPrint('AudioPlayerController: Playlist set with ${songs.length} songs');
+      },
+      error: (message, code) {
+        _errorMessage = message;
+        notifyListeners();
+      },
+    );
+  }
+  
   void _setLoading(bool loading) {
     _isLoading = loading;
     notifyListeners();
