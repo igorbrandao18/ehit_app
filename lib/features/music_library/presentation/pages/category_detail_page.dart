@@ -26,6 +26,7 @@ class CategoryDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -47,6 +48,9 @@ class CategoryDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Status bar padding
+            SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight),
+            
             // Header section
             _buildHeaderSection(),
             
@@ -98,19 +102,19 @@ class CategoryDetailPage extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 16),
-              
+              const SizedBox(height: 12),
               // Artists list
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: controller.categoryArtists.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 12),
-                itemBuilder: (context, index) {
-                  final artist = controller.categoryArtists[index];
-                  return _buildArtistListItem(context, artist, index + 1);
-                },
-              ),
+              ...controller.categoryArtists.asMap().entries.map((entry) {
+                final index = entry.key;
+                final artist = entry.value;
+                return Column(
+                  children: [
+                    _buildArtistListItem(context, artist, index + 1),
+                    if (index < controller.categoryArtists.length - 1)
+                      const SizedBox(height: 6),
+                  ],
+                );
+              }).toList(),
             ],
           ),
         );

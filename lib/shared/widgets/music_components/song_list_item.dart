@@ -60,16 +60,32 @@ class SongListItem extends StatelessWidget {
         child: Image.network(
           song.imageUrl,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
             return Container(
               decoration: BoxDecoration(
                 color: Colors.grey.shade800,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 2,
+                ),
+              ),
+            );
+          },
+          errorBuilder: (context, error, stackTrace) {
+            print('❌ SongListItem: Error loading image: ${song.imageUrl}');
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade800,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
                 Icons.music_note,
                 color: Colors.grey,
-                size: 20,
+                size: DesignTokens.songThumbnailSize * 0.4,
               ),
             );
           },

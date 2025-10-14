@@ -5,6 +5,7 @@ import '../utils/result.dart';
 import '../errors/failures.dart';
 import '../../features/music_library/domain/entities/song.dart';
 import '../../features/music_library/domain/entities/artist.dart';
+import '../../core/constants/app_config.dart';
 import 'supabase_config.dart';
 
 /// Supabase-based music service
@@ -443,14 +444,28 @@ class SupabaseMusicService {
     final artist = data['artists'] as Map<String, dynamic>?;
     final album = data['albums'] as Map<String, dynamic>?;
 
+    // Debug: Log image URLs
+    final imageUrl = data['image_url'];
+    final artistImageUrl = artist?['avatar_url'];
+    
+    print('🎵 Song: ${data['title']} - Image URL: $imageUrl');
+    print('🎵 Artist: ${artist?['name']} - Avatar URL: $artistImageUrl');
+
+    // Usar imagem do artista se a imagem da música não estiver disponível
+    final finalImageUrl = imageUrl?.isNotEmpty == true 
+        ? imageUrl 
+        : artistImageUrl?.isNotEmpty == true 
+            ? artistImageUrl 
+            : AppConfig.defaultAlbumArt;
+
     return Song(
       id: data['id'],
       title: data['title'],
       artist: artist?['name'] ?? 'Unknown Artist',
       album: album?['title'] ?? 'Unknown Album',
       duration: _formatDuration(data['duration'] ?? 0),
-      imageUrl: data['image_url'] ?? '',
-      audioUrl: data['audio_url'],
+      imageUrl: finalImageUrl,
+      audioUrl: data['audio_url'] ?? AppConfig.getAudioUrl(data['id']),
       isExplicit: data['is_explicit'] ?? false,
       playCount: data['play_count'] ?? 0,
       releaseDate: DateTime.parse(data['created_at'] ?? DateTime.now().toIso8601String()),
@@ -460,11 +475,15 @@ class SupabaseMusicService {
 
   /// Map database data to Artist entity
   Artist _mapArtistFromData(Map<String, dynamic> data) {
+    // Debug: Log artist image URL
+    final avatarUrl = data['avatar_url'];
+    print('👤 Artist: ${data['name']} - Avatar URL: $avatarUrl');
+
     return Artist(
       id: data['id'],
       name: data['name'],
       bio: data['bio'] ?? '',
-      imageUrl: data['avatar_url'] ?? '', // Corrigido: avatar_url em vez de image_url
+      imageUrl: avatarUrl?.isNotEmpty == true ? avatarUrl : AppConfig.defaultArtistImage,
       totalSongs: data['total_songs'] ?? 0,
       totalDuration: _formatDuration(data['total_duration'] ?? 0),
       genres: List<String>.from(data['genres'] ?? []),

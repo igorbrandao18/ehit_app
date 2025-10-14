@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../shared/design/design_tokens.dart';
 import '../../../../shared/design/app_colors.dart';
+import '../../../../shared/widgets/layout/gradient_scaffold.dart';
 import '../../../../shared/widgets/music_components/artist_hero_section.dart';
 import '../../../../shared/widgets/music_components/songs_list_section.dart';
 import '../../../../core/audio/audio_player_service.dart';
@@ -31,7 +32,11 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
   @override
   void initState() {
     super.initState();
-    _controller = di.sl<ArtistDetailController>();
+    // Criar nova instância para cada página
+    _controller = ArtistDetailController(
+      getArtistByIdUseCase: di.sl(),
+      getSongsByArtistUseCase: di.sl(),
+    );
     _loadArtistData();
   }
 
@@ -47,33 +52,27 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: AppColors.subtleGradient,
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        extendBodyBehindAppBar: true,
-        appBar: _buildAppBar(),
-        body: ChangeNotifierProvider.value(
-          value: _controller,
-          child: Consumer<ArtistDetailController>(
-            builder: (context, controller, child) {
-              if (controller.isLoading) {
-                return _buildLoadingState();
-              }
+    return GradientScaffold(
+      extendBodyBehindAppBar: true,
+      appBar: _buildAppBar(),
+      body: ChangeNotifierProvider.value(
+        value: _controller,
+        child: Consumer<ArtistDetailController>(
+          builder: (context, controller, child) {
+            if (controller.isLoading) {
+              return _buildLoadingState();
+            }
 
-              if (controller.error != null) {
-                return _buildErrorState();
-              }
+            if (controller.error != null) {
+              return _buildErrorState();
+            }
 
-              if (!controller.hasData) {
-                return _buildEmptyState();
-              }
+            if (!controller.hasData) {
+              return _buildEmptyState();
+            }
 
-              return _buildContent(controller);
-            },
-          ),
+            return _buildContent(controller);
+          },
         ),
       ),
     );
