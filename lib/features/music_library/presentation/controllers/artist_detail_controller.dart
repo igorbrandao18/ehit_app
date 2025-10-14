@@ -5,7 +5,6 @@ import '../../domain/entities/artist.dart';
 import '../../domain/entities/song.dart';
 import '../../domain/usecases/get_artists_usecase.dart';
 import '../../domain/usecases/get_songs_usecase.dart';
-import '../../../../core/injection/injection_container.dart' as di;
 import '../../../../core/utils/result.dart';
 
 /// Controller responsável por gerenciar o estado da página de detalhes do artista
@@ -60,6 +59,9 @@ class ArtistDetailController extends ChangeNotifier {
           success: (songs) {
             _songs = songs;
             debugPrint('ArtistDetailController: Songs loaded: ${songs.length} songs');
+            
+            // Atualiza o artista com informações calculadas das músicas
+            _updateArtistWithSongsInfo(songs);
           },
           error: (message, code) {
             _error = 'Erro ao carregar músicas: $message';
@@ -77,6 +79,47 @@ class ArtistDetailController extends ChangeNotifier {
     }
   }
 
+  /// Atualiza o artista com informações calculadas das músicas
+  void _updateArtistWithSongsInfo(List<Song> songs) {
+    if (_artist == null) return;
+    
+    // Calcula o total de músicas
+    final totalSongs = songs.length;
+    
+    // Calcula a duração total
+    int totalDurationMs = 0;
+    for (final song in songs) {
+      totalDurationMs += _parseDurationToMs(song.duration);
+    }
+    
+    // Converte para formato legível (MM:SS)
+    final totalMinutes = totalDurationMs ~/ (60 * 1000);
+    final totalSeconds = (totalDurationMs % (60 * 1000)) ~/ 1000;
+    final totalDuration = '${totalMinutes.toString().padLeft(2, '0')}:${totalSeconds.toString().padLeft(2, '0')}';
+    
+    // Atualiza o artista com as informações calculadas
+    _artist = _artist!.copyWith(
+      totalSongs: totalSongs,
+      totalDuration: totalDuration,
+    );
+    
+    debugPrint('ArtistDetailController: Updated artist - $totalSongs songs, $totalDuration total duration');
+  }
+  
+  /// Converte string de duração (MM:SS) para milissegundos
+  int _parseDurationToMs(String duration) {
+    try {
+      final parts = duration.split(':');
+      if (parts.length == 2) {
+        final minutes = int.parse(parts[0]);
+        final seconds = int.parse(parts[1]);
+        return (minutes * 60 + seconds) * 1000;
+      }
+    } catch (e) {
+      debugPrint('Error parsing duration: $duration - $e');
+    }
+    return 0; // Default to 0 if parsing fails
+  }
 
   /// Reproduz uma música
   void playSong(Song song) {
