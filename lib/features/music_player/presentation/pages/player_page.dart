@@ -4,8 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../shared/design/app_colors.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
-import '../../../../core/audio/audio_player_service.dart';
-import '../controllers/music_player_controller.dart';
+import '../controllers/audio_player_controller.dart';
 
 class PlayerPage extends StatelessWidget {
   const PlayerPage({super.key});
@@ -19,7 +18,7 @@ class PlayerPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AudioPlayerService>(
+    return Consumer<AudioPlayerController>(
       builder: (context, audioPlayer, child) {
         return GradientScaffold(
           showMiniPlayer: false, // Não mostrar mini player na página do player
@@ -106,7 +105,7 @@ class PlayerPage extends StatelessWidget {
   }
 
   Widget _buildAlbumArt(BuildContext context) {
-    final audioPlayer = Provider.of<AudioPlayerService>(context);
+    final audioPlayer = Provider.of<AudioPlayerController>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final albumSize = screenWidth * 0.6; // 60% da largura da tela
     final imageUrl = audioPlayer.currentSong?.imageUrl ?? '';
@@ -159,7 +158,7 @@ class PlayerPage extends StatelessWidget {
   }
 
   Widget _buildSongInfo(BuildContext context) {
-    final audioPlayer = Provider.of<AudioPlayerService>(context);
+    final audioPlayer = Provider.of<AudioPlayerController>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final titleFontSize = screenWidth * 0.06; // 6% da largura
     final artistFontSize = screenWidth * 0.045; // 4.5% da largura
@@ -189,7 +188,7 @@ class PlayerPage extends StatelessWidget {
     );
   }
 
-  Widget _buildProgressBar(BuildContext context, AudioPlayerService audioPlayer) {
+  Widget _buildProgressBar(BuildContext context, AudioPlayerController audioPlayer) {
     final progress = audioPlayer.progress;
     final remaining = audioPlayer.duration - audioPlayer.position;
     
@@ -209,7 +208,8 @@ class PlayerPage extends StatelessWidget {
               final newPosition = Duration(
                 milliseconds: (value * audioPlayer.duration.inMilliseconds).round(),
               );
-              audioPlayer.seek(newPosition);
+              // TODO: Implement seek functionality
+              print('Seek to: $newPosition');
             },
           ),
         ),
@@ -239,7 +239,7 @@ class PlayerPage extends StatelessWidget {
     );
   }
 
-  Widget _buildPlayerControls(BuildContext context, AudioPlayerService audioPlayer) {
+  Widget _buildPlayerControls(BuildContext context, AudioPlayerController audioPlayer) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
@@ -247,7 +247,10 @@ class PlayerPage extends StatelessWidget {
         _buildControlButton(
           context: context,
           icon: Icons.skip_previous,
-          onTap: () => audioPlayer.previous(),
+          onTap: () {
+            // TODO: Implement previous functionality
+            print('Previous song');
+          },
         ),
         
         // Botão play/pause principal
@@ -290,7 +293,7 @@ class PlayerPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMainControlButton(BuildContext context, AudioPlayerService audioPlayer) {
+  Widget _buildMainControlButton(BuildContext context, AudioPlayerController audioPlayer) {
     final screenWidth = MediaQuery.of(context).size.width;
     final buttonSize = screenWidth * 0.2; // 20% da largura
     final iconSize = screenWidth * 0.1; // 10% da largura

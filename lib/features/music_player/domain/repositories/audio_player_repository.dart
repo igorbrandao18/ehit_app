@@ -1,80 +1,56 @@
 // features/music_player/domain/repositories/audio_player_repository.dart
 
 import '../../../../core/utils/result.dart';
-import '../entities/audio_state.dart';
-import '../../../music_library/domain/entities/song.dart';
+import '../../../../features/music_library/domain/entities/song.dart';
 
-/// Interface para operações do player de áudio
+/// Repository interface for audio player operations
+/// Follows Clean Architecture - Domain Layer
 abstract class AudioPlayerRepository {
-  /// Inicializa o player
-  Future<Result<void>> initialize();
-  
-  /// Libera recursos do player
-  Future<Result<void>> dispose();
-  
-  /// Toca uma música específica
+  /// Play a specific song
   Future<Result<void>> playSong(Song song);
   
-  /// Toca uma lista de músicas
-  Future<Result<void>> playQueue(List<Song> songs, {int startIndex = 0});
-  
-  /// Pausa a reprodução
+  /// Pause current playback
   Future<Result<void>> pause();
   
-  /// Resume a reprodução
+  /// Resume current playback
   Future<Result<void>> resume();
   
-  /// Para a reprodução
+  /// Stop current playback
   Future<Result<void>> stop();
   
-  /// Vai para a próxima música
+  /// Play next song in queue
   Future<Result<void>> next();
   
-  /// Vai para a música anterior
+  /// Play previous song in queue
   Future<Result<void>> previous();
   
-  /// Define a posição da música
+  /// Seek to specific position
   Future<Result<void>> seekTo(Duration position);
   
-  /// Define o volume (0.0 a 1.0)
-  Future<Result<void>> setVolume(double volume);
+  /// Toggle play/pause
+  Future<Result<void>> togglePlayPause();
   
-  /// Liga/desliga o mute
-  Future<Result<void>> setMuted(bool muted);
+  /// Get current playing song
+  Future<Result<Song?>> getCurrentSong();
   
-  /// Ativa/desativa o modo shuffle
-  Future<Result<void>> setShuffled(bool shuffled);
-  
-  /// Define o modo de repetição
-  Future<Result<void>> setRepeatMode(RepeatMode repeatMode);
-  
-  /// Obtém o estado atual do player
-  Future<Result<AudioState>> getCurrentState();
-  
-  /// Obtém a posição atual
+  /// Get current playback position
   Future<Result<Duration>> getCurrentPosition();
   
-  /// Obtém a duração da música atual
-  Future<Result<Duration>> getCurrentDuration();
+  /// Get current playback duration
+  Future<Result<Duration>> getDuration();
   
-  /// Verifica se está tocando
+  /// Get playback progress (0.0 to 1.0)
+  Future<Result<double>> getProgress();
+  
+  /// Check if currently playing
   Future<Result<bool>> isPlaying();
   
-  /// Verifica se está pausado
-  Future<Result<bool>> isPaused();
+  /// Set playlist
+  Future<Result<void>> setPlaylist(List<Song> songs, {int startIndex = 0});
   
-  /// Obtém o volume atual
-  Future<Result<double>> getVolume();
+  /// Add song to queue
+  Future<Result<void>> addToQueue(Song song);
   
-  /// Verifica se está mutado
-  Future<Result<bool>> isMuted();
-  
-  /// Verifica se está em modo shuffle
-  Future<Result<bool>> isShuffled();
-  
-  /// Obtém o modo de repetição atual
-  Future<Result<RepeatMode>> getRepeatMode();
-  
-  /// Stream do estado do player
-  Stream<AudioState> get audioStateStream;
+  /// Clear queue
+  Future<Result<void>> clearQueue();
 }

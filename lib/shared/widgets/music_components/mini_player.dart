@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/audio/audio_player_service.dart';
+import '../../../features/music_player/presentation/controllers/audio_player_controller.dart';
 import '../../design/app_colors.dart';
 import '../../design/design_tokens.dart';
 
@@ -13,7 +13,7 @@ class MiniPlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AudioPlayerService>(
+    return Consumer<AudioPlayerController>(
       builder: (context, audioPlayer, child) {
         // Só mostra se há uma música tocando
         if (!audioPlayer.isPlaying && audioPlayer.currentSong == null) {
@@ -67,7 +67,7 @@ class MiniPlayer extends StatelessWidget {
     );
   }
 
-  Widget _buildAlbumArt(AudioPlayerService audioPlayer) {
+  Widget _buildAlbumArt(AudioPlayerController audioPlayer) {
     return Container(
       width: 60,
       height: 60,
@@ -115,7 +115,7 @@ class MiniPlayer extends StatelessWidget {
     );
   }
 
-  Widget _buildSongInfo(AudioPlayerService audioPlayer) {
+  Widget _buildSongInfo(AudioPlayerController audioPlayer) {
     if (audioPlayer.currentSong == null) {
       return const SizedBox.shrink();
     }
@@ -149,7 +149,7 @@ class MiniPlayer extends StatelessWidget {
     );
   }
 
-  Widget _buildControls(AudioPlayerService audioPlayer) {
+  Widget _buildControls(AudioPlayerController audioPlayer) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [

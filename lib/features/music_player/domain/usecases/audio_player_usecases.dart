@@ -1,76 +1,82 @@
 // features/music_player/domain/usecases/audio_player_usecases.dart
 
 import '../../../../core/utils/result.dart';
-import '../entities/audio_state.dart';
+import '../../../../features/music_library/domain/entities/song.dart';
 import '../repositories/audio_player_repository.dart';
 
-/// Use case para controlar reprodução (play/pause)
+/// Use case for toggling play/pause
 class TogglePlayPauseUseCase {
-  final AudioPlayerRepository _audioPlayerRepository;
-
-  TogglePlayPauseUseCase(this._audioPlayerRepository);
-
-  /// Executa o use case para alternar entre play/pause
+  final AudioPlayerRepository _repository;
+  
+  const TogglePlayPauseUseCase(this._repository);
+  
   Future<Result<void>> call() async {
-    final isPlayingResult = await _audioPlayerRepository.isPlaying();
-    
-    return isPlayingResult.when(
-      success: (isPlaying) async {
-        if (isPlaying) {
-          return await _audioPlayerRepository.pause();
-        } else {
-          return await _audioPlayerRepository.resume();
-        }
-      },
-      error: (message, code) => Error<void>(message: message, code: code),
-    );
+    return await _repository.togglePlayPause();
   }
 }
 
-/// Use case para navegar para próxima música
+/// Use case for playing next song
 class NextSongUseCase {
-  final AudioPlayerRepository _audioPlayerRepository;
-
-  NextSongUseCase(this._audioPlayerRepository);
-
-  /// Executa o use case para próxima música
+  final AudioPlayerRepository _repository;
+  
+  const NextSongUseCase(this._repository);
+  
   Future<Result<void>> call() async {
-    return await _audioPlayerRepository.next();
+    return await _repository.next();
   }
 }
 
-/// Use case para navegar para música anterior
-class PreviousSongUseCase {
-  final AudioPlayerRepository _audioPlayerRepository;
-
-  PreviousSongUseCase(this._audioPlayerRepository);
-
-  /// Executa o use case para música anterior
-  Future<Result<void>> call() async {
-    return await _audioPlayerRepository.previous();
+/// Use case for getting current song
+class GetCurrentSongUseCase {
+  final AudioPlayerRepository _repository;
+  
+  const GetCurrentSongUseCase(this._repository);
+  
+  Future<Result<Song?>> call() async {
+    return await _repository.getCurrentSong();
   }
 }
 
-/// Use case para buscar posição específica
-class SeekToPositionUseCase {
-  final AudioPlayerRepository _audioPlayerRepository;
-
-  SeekToPositionUseCase(this._audioPlayerRepository);
-
-  /// Executa o use case para buscar posição
-  Future<Result<void>> call(Duration position) async {
-    return await _audioPlayerRepository.seekTo(position);
+/// Use case for checking if playing
+class IsPlayingUseCase {
+  final AudioPlayerRepository _repository;
+  
+  const IsPlayingUseCase(this._repository);
+  
+  Future<Result<bool>> call() async {
+    return await _repository.isPlaying();
   }
 }
 
-/// Use case para obter estado atual do player
-class GetAudioStateUseCase {
-  final AudioPlayerRepository _audioPlayerRepository;
+/// Use case for getting playback progress
+class GetProgressUseCase {
+  final AudioPlayerRepository _repository;
+  
+  const GetProgressUseCase(this._repository);
+  
+  Future<Result<double>> call() async {
+    return await _repository.getProgress();
+  }
+}
 
-  GetAudioStateUseCase(this._audioPlayerRepository);
+/// Use case for getting current position
+class GetCurrentPositionUseCase {
+  final AudioPlayerRepository _repository;
+  
+  const GetCurrentPositionUseCase(this._repository);
+  
+  Future<Result<Duration>> call() async {
+    return await _repository.getCurrentPosition();
+  }
+}
 
-  /// Executa o use case para obter estado atual
-  Future<Result<AudioState>> call() async {
-    return await _audioPlayerRepository.getCurrentState();
+/// Use case for getting duration
+class GetDurationUseCase {
+  final AudioPlayerRepository _repository;
+  
+  const GetDurationUseCase(this._repository);
+  
+  Future<Result<Duration>> call() async {
+    return await _repository.getDuration();
   }
 }

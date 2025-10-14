@@ -153,7 +153,7 @@ Future<void> init() async {
   );
 
   sl.registerLazySingleton<AudioPlayerRepository>(
-    () => AudioPlayerRepositoryImpl(sl<AudioPlayerDataSource>()),
+    () => AudioPlayerRepositoryImpl(),
   );
 
   // Authentication Repositories
@@ -200,9 +200,11 @@ Future<void> init() async {
   sl.registerLazySingleton(() => PlayQueueUseCase(sl<AudioPlayerRepository>()));
   sl.registerLazySingleton(() => TogglePlayPauseUseCase(sl<AudioPlayerRepository>()));
   sl.registerLazySingleton(() => NextSongUseCase(sl<AudioPlayerRepository>()));
-  sl.registerLazySingleton(() => PreviousSongUseCase(sl<AudioPlayerRepository>()));
-  sl.registerLazySingleton(() => SeekToPositionUseCase(sl<AudioPlayerRepository>()));
-  sl.registerLazySingleton(() => GetAudioStateUseCase(sl<AudioPlayerRepository>()));
+  sl.registerLazySingleton(() => GetCurrentSongUseCase(sl<AudioPlayerRepository>()));
+  sl.registerLazySingleton(() => IsPlayingUseCase(sl<AudioPlayerRepository>()));
+  sl.registerLazySingleton(() => GetProgressUseCase(sl<AudioPlayerRepository>()));
+  sl.registerLazySingleton(() => GetCurrentPositionUseCase(sl<AudioPlayerRepository>()));
+  sl.registerLazySingleton(() => GetDurationUseCase(sl<AudioPlayerRepository>()));
 
   // Authentication Use Cases
   sl.registerLazySingleton(() => LoginWithEmailUseCase(sl<AuthRepository>()));
@@ -258,13 +260,13 @@ Future<void> init() async {
 
   sl.registerLazySingleton(() => AudioPlayerController(
     playSongUseCase: sl<PlaySongUseCase>(),
-    playQueueUseCase: sl<PlayQueueUseCase>(),
     togglePlayPauseUseCase: sl<TogglePlayPauseUseCase>(),
     nextSongUseCase: sl<NextSongUseCase>(),
-    previousSongUseCase: sl<PreviousSongUseCase>(),
-    seekToPositionUseCase: sl<SeekToPositionUseCase>(),
-    getAudioStateUseCase: sl<GetAudioStateUseCase>(),
-    audioPlayerRepository: sl<AudioPlayerRepository>(),
+    getCurrentSongUseCase: sl<GetCurrentSongUseCase>(),
+    isPlayingUseCase: sl<IsPlayingUseCase>(),
+    getProgressUseCase: sl<GetProgressUseCase>(),
+    getCurrentPositionUseCase: sl<GetCurrentPositionUseCase>(),
+    getDurationUseCase: sl<GetDurationUseCase>(),
   ));
 
   // Authentication Controllers

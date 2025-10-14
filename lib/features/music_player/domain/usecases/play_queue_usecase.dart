@@ -12,6 +12,6 @@ class PlayQueueUseCase {
 
   /// Executa o use case para tocar uma lista de músicas
   Future<Result<void>> call(List<Song> songs, {int startIndex = 0}) async {
-    return await _audioPlayerRepository.playQueue(songs, startIndex: startIndex);
+    return await _audioPlayerRepository.setPlaylist(songs, startIndex: startIndex);
   }
 }

@@ -2,479 +2,264 @@
 
 import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:just_audio/just_audio.dart';
 import '../../../../core/utils/result.dart';
 import '../../../../core/errors/failures.dart';
-import '../../domain/entities/audio_state.dart';
+import '../../../../features/music_library/domain/entities/song.dart';
 import '../../domain/repositories/audio_player_repository.dart';
-import '../../../music_library/domain/entities/song.dart';
-import '../datasources/audio_player_datasource.dart';
 
-/// Implementação do repositório de player de áudio
+/// Implementation of AudioPlayerRepository
+/// Follows Clean Architecture - Data Layer
 class AudioPlayerRepositoryImpl implements AudioPlayerRepository {
-  final AudioPlayerDataSource _audioDataSource;
+  final AudioPlayer _audioPlayer = AudioPlayer();
   
-  // Estado interno do player
-  AudioState _currentState = AudioState.initial;
-  bool _isInitialized = false;
+  Song? _currentSong;
+  List<Song> _playlist = [];
+  int _currentIndex = 0;
+  bool _isPlaying = false;
+  Duration _position = Duration.zero;
+  Duration _duration = Duration.zero;
   
-  // Timer para simular progresso da música
-  Timer? _progressTimer;
+  // Stream controllers for state management
+  final StreamController<Song?> _currentSongController = StreamController<Song?>.broadcast();
+  final StreamController<bool> _isPlayingController = StreamController<bool>.broadcast();
+  final StreamController<Duration> _positionController = StreamController<Duration>.broadcast();
+  final StreamController<Duration> _durationController = StreamController<Duration>.broadcast();
+  final StreamController<double> _progressController = StreamController<double>.broadcast();
   
-  // Stream controllers para notificar mudanças
-  final StreamController<AudioState> _audioStateController = StreamController<AudioState>.broadcast();
-
-  AudioPlayerRepositoryImpl(this._audioDataSource);
-
-  @override
-  Future<Result<void>> initialize() async {
-    try {
-      if (_isInitialized) {
-        return const Success(null);
-      }
-      
-      final result = await _audioDataSource.initialize();
-      if (result is Error) {
-        return Error<void>(
-          message: 'Erro ao inicializar data source: ${result.message}',
-        );
-      }
-      
-      _isInitialized = true;
-      _setupStreams();
-      
-      return const Success(null);
-    } catch (e) {
-      return Error<void>(
-        message: 'Erro ao inicializar player: $e',
-      );
-    }
+  // Getters for streams
+  Stream<Song?> get currentSongStream => _currentSongController.stream;
+  Stream<bool> get isPlayingStream => _isPlayingController.stream;
+  Stream<Duration> get positionStream => _positionController.stream;
+  Stream<Duration> get durationStream => _durationController.stream;
+  Stream<double> get progressStream => _progressController.stream;
+  
+  AudioPlayerRepositoryImpl() {
+    _init();
   }
-
-  @override
-  Future<Result<void>> dispose() async {
-    try {
-      _progressTimer?.cancel();
-      _progressTimer = null;
-      _isInitialized = false;
-      _currentState = AudioState.initial;
+  
+  void _init() {
+    // Listener para mudanças no estado de reprodução
+    _audioPlayer.playerStateStream.listen((state) {
+      _isPlaying = state.playing;
+      _isPlayingController.add(_isPlaying);
       
-      final result = await _audioDataSource.dispose();
-      await _audioStateController.close();
+      // Se terminou a música, toca a próxima
+      if (state.processingState == ProcessingState.completed) {
+        next();
+      }
+    });
+    
+    // Listener para mudanças na posição
+    _audioPlayer.positionStream.listen((position) {
+      _position = position;
+      _positionController.add(_position);
       
-      return result;
-    } catch (e) {
-      return Error<void>(
-        message: 'Erro ao liberar player: $e',
-      );
-    }
+      // Calcular progresso
+      if (_duration.inMilliseconds > 0) {
+        final progress = _position.inMilliseconds / _duration.inMilliseconds;
+        _progressController.add(progress);
+      }
+    });
+    
+    // Listener para mudanças na duração
+    _audioPlayer.durationStream.listen((duration) {
+      _duration = duration ?? Duration.zero;
+      _durationController.add(_duration);
+    });
   }
-
+  
   @override
   Future<Result<void>> playSong(Song song) async {
     try {
-      if (!_isInitialized) {
-        await initialize();
-      }
+      print('🎵 Tocando: ${song.title} - ${song.artist}');
+      print('🎵 URL: ${song.audioUrl}');
       
-      _currentState = _currentState.copyWith(
-        playerState: AudioPlayerState.playing,
-        currentSong: song,
-        position: Duration.zero,
-        duration: _parseDuration(song.duration),
-        queue: [song],
-        currentIndex: 0,
-        errorMessage: null,
-      );
+      _currentSong = song;
+      _currentSongController.add(_currentSong);
       
-      _notifyStateChange();
-      
-      final result = await _audioDataSource.playSong(song);
-      if (result is Error) {
-        _currentState = _currentState.copyWith(
-          playerState: AudioPlayerState.error,
-          errorMessage: result.message,
-        );
-        _notifyStateChange();
-        return result;
-      }
-      
-      _startProgressTimer();
+      await _audioPlayer.setUrl(song.audioUrl);
+      await _audioPlayer.play();
       
       return const Success(null);
     } catch (e) {
+      print('❌ Erro ao tocar música: $e');
       return Error<void>(
-        message: 'Erro ao tocar música: $e',
+        message: 'Erro ao reproduzir música: $e',
       );
     }
   }
-
-  @override
-  Future<Result<void>> playQueue(List<Song> songs, {int startIndex = 0}) async {
-    try {
-      if (!_isInitialized) {
-        await initialize();
-      }
-      
-      if (songs.isEmpty) {
-        return Error<void>(
-          message: 'Lista de músicas vazia',
-        );
-      }
-      
-      final index = startIndex.clamp(0, songs.length - 1);
-      final currentSong = songs[index];
-      
-      _currentState = _currentState.copyWith(
-        playerState: AudioPlayerState.playing,
-        currentSong: currentSong,
-        position: Duration.zero,
-        duration: _parseDuration(currentSong.duration),
-        queue: songs,
-        currentIndex: index,
-        errorMessage: null,
-      );
-      
-      _notifyStateChange();
-      
-      final result = await _audioDataSource.playSong(currentSong);
-      if (result is Error) {
-        _currentState = _currentState.copyWith(
-          playerState: AudioPlayerState.error,
-          errorMessage: result.message,
-        );
-        _notifyStateChange();
-        return result;
-      }
-      
-      _startProgressTimer();
-      
-      return const Success(null);
-    } catch (e) {
-      return Error<void>(
-        message: 'Erro ao tocar fila: $e',
-      );
-    }
-  }
-
+  
   @override
   Future<Result<void>> pause() async {
     try {
-      final result = await _audioDataSource.pause();
-      if (result is Success) {
-        _currentState = _currentState.copyWith(
-          playerState: AudioPlayerState.paused,
-        );
-        _notifyStateChange();
-      }
-      return result;
+      await _audioPlayer.pause();
+      return const Success(null);
     } catch (e) {
       return Error<void>(
         message: 'Erro ao pausar música: $e',
       );
     }
   }
-
+  
   @override
   Future<Result<void>> resume() async {
     try {
-      final result = await _audioDataSource.resume();
-      if (result is Success) {
-        _currentState = _currentState.copyWith(
-          playerState: AudioPlayerState.playing,
-        );
-        _notifyStateChange();
-        _startProgressTimer();
-      }
-      return result;
+      await _audioPlayer.play();
+      return const Success(null);
     } catch (e) {
       return Error<void>(
-        message: 'Erro ao resumir música: $e',
+        message: 'Erro ao retomar música: $e',
       );
     }
   }
-
+  
   @override
   Future<Result<void>> stop() async {
     try {
-      final result = await _audioDataSource.stop();
-      if (result is Success) {
-        _currentState = _currentState.copyWith(
-          playerState: AudioPlayerState.stopped,
-          position: Duration.zero,
-        );
-        _notifyStateChange();
-        _progressTimer?.cancel();
-      }
-      return result;
+      await _audioPlayer.stop();
+      _currentSong = null;
+      _currentSongController.add(_currentSong);
+      return const Success(null);
     } catch (e) {
       return Error<void>(
         message: 'Erro ao parar música: $e',
       );
     }
   }
-
+  
   @override
   Future<Result<void>> next() async {
     try {
-      if (_currentState.queue.isEmpty) {
-        return Error<void>(message: 'Fila vazia');
+      if (_playlist.isNotEmpty && _currentIndex < _playlist.length - 1) {
+        _currentIndex++;
+        final nextSong = _playlist[_currentIndex];
+        return await playSong(nextSong);
       }
-      
-      final nextIndex = (_currentState.currentIndex + 1) % _currentState.queue.length;
-      final nextSong = _currentState.queue[nextIndex];
-      
-      _currentState = _currentState.copyWith(
-        currentSong: nextSong,
-        currentIndex: nextIndex,
-        position: Duration.zero,
-        duration: _parseDuration(nextSong.duration),
-      );
-      
-      _notifyStateChange();
-      
-      final result = await _audioDataSource.playSong(nextSong);
-      if (result is Error) {
-        _currentState = _currentState.copyWith(
-          playerState: AudioPlayerState.error,
-          errorMessage: result.message,
-        );
-        _notifyStateChange();
-        return result;
-      }
-      
       return const Success(null);
     } catch (e) {
       return Error<void>(
-        message: 'Erro ao tocar próxima música: $e',
+        message: 'Erro ao avançar música: $e',
       );
     }
   }
-
+  
   @override
   Future<Result<void>> previous() async {
     try {
-      if (_currentState.queue.isEmpty) {
-        return Error<void>(message: 'Fila vazia');
+      if (_playlist.isNotEmpty && _currentIndex > 0) {
+        _currentIndex--;
+        final previousSong = _playlist[_currentIndex];
+        return await playSong(previousSong);
       }
-      
-      final prevIndex = (_currentState.currentIndex - 1 + _currentState.queue.length) % _currentState.queue.length;
-      final prevSong = _currentState.queue[prevIndex];
-      
-      _currentState = _currentState.copyWith(
-        currentSong: prevSong,
-        currentIndex: prevIndex,
-        position: Duration.zero,
-        duration: _parseDuration(prevSong.duration),
-      );
-      
-      _notifyStateChange();
-      
-      final result = await _audioDataSource.playSong(prevSong);
-      if (result is Error) {
-        _currentState = _currentState.copyWith(
-          playerState: AudioPlayerState.error,
-          errorMessage: result.message,
-        );
-        _notifyStateChange();
-        return result;
-      }
-      
       return const Success(null);
     } catch (e) {
       return Error<void>(
-        message: 'Erro ao tocar música anterior: $e',
+        message: 'Erro ao retroceder música: $e',
       );
     }
   }
-
+  
   @override
   Future<Result<void>> seekTo(Duration position) async {
     try {
-      final result = await _audioDataSource.seekTo(position);
-      if (result is Success) {
-        _currentState = _currentState.copyWith(position: position);
-        _notifyStateChange();
-      }
-      return result;
+      await _audioPlayer.seek(position);
+      return const Success(null);
     } catch (e) {
       return Error<void>(
         message: 'Erro ao buscar posição: $e',
       );
     }
   }
-
+  
   @override
-  Future<Result<void>> setVolume(double volume) async {
+  Future<Result<void>> togglePlayPause() async {
     try {
-      final result = await _audioDataSource.setVolume(volume);
-      if (result is Success) {
-        _currentState = _currentState.copyWith(volume: volume);
-        _notifyStateChange();
+      if (_isPlaying) {
+        return await pause();
+      } else {
+        return await resume();
       }
-      return result;
     } catch (e) {
       return Error<void>(
-        message: 'Erro ao definir volume: $e',
+        message: 'Erro ao alternar reprodução: $e',
       );
     }
   }
-
+  
   @override
-  Future<Result<void>> setMuted(bool muted) async {
-    try {
-      final result = await _audioDataSource.setMuted(muted);
-      if (result is Success) {
-        _currentState = _currentState.copyWith(isMuted: muted);
-        _notifyStateChange();
-      }
-      return result;
-    } catch (e) {
-      return Error<void>(
-        message: 'Erro ao definir mute: $e',
-      );
-    }
+  Future<Result<Song?>> getCurrentSong() async {
+    return Success(_currentSong);
   }
-
-  @override
-  Future<Result<void>> setShuffled(bool shuffled) async {
-    try {
-      _currentState = _currentState.copyWith(isShuffled: shuffled);
-      _notifyStateChange();
-      return const Success(null);
-    } catch (e) {
-      return Error<void>(
-        message: 'Erro ao definir shuffle: $e',
-      );
-    }
-  }
-
-  @override
-  Future<Result<void>> setRepeatMode(RepeatMode repeatMode) async {
-    try {
-      _currentState = _currentState.copyWith(repeatMode: repeatMode);
-      _notifyStateChange();
-      return const Success(null);
-    } catch (e) {
-      return Error<void>(
-        message: 'Erro ao definir modo de repetição: $e',
-      );
-    }
-  }
-
-  @override
-  Future<Result<AudioState>> getCurrentState() async {
-    return Success(_currentState);
-  }
-
+  
   @override
   Future<Result<Duration>> getCurrentPosition() async {
-    return await _audioDataSource.getCurrentPosition();
+    return Success(_position);
   }
-
+  
   @override
-  Future<Result<Duration>> getCurrentDuration() async {
-    return await _audioDataSource.getCurrentDuration();
+  Future<Result<Duration>> getDuration() async {
+    return Success(_duration);
   }
-
+  
+  @override
+  Future<Result<double>> getProgress() async {
+    final progress = _duration.inMilliseconds > 0 
+        ? _position.inMilliseconds / _duration.inMilliseconds 
+        : 0.0;
+    return Success(progress);
+  }
+  
   @override
   Future<Result<bool>> isPlaying() async {
-    return await _audioDataSource.isPlaying();
+    return Success(_isPlaying);
   }
-
+  
   @override
-  Future<Result<bool>> isPaused() async {
-    return await _audioDataSource.isPaused();
-  }
-
-  @override
-  Future<Result<double>> getVolume() async {
-    return await _audioDataSource.getVolume();
-  }
-
-  @override
-  Future<Result<bool>> isMuted() async {
-    return await _audioDataSource.isMuted();
-  }
-
-  @override
-  Future<Result<bool>> isShuffled() async {
-    return Success(_currentState.isShuffled);
-  }
-
-  @override
-  Future<Result<RepeatMode>> getRepeatMode() async {
-    return Success(_currentState.repeatMode);
-  }
-
-  @override
-  Stream<AudioState> get audioStateStream => _audioStateController.stream;
-
-  // ============================================================================
-  // HELPER METHODS
-  // ============================================================================
-
-  void _setupStreams() {
-    // Listener para mudanças no estado de reprodução
-    _audioDataSource.playingStateStream.listen((isPlaying) {
-      _currentState = _currentState.copyWith(
-        playerState: isPlaying ? AudioPlayerState.playing : AudioPlayerState.paused,
-      );
-      _notifyStateChange();
-    });
-    
-    // Listener para mudanças na posição
-    _audioDataSource.positionStream.listen((position) {
-      _currentState = _currentState.copyWith(position: position);
-      _notifyStateChange();
-    });
-    
-    // Listener para mudanças na duração
-    _audioDataSource.durationStream.listen((duration) {
-      if (duration != null) {
-        _currentState = _currentState.copyWith(duration: duration);
-        _notifyStateChange();
-      }
-    });
-  }
-
-  void _notifyStateChange() {
-    _audioStateController.add(_currentState);
-  }
-
-  void _startProgressTimer() {
-    _progressTimer?.cancel();
-    _progressTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_currentState.playerState != AudioPlayerState.playing) {
-        timer.cancel();
-        return;
-      }
-      
-      // Simula progresso se necessário
-      if (kIsWeb) {
-        _currentState = _currentState.copyWith(
-          position: _currentState.position + const Duration(seconds: 1),
-        );
-        _notifyStateChange();
-        
-        if (_currentState.position >= _currentState.duration) {
-          timer.cancel();
-          next(); // Toca próxima música automaticamente
-        }
-      }
-    });
-  }
-
-  Duration _parseDuration(String durationString) {
+  Future<Result<void>> setPlaylist(List<Song> songs, {int startIndex = 0}) async {
     try {
-      final parts = durationString.split(':');
-      if (parts.length == 2) {
-        final minutes = int.parse(parts[0]);
-        final seconds = int.parse(parts[1]);
-        return Duration(minutes: minutes, seconds: seconds);
-      }
+      _playlist = songs;
+      _currentIndex = startIndex;
+      return const Success(null);
     } catch (e) {
-      debugPrint('Erro ao fazer parse da duração: $durationString');
+      return Error<void>(
+        message: 'Erro ao definir playlist: $e',
+      );
     }
-    return const Duration(minutes: 3, seconds: 30); // Duração padrão
+  }
+  
+  @override
+  Future<Result<void>> addToQueue(Song song) async {
+    try {
+      _playlist.add(song);
+      return const Success(null);
+    } catch (e) {
+      return Error<void>(
+        message: 'Erro ao adicionar à fila: $e',
+      );
+    }
+  }
+  
+  @override
+  Future<Result<void>> clearQueue() async {
+    try {
+      _playlist.clear();
+      _currentIndex = 0;
+      return const Success(null);
+    } catch (e) {
+      return Error<void>(
+        message: 'Erro ao limpar fila: $e',
+      );
+    }
+  }
+  
+  /// Dispose resources
+  void dispose() {
+    _audioPlayer.dispose();
+    _currentSongController.close();
+    _isPlayingController.close();
+    _positionController.close();
+    _durationController.close();
+    _progressController.close();
   }
 }

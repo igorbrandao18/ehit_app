@@ -5,7 +5,6 @@ import 'shared/design/app_theme.dart';
 import 'core/injection/injection_container.dart' as di;
 import 'core/routing/app_router.dart';
 import 'core/supabase/supabase_config.dart';
-import 'core/audio/audio_player_service.dart';
 import 'features/music_player/presentation/controllers/audio_player_controller.dart';
 import 'features/music_player/presentation/controllers/music_player_controller.dart';
 import 'features/music_player/presentation/controllers/playlist_controller.dart';
@@ -31,7 +30,6 @@ class EhitApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AudioPlayerService()),
         ChangeNotifierProvider(create: (_) => di.sl<AudioPlayerController>()),
         ChangeNotifierProvider(create: (_) => di.sl<AuthController>()),
         ChangeNotifierProvider(create: (_) => di.sl<MusicPlayerController>()),
