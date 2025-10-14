@@ -6,9 +6,10 @@ import '../../../../core/utils/result.dart';
 import '../../../../features/music_library/domain/entities/song.dart';
 import '../../domain/usecases/play_song_usecase.dart';
 import '../../domain/usecases/audio_player_usecases.dart';
+import '../../domain/repositories/audio_player_repository.dart';
 
 /// Audio Player Controller following Clean Architecture
-/// Uses Use Cases instead of direct service access
+/// Uses Use Cases for business logic and direct repository access for streams
 class AudioPlayerController extends ChangeNotifier {
   final PlaySongUseCase _playSongUseCase;
   final TogglePlayPauseUseCase _togglePlayPauseUseCase;
@@ -18,6 +19,7 @@ class AudioPlayerController extends ChangeNotifier {
   final GetProgressUseCase _getProgressUseCase;
   final GetCurrentPositionUseCase _getCurrentPositionUseCase;
   final GetDurationUseCase _getDurationUseCase;
+  final AudioPlayerRepository _repository;
   
   // State
   Song? _currentSong;
@@ -44,6 +46,7 @@ class AudioPlayerController extends ChangeNotifier {
     required GetProgressUseCase getProgressUseCase,
     required GetCurrentPositionUseCase getCurrentPositionUseCase,
     required GetDurationUseCase getDurationUseCase,
+    required AudioPlayerRepository repository,
   }) : _playSongUseCase = playSongUseCase,
        _togglePlayPauseUseCase = togglePlayPauseUseCase,
        _nextSongUseCase = nextSongUseCase,
@@ -51,7 +54,8 @@ class AudioPlayerController extends ChangeNotifier {
        _isPlayingUseCase = isPlayingUseCase,
        _getProgressUseCase = getProgressUseCase,
        _getCurrentPositionUseCase = getCurrentPositionUseCase,
-       _getDurationUseCase = getDurationUseCase {
+       _getDurationUseCase = getDurationUseCase,
+       _repository = repository {
     _initializeState();
   }
   
@@ -65,6 +69,32 @@ class AudioPlayerController extends ChangeNotifier {
   bool get isLoading => _isLoading;
   
   void _initializeState() {
+    // Connect to repository streams for real-time updates
+    _currentSongSubscription = _repository.currentSongStream.listen((song) {
+      _currentSong = song;
+      notifyListeners();
+    });
+    
+    _isPlayingSubscription = _repository.isPlayingStream.listen((playing) {
+      _isPlaying = playing;
+      notifyListeners();
+    });
+    
+    _positionSubscription = _repository.positionStream.listen((position) {
+      _position = position;
+      notifyListeners();
+    });
+    
+    _durationSubscription = _repository.durationStream.listen((duration) {
+      _duration = duration;
+      notifyListeners();
+    });
+    
+    _progressSubscription = _repository.progressStream.listen((progress) {
+      _progress = progress;
+      notifyListeners();
+    });
+    
     // Initialize with current state from repository
     _loadCurrentState();
   }

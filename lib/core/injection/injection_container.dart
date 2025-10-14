@@ -267,6 +267,7 @@ Future<void> init() async {
     getProgressUseCase: sl<GetProgressUseCase>(),
     getCurrentPositionUseCase: sl<GetCurrentPositionUseCase>(),
     getDurationUseCase: sl<GetDurationUseCase>(),
+    repository: sl<AudioPlayerRepository>(),
   ));
 
   // Authentication Controllers

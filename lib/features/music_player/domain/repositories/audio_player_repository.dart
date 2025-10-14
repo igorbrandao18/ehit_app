@@ -2,6 +2,7 @@
 
 import '../../../../core/utils/result.dart';
 import '../../../../features/music_library/domain/entities/song.dart';
+import 'dart:async';
 
 /// Repository interface for audio player operations
 /// Follows Clean Architecture - Domain Layer
@@ -53,4 +54,11 @@ abstract class AudioPlayerRepository {
   
   /// Clear queue
   Future<Result<void>> clearQueue();
+  
+  // Streams for real-time updates
+  Stream<Song?> get currentSongStream;
+  Stream<bool> get isPlayingStream;
+  Stream<Duration> get positionStream;
+  Stream<Duration> get durationStream;
+  Stream<double> get progressStream;
 }
