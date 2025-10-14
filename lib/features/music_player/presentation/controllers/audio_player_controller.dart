@@ -190,6 +190,42 @@ class AudioPlayerController extends ChangeNotifier {
     );
   }
   
+  /// Play previous song
+  Future<void> previous() async {
+    _clearError();
+    
+    // TODO: Implement PreviousSongUseCase
+    // For now, we'll use the repository directly
+    final result = await _repository.previous();
+    
+    result.when(
+      success: (_) {
+        // State will be updated via streams
+      },
+      error: (message, code) {
+        _errorMessage = message;
+        notifyListeners();
+      },
+    );
+  }
+  
+  /// Seek to specific position
+  Future<void> seekTo(Duration position) async {
+    _clearError();
+    
+    final result = await _repository.seekTo(position);
+    
+    result.when(
+      success: (_) {
+        // Position will be updated via streams
+      },
+      error: (message, code) {
+        _errorMessage = message;
+        notifyListeners();
+      },
+    );
+  }
+  
   void _setLoading(bool loading) {
     _isLoading = loading;
     notifyListeners();

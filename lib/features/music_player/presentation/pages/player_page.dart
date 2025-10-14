@@ -208,8 +208,7 @@ class PlayerPage extends StatelessWidget {
               final newPosition = Duration(
                 milliseconds: (value * audioPlayer.duration.inMilliseconds).round(),
               );
-              // TODO: Implement seek functionality
-              print('Seek to: $newPosition');
+              audioPlayer.seekTo(newPosition);
             },
           ),
         ),
@@ -247,10 +246,7 @@ class PlayerPage extends StatelessWidget {
         _buildControlButton(
           context: context,
           icon: Icons.skip_previous,
-          onTap: () {
-            // TODO: Implement previous functionality
-            print('Previous song');
-          },
+          onTap: () => audioPlayer.previous(),
         ),
         
         // Botão play/pause principal
