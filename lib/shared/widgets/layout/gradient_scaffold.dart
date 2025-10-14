@@ -1,6 +1,7 @@
 // shared/widgets/layout/gradient_scaffold.dart
 import 'package:flutter/material.dart';
 import '../../design/app_colors.dart';
+import 'app_layout_with_mini_player.dart';
 
 /// Scaffold com gradiente de fundo reutilizável
 class GradientScaffold extends StatelessWidget {
@@ -12,6 +13,7 @@ class GradientScaffold extends StatelessWidget {
   final FloatingActionButtonLocation? floatingActionButtonLocation;
   final Color? backgroundColor;
   final LinearGradient? gradient;
+  final bool showMiniPlayer;
 
   const GradientScaffold({
     super.key,
@@ -23,10 +25,20 @@ class GradientScaffold extends StatelessWidget {
     this.floatingActionButtonLocation,
     this.backgroundColor,
     this.gradient,
+    this.showMiniPlayer = true,
   });
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldBody = Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        gradient: gradient ?? AppColors.subtleGradient,
+      ),
+      child: body,
+    );
+
     return Scaffold(
       extendBodyBehindAppBar: extendBodyBehindAppBar,
       appBar: appBar,
@@ -34,14 +46,9 @@ class GradientScaffold extends StatelessWidget {
       floatingActionButton: floatingActionButton,
       floatingActionButtonLocation: floatingActionButtonLocation,
       backgroundColor: backgroundColor ?? Colors.transparent,
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          gradient: gradient ?? AppColors.subtleGradient,
-        ),
-        child: body,
-      ),
+      body: showMiniPlayer 
+          ? AppLayoutWithMiniPlayer(child: scaffoldBody)
+          : scaffoldBody,
     );
   }
 }

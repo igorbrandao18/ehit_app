@@ -39,7 +39,7 @@ class ArtistHeroSection extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = constraints.maxWidth;
-        final imageSize = screenWidth * 0.6; // 60% da largura da tela
+        final imageSize = screenWidth * 0.4; // 40% da largura da tela (reduzido de 60%)
         
         return Container(
           width: imageSize,

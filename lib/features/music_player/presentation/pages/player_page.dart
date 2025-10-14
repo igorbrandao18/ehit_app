@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../shared/design/app_colors.dart';
+import '../../../../shared/widgets/layout/gradient_scaffold.dart';
 import '../../../../core/audio/audio_player_service.dart';
 import '../controllers/music_player_controller.dart';
 
@@ -20,15 +21,11 @@ class PlayerPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AudioPlayerService>(
       builder: (context, audioPlayer, child) {
-        return Scaffold(
-          backgroundColor: AppColors.primaryRed,
+        return GradientScaffold(
+          showMiniPlayer: false, // Não mostrar mini player na página do player
           body: SafeArea(
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: AppColors.subtleGradient,
-              ),
-              child: Column(
-                children: [
+            child: Column(
+              children: [
                   // Header com seta para voltar e título
                   _buildHeader(context),
                   
@@ -65,8 +62,7 @@ class PlayerPage extends StatelessWidget {
                       ),
                     ),
                   ),
-                ],
-              ),
+              ],
             ),
           ),
         );
