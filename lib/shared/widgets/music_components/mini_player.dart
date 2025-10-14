@@ -21,7 +21,7 @@ class MiniPlayer extends StatelessWidget {
         }
 
         return Container(
-          height: 80,
+          height: 90,
           decoration: BoxDecoration(
             gradient: AppColors.subtleGradient,
             boxShadow: [
@@ -42,7 +42,7 @@ class MiniPlayer extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: DesignTokens.spaceMD,
-                  vertical: DesignTokens.spaceSM,
+                  vertical: DesignTokens.spaceXS,
                 ),
                 child: Row(
                   children: [
@@ -134,7 +134,7 @@ class MiniPlayer extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: 1),
         Text(
           audioPlayer.currentSong!.artist,
           style: const TextStyle(
@@ -145,7 +145,7 @@ class MiniPlayer extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 2),
         Text(
           '${_formatDuration(audioPlayer.position)} / ${_formatDuration(audioPlayer.duration)}',
           style: const TextStyle(
