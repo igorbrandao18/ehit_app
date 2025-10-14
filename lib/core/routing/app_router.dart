@@ -9,6 +9,7 @@ import '../../features/music_library/presentation/pages/artist_detail_page.dart'
 import '../../features/music_library/presentation/controllers/music_library_controller.dart';
 import '../../features/music_player/presentation/pages/player_page.dart';
 import '../../shared/design/app_theme.dart';
+import '../../shared/widgets/layout/gradient_scaffold.dart';
 import 'app_routes.dart';
 
 /// Configuração principal do roteamento da aplicação
@@ -219,7 +220,7 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GradientScaffold(
       appBar: AppBar(
         title: const Text('Buscar'),
         backgroundColor: Colors.transparent,
@@ -237,7 +238,7 @@ class LibraryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GradientScaffold(
       appBar: AppBar(
         title: const Text('Sua Biblioteca'),
         backgroundColor: Colors.transparent,
@@ -255,7 +256,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GradientScaffold(
       appBar: AppBar(
         title: const Text('Perfil'),
         backgroundColor: Colors.transparent,
@@ -276,7 +277,7 @@ class AlbumDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GradientScaffold(
       appBar: AppBar(
         title: Text('Álbum: $albumId'),
         backgroundColor: Colors.transparent,
@@ -296,7 +297,7 @@ class PlaylistDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return GradientScaffold(
       appBar: AppBar(
         title: Text('Playlist: $playlistId'),
         backgroundColor: Colors.transparent,

@@ -71,11 +71,11 @@ class AppColors {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xFFDA3637), // Bright red (top)
-      Color(0xFFB82D2E), // Medium red
-      Color(0xFF8B0000), // Dark red (bottom)
+      Color(0xFF8B0000), // Dark red (top) - como no player
+      Color(0xFF4B0000), // Darker red (middle) - como no player
+      Colors.black, // Black (bottom) - como no player
     ],
-    stops: [0.0, 0.6, 1.0],
+    stops: [0.0, 0.5, 1.0],
   );
 
   static const LinearGradient cardGradient = LinearGradient(

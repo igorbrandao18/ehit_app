@@ -8,6 +8,7 @@ import '../../../../shared/widgets/layout/section_header.dart';
 import '../../../../shared/widgets/layout/loading_section.dart';
 import '../../../../shared/widgets/music_components/artist_card.dart';
 import '../../../../shared/design/design_tokens.dart';
+import '../../../../shared/design/app_colors.dart';
 import '../controllers/music_library_controller.dart';
 import '../../domain/entities/artist.dart';
 
@@ -24,50 +25,37 @@ class CategoryDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFFDA3637),
-            Color(0xFF8B0000),
-          ],
-        ),
-      ),
-      child: Scaffold(
+    return GradientScaffold(
+      appBar: AppBar(
         backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-            onPressed: () => context.pop(),
-          ),
-          title: Text(
-            categoryTitle,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          centerTitle: true,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => context.pop(),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header section
-              _buildHeaderSection(),
-              
-              // Artists section
-              _buildArtistsSection(),
-              
-              // Bottom padding
-              const SizedBox(height: 100),
-            ],
+        title: Text(
+          categoryTitle,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
           ),
+        ),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header section
+            _buildHeaderSection(),
+            
+            // Artists section
+            _buildArtistsSection(),
+            
+            // Bottom padding
+            const SizedBox(height: 100),
+          ],
         ),
       ),
     );

@@ -21,19 +21,11 @@ class PlayerPage extends StatelessWidget {
     return Consumer<AudioPlayerService>(
       builder: (context, audioPlayer, child) {
         return Scaffold(
-          backgroundColor: const Color(0xFF8B0000), // Vermelho escuro como na imagem
+          backgroundColor: AppColors.primaryRed,
           body: SafeArea(
             child: Container(
               decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF8B0000), // Vermelho escuro
-                    Color(0xFF4B0000), // Vermelho mais escuro
-                    Colors.black,
-                  ],
-                ),
+                gradient: AppColors.subtleGradient,
               ),
               child: Column(
                 children: [
@@ -315,7 +307,7 @@ class PlayerPage extends StatelessWidget {
         width: buttonSize,
         height: buttonSize,
         decoration: const BoxDecoration(
-          color: Color(0xFF8B0000), // Vermelho como na imagem
+          color: AppColors.primaryRed,
           shape: BoxShape.circle,
         ),
         child: Icon(
