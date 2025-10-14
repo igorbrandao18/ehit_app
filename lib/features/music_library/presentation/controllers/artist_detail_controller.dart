@@ -88,14 +88,31 @@ class ArtistDetailController extends ChangeNotifier {
     
     // Calcula a duração total
     int totalDurationMs = 0;
+    int songsWithValidDuration = 0;
+    
     for (final song in songs) {
-      totalDurationMs += _parseDurationToMs(song.duration);
+      final durationMs = _parseDurationToMs(song.duration);
+      if (durationMs > 0) {
+        totalDurationMs += durationMs;
+        songsWithValidDuration++;
+      }
     }
     
-    // Converte para formato legível (MM:SS)
-    final totalMinutes = totalDurationMs ~/ (60 * 1000);
-    final totalSeconds = (totalDurationMs % (60 * 1000)) ~/ 1000;
-    final totalDuration = '${totalMinutes.toString().padLeft(2, '0')}:${totalSeconds.toString().padLeft(2, '0')}';
+    // Se não há durações válidas, usa uma duração padrão estimada
+    String totalDuration;
+    if (totalDurationMs > 0) {
+      // Converte para formato legível (MM:SS)
+      final totalMinutes = totalDurationMs ~/ (60 * 1000);
+      final totalSeconds = (totalDurationMs % (60 * 1000)) ~/ 1000;
+      totalDuration = '${totalMinutes.toString().padLeft(2, '0')}:${totalSeconds.toString().padLeft(2, '0')}';
+    } else {
+      // Duração padrão estimada: 3:30 por música
+      final estimatedMinutes = totalSongs * 3;
+      final estimatedSeconds = totalSongs * 30;
+      final finalMinutes = estimatedMinutes + (estimatedSeconds ~/ 60);
+      final finalSeconds = estimatedSeconds % 60;
+      totalDuration = '${finalMinutes.toString().padLeft(2, '0')}:${finalSeconds.toString().padLeft(2, '0')}';
+    }
     
     // Atualiza o artista com as informações calculadas
     _artist = _artist!.copyWith(
@@ -104,20 +121,25 @@ class ArtistDetailController extends ChangeNotifier {
     );
     
     debugPrint('ArtistDetailController: Updated artist - $totalSongs songs, $totalDuration total duration');
+    debugPrint('ArtistDetailController: Songs with valid duration: $songsWithValidDuration/$totalSongs');
   }
   
   /// Converte string de duração (MM:SS) para milissegundos
   int _parseDurationToMs(String duration) {
+    debugPrint('Parsing duration: "$duration"');
     try {
       final parts = duration.split(':');
       if (parts.length == 2) {
         final minutes = int.parse(parts[0]);
         final seconds = int.parse(parts[1]);
-        return (minutes * 60 + seconds) * 1000;
+        final totalMs = (minutes * 60 + seconds) * 1000;
+        debugPrint('Parsed: $minutes minutes, $seconds seconds = $totalMs ms');
+        return totalMs;
       }
     } catch (e) {
-      debugPrint('Error parsing duration: $duration - $e');
+      debugPrint('Error parsing duration: "$duration" - $e');
     }
+    debugPrint('Failed to parse duration, returning 0');
     return 0; // Default to 0 if parsing fails
   }
 
