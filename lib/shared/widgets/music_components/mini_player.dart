@@ -145,8 +145,24 @@ class MiniPlayer extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
+        const SizedBox(height: 4),
+        Text(
+          '${_formatDuration(audioPlayer.position)} / ${_formatDuration(audioPlayer.duration)}',
+          style: const TextStyle(
+            color: Colors.white60,
+            fontSize: DesignTokens.fontSizeXS,
+            fontWeight: FontWeight.w400,
+          ),
+        ),
       ],
     );
+  }
+  
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+    return '$minutes:$seconds';
   }
 
   Widget _buildControls(AudioPlayerController audioPlayer) {
@@ -161,7 +177,7 @@ class MiniPlayer extends StatelessWidget {
           child: Container(
             width: 40,
             height: 40,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.primaryRed,
               shape: BoxShape.circle,
             ),
