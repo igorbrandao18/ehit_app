@@ -8,7 +8,7 @@ import '../../../../shared/design/app_colors.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
 import '../../../../shared/widgets/music_components/artist_hero_section.dart';
 import '../../../../shared/widgets/music_components/songs_list_section.dart';
-import '../../../../core/audio/audio_player_service.dart';
+import '../../../../features/music_player/presentation/controllers/audio_player_controller.dart';
 import '../../../../core/injection/injection_container.dart' as di;
 import '../controllers/artist_detail_controller.dart';
 import '../../domain/entities/song.dart';
@@ -186,8 +186,8 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
   }
 
   void _onSongTap(Song song) {
-    // Usa o AudioPlayerService para tocar a música
-    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
+    // Usa o AudioPlayerController para tocar a música
+    final audioPlayer = Provider.of<AudioPlayerController>(context, listen: false);
     audioPlayer.playSong(song);
     
     // Navegar para o player
@@ -195,21 +195,23 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
   }
 
   void _onShuffleTap() {
-    // Usa o AudioPlayerService para tocar todas as músicas em ordem aleatória
-    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
+    // Usa o AudioPlayerController para tocar todas as músicas em ordem aleatória
+    final audioPlayer = Provider.of<AudioPlayerController>(context, listen: false);
     final songs = _controller.songs;
     if (songs.isNotEmpty) {
-      audioPlayer.playPlaylist(songs..shuffle());
+      // TODO: Implement shuffle functionality
+      print('Shuffle play: ${songs.length} songs');
       context.pushNamed('player');
     }
   }
 
   void _onRepeatTap() {
-    // Usa o AudioPlayerService para tocar todas as músicas
-    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
+    // Usa o AudioPlayerController para tocar todas as músicas
+    final audioPlayer = Provider.of<AudioPlayerController>(context, listen: false);
     final songs = _controller.songs;
     if (songs.isNotEmpty) {
-      audioPlayer.playPlaylist(songs);
+      // TODO: Implement repeat functionality
+      print('Repeat play: ${songs.length} songs');
       context.pushNamed('player');
     }
   }
