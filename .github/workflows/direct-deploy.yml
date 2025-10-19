@@ -46,6 +46,7 @@ jobs:
         TEAM_ID: ${{ secrets.TEAM_ID }}
         ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
         APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       run: |
         cd ios
         bundle exec fastlane beta
