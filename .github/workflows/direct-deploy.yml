@@ -48,20 +48,7 @@ jobs:
         APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
       run: |
         cd ios
-        # Increment build number
-        bundle exec fastlane run increment_build_number xcodeproj:"Runner.xcodeproj"
-        
-        # Build the iOS app
-        bundle exec fastlane run build_app \
-          workspace:"Runner.xcworkspace" \
-          scheme:"Runner" \
-          export_method:"app-store" \
-          export_options:"{method: 'app-store', teamID: '$TEAM_ID', uploadBitcode: false, uploadSymbols: true, compileBitcode: false}"
-        
-        # Upload to TestFlight
-        bundle exec fastlane run upload_to_testflight \
-          skip_waiting_for_build_processing:true \
-          changelog:"New build with latest features and improvements"
+        bundle exec fastlane beta
         
     - name: Deployment Success
       if: success()
