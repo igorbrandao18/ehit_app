@@ -33,6 +33,18 @@ jobs:
         flutter pub get
         cd ios && bundle install
         
+    - name: Setup Match (First Time)
+      env:
+        APPLE_ID: ${{ secrets.APPLE_ID }}
+        APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+        TEAM_ID: ${{ secrets.TEAM_ID }}
+        ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
+        APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      run: |
+        cd ios
+        bundle exec fastlane match_setup || echo "Match already configured"
+        
     - name: Build and Deploy
       env:
         APPLE_ID: ${{ secrets.APPLE_ID }}
@@ -40,6 +52,7 @@ jobs:
         TEAM_ID: ${{ secrets.TEAM_ID }}
         ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
         APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       run: |
         cd ios
         bundle exec fastlane beta

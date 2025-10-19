@@ -27,6 +27,11 @@ Acesse: `Settings` → `Secrets and variables` → `Actions` → `New repository
 - **Valor**: `br.com.brandaodeveloper.ehitapp`
 - **Descrição**: Bundle identifier do app
 
+### 6. MATCH_PASSWORD
+- **Valor**: Uma senha forte para criptografar os certificados
+- **Descrição**: Senha para criptografar os certificados no repositório Git
+- **⚠️ Importante**: Use uma senha forte e guarde-a bem! Você precisará dela sempre.
+
 ## 🔑 Como Configurar App-Specific Password
 
 1. Acesse [appleid.apple.com](https://appleid.apple.com)

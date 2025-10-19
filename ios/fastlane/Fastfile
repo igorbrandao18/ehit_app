@@ -18,6 +18,9 @@ default_platform(:ios)
 platform :ios do
   desc "Push a new beta build to TestFlight"
   lane :beta do
+    # Sync certificates and provisioning profiles
+    match(type: "appstore", readonly: true)
+    
     # Build Flutter app first
     flutter_build_ios
     
@@ -49,6 +52,9 @@ platform :ios do
   lane :beta_with_changelog do |options|
     changelog = options[:changelog] || "New build with latest features and improvements"
     
+    # Sync certificates and provisioning profiles
+    match(type: "appstore", readonly: true)
+    
     # Build Flutter app first
     flutter_build_ios
     
@@ -78,6 +84,9 @@ platform :ios do
 
   desc "Build app for App Store"
   lane :release do
+    # Sync certificates and provisioning profiles
+    match(type: "appstore", readonly: true)
+    
     # Build Flutter app first
     flutter_build_ios
     
@@ -104,6 +113,11 @@ platform :ios do
       skip_metadata: false,
       skip_screenshots: false
     )
+  end
+
+  desc "Setup certificates and provisioning profiles for the first time"
+  lane :match_setup do
+    match(type: "appstore", force_for_new_devices: true)
   end
 
   desc "Build Flutter iOS app"
