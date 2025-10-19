@@ -31,7 +31,10 @@ jobs:
     - name: Install dependencies
       run: |
         flutter pub get
-        cd ios && bundle install
+        cd ios
+        # Clean bundle cache and reinstall
+        bundle clean --force
+        bundle install
         # Install CocoaPods dependencies
         bundle exec pod install
         
