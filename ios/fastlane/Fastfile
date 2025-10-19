@@ -31,14 +31,7 @@ platform :ios do
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
-      export_method: "app-store",
-      export_options: {
-        method: "app-store",
-        teamID: "W66MTSPZ69",
-        uploadBitcode: false,
-        uploadSymbols: true,
-        compileBitcode: false
-      }
+      export_method: "app-store"
     )
     
     # Upload to TestFlight
@@ -65,14 +58,7 @@ platform :ios do
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
-      export_method: "app-store",
-      export_options: {
-        method: "app-store",
-        teamID: "W66MTSPZ69",
-        uploadBitcode: false,
-        uploadSymbols: true,
-        compileBitcode: false
-      }
+      export_method: "app-store"
     )
     
     # Upload to TestFlight
@@ -97,14 +83,7 @@ platform :ios do
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
-      export_method: "app-store",
-      export_options: {
-        method: "app-store",
-        teamID: "W66MTSPZ69",
-        uploadBitcode: false,
-        uploadSymbols: true,
-        compileBitcode: false
-      }
+      export_method: "app-store"
     )
     
     # Upload to App Store
