@@ -1,10 +1,9 @@
-# Temporarily disabled - using deploy-no-tests.yml instead
-# name: Simple TestFlight Deploy
+name: Deploy to TestFlight (No Tests)
 
-# on:
-#   push:
-#     branches: [ main ]
-#   workflow_dispatch:
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
 env:
   FLUTTER_VERSION: '3.24.0'
@@ -40,7 +39,7 @@ jobs:
         flutter pub get
         flutter build ios --release --no-codesign
         
-    - name: Build and Deploy to TestFlight (No Match)
+    - name: Build and Deploy to TestFlight
       env:
         APPLE_ID: ${{ secrets.APPLE_ID }}
         APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
