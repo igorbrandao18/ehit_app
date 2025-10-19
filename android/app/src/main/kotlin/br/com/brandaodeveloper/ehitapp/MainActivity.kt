@@ -1,4 +1,4 @@
-package com.example.ehit_app
+package br.com.brandaodeveloper.ehitapp
 
 import io.flutter.embedding.android.FlutterActivity
 

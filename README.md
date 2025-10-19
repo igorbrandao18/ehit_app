@@ -2,6 +2,58 @@
 
 A modern Flutter music streaming application built with Clean Architecture, featuring Spotify-style functionality with comprehensive music library, playlists, user authentication, and social features.
 
+## 🚀 Deploy Automático
+
+**A cada push na branch `main`, o app é automaticamente enviado para o TestFlight!**
+
+### Como Funciona
+
+1. **Push para main** → GitHub Actions executa automaticamente
+2. **Build Flutter** → Compila o projeto iOS
+3. **Deploy TestFlight** → Envia para o TestFlight via Fastlane
+4. **Notificação** → Build disponível para testes
+
+### Setup do Deploy Automático
+
+1. **Executar Setup Automático**
+   ```bash
+   ./setup.sh
+   ```
+
+2. **Configurar Secrets no GitHub**
+   Acesse: `Settings` → `Secrets and variables` → `Actions`
+   
+   **Secrets necessários:**
+   - `APPLE_ID`: `brandaodeveloperapp@gmail.com`
+   - `APPLE_ID_PASSWORD`: Sua senha do Apple ID (use App-Specific Password)
+   - `TEAM_ID`: `W66MTSPZ69`
+   - `ITC_TEAM_ID`: `127134714`
+   - `APP_IDENTIFIER`: `br.com.brandaodeveloper.ehitapp`
+
+3. **Primeiro Deploy**
+   ```bash
+   git add .
+   git commit -m "Setup Fastlane and GitHub Actions"
+   git push origin main
+   ```
+
+### Comandos de Deploy Local
+
+```bash
+# Deploy para TestFlight
+./fastlane.sh beta
+
+# Deploy com changelog customizado
+./fastlane.sh beta-custom "Fixed login bug and improved performance"
+
+# Deploy para App Store
+./fastlane.sh release
+```
+
+### Bundle Identifier
+- **iOS**: `br.com.brandaodeveloper.ehitapp`
+- **Android**: `br.com.brandaodeveloper.ehitapp`
+
 ## 🎯 Overview
 
 ÊHIT is a Spotify-style music streaming platform that provides users with:
