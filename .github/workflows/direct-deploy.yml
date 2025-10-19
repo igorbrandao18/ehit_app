@@ -1,10 +1,9 @@
-# Temporarily disabled - using direct-deploy.yml instead
-# name: Simple Deploy to TestFlight
+name: Direct Deploy to TestFlight
 
-# on:
-#   push:
-#     branches: [ main ]
-#   workflow_dispatch:
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
 env:
   FLUTTER_VERSION: '3.24.0'
