@@ -1,9 +1,10 @@
-name: Deploy to TestFlight (No Tests)
+# Temporarily disabled - using auto-deploy.yml instead
+# name: Deploy to TestFlight (No Tests)
 
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+# on:
+#   push:
+#     branches: [ main ]
+#   workflow_dispatch:
 
 env:
   FLUTTER_VERSION: '3.24.0'

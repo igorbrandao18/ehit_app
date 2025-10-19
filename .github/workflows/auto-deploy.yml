@@ -1,10 +1,9 @@
-# Temporarily disabled - using simple-deploy.yml instead
-# name: Auto Deploy to TestFlight
+name: Auto Deploy to TestFlight
 
-# on:
-#   push:
-#     branches: [ main ]
-#   workflow_dispatch: # Permite execução manual
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Permite execução manual
 
 env:
   FLUTTER_VERSION: '3.24.0'
