@@ -1,10 +1,9 @@
-# Temporarily disabled - using simple-testflight.yml instead
-# name: Direct Deploy to TestFlight
+name: Simple TestFlight Deploy
 
-# on:
-#   push:
-#     branches: [ main ]
-#   workflow_dispatch:
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
 env:
   FLUTTER_VERSION: '3.24.0'
@@ -40,29 +39,19 @@ jobs:
         flutter pub get
         flutter build ios --release --no-codesign
         
-    - name: Setup Match (First Time)
+    - name: Build and Deploy to TestFlight (No Match)
       env:
         APPLE_ID: ${{ secrets.APPLE_ID }}
         APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
         TEAM_ID: ${{ secrets.TEAM_ID }}
         ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
         APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
-        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       run: |
         cd ios
-        bundle exec fastlane match_setup || echo "Match already configured"
-        
-    - name: Build and Deploy to TestFlight
-      env:
-        APPLE_ID: ${{ secrets.APPLE_ID }}
-        APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
-        TEAM_ID: ${{ secrets.TEAM_ID }}
-        ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
-        APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
-        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-      run: |
-        cd ios
-        bundle exec fastlane beta
+        # Build without Match - use existing certificates
+        bundle exec fastlane run increment_build_number xcodeproj:"Runner.xcodeproj"
+        bundle exec fastlane run build_app workspace:"Runner.xcworkspace" scheme:"Runner" export_method:"app-store"
+        bundle exec fastlane run upload_to_testflight skip_waiting_for_build_processing:true changelog:"New build with latest features and improvements"
         
     - name: Deployment Success
       if: success()
