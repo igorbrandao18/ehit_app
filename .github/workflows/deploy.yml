@@ -32,8 +32,7 @@ jobs:
       run: |
         flutter pub get
         cd ios
-        # Clean bundle cache and reinstall
-        bundle clean --force
+        # Install Ruby dependencies
         bundle install
         # Install CocoaPods dependencies
         bundle exec pod install
