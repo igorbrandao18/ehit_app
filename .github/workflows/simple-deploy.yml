@@ -1,10 +1,9 @@
-# Temporarily disabled - using simple-deploy.yml instead
-# name: Auto Deploy to TestFlight
+name: Simple Deploy to TestFlight
 
-# on:
-#   push:
-#     branches: [ main ]
-#   workflow_dispatch: # Permite execução manual
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
 env:
   FLUTTER_VERSION: '3.24.0'
@@ -34,39 +33,40 @@ jobs:
         flutter pub get
         cd ios && bundle install
         
-    - name: Setup Match (First Time)
-      env:
-        APPLE_ID: ${{ secrets.APPLE_ID }}
-        APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
-        TEAM_ID: ${{ secrets.TEAM_ID }}
-        ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
-        APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
-        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-        MATCH_GITHUB_TOKEN: ${{ secrets.MATCH_GITHUB_TOKEN }}
+    - name: Build Flutter iOS
       run: |
-        cd ios
-        export GIT_TOKEN="$MATCH_GITHUB_TOKEN"
-        bundle exec fastlane match_setup || echo "Match already configured"
+        flutter clean
+        flutter pub get
+        flutter build ios --release --no-codesign
         
-    - name: Build and Deploy
+    - name: Build and Deploy to TestFlight
       env:
         APPLE_ID: ${{ secrets.APPLE_ID }}
         APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
         TEAM_ID: ${{ secrets.TEAM_ID }}
         ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
         APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
-        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-        MATCH_GITHUB_TOKEN: ${{ secrets.MATCH_GITHUB_TOKEN }}
       run: |
         cd ios
-        export GIT_TOKEN="$MATCH_GITHUB_TOKEN"
-        bundle exec fastlane beta
+        # Increment build number
+        bundle exec fastlane run increment_build_number xcodeproj:"Runner.xcodeproj"
+        
+        # Build the iOS app
+        bundle exec fastlane run build_app \
+          workspace:"Runner.xcworkspace" \
+          scheme:"Runner" \
+          export_method:"app-store" \
+          export_options:"{method: 'app-store', teamID: '$TEAM_ID', uploadBitcode: false, uploadSymbols: true, compileBitcode: false}"
+        
+        # Upload to TestFlight
+        bundle exec fastlane run upload_to_testflight \
+          skip_waiting_for_build_processing:true \
+          changelog:"New build with latest features and improvements"
         
     - name: Deployment Success
       if: success()
       run: |
         echo "🎉 App deployed to TestFlight successfully!"
-        echo "📱 Check your TestFlight dashboard for the new build"
         
     - name: Deployment Failed
       if: failure()
