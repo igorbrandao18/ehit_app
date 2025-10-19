@@ -32,9 +32,8 @@ jobs:
       run: |
         flutter pub get
         cd ios && bundle install
-        # Install CocoaPods
-        sudo gem install cocoapods
-        pod install
+        # Install CocoaPods dependencies
+        bundle exec pod install
         
     - name: Build Flutter iOS
       run: |
