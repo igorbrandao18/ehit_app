@@ -41,8 +41,10 @@ jobs:
         ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
         APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        MATCH_GITHUB_TOKEN: ${{ secrets.MATCH_GITHUB_TOKEN }}
       run: |
         cd ios
+        export GIT_TOKEN="$MATCH_GITHUB_TOKEN"
         bundle exec fastlane match_setup || echo "Match already configured"
         
     - name: Build and Deploy
@@ -53,8 +55,10 @@ jobs:
         ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
         APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
         MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        MATCH_GITHUB_TOKEN: ${{ secrets.MATCH_GITHUB_TOKEN }}
       run: |
         cd ios
+        export GIT_TOKEN="$MATCH_GITHUB_TOKEN"
         bundle exec fastlane beta
         
     - name: Deployment Success

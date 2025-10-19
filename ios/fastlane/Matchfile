@@ -1,4 +1,4 @@
-git_url("git@github.com:igorbrandao18/ehit_certs_apple.git")
+git_url("https://github.com/igorbrandao18/ehit_certs_apple.git")
 
 storage_mode("git")
 
