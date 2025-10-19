@@ -1,4 +1,4 @@
-name: Deploy to TestFlight (No Tests)
+name: Deploy to TestFlight
 
 on:
   push:
@@ -39,7 +39,7 @@ jobs:
         flutter pub get
         flutter build ios --release --no-codesign
         
-    - name: Setup Match (First Time)
+    - name: Setup Match
       env:
         APPLE_ID: ${{ secrets.APPLE_ID }}
         APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
