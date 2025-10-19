@@ -43,18 +43,6 @@ jobs:
         flutter pub get
         flutter build ios --release --no-codesign
         
-    - name: Setup Match
-      env:
-        APPLE_ID: ${{ secrets.APPLE_ID }}
-        APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
-        TEAM_ID: ${{ secrets.TEAM_ID }}
-        ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
-        APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
-        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-      run: |
-        cd ios
-        bundle exec fastlane match_setup || echo "Match already configured"
-        
     - name: Build and Deploy to TestFlight
       env:
         APPLE_ID: ${{ secrets.APPLE_ID }}
@@ -62,10 +50,9 @@ jobs:
         TEAM_ID: ${{ secrets.TEAM_ID }}
         ITC_TEAM_ID: ${{ secrets.ITC_TEAM_ID }}
         APP_IDENTIFIER: ${{ secrets.APP_IDENTIFIER }}
-        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
       run: |
         cd ios
-        bundle exec fastlane beta
+        bundle exec fastlane beta_without_match
         
     - name: Notify deployment status
       if: always()

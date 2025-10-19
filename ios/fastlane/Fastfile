@@ -99,6 +99,28 @@ platform :ios do
     match(type: "appstore", force_for_new_devices: true)
   end
 
+  desc "Build and upload to TestFlight without Match (using local certificates)"
+  lane :beta_without_match do
+    # Build Flutter app first
+    flutter_build_ios
+    
+    # Increment build number
+    increment_build_number(xcodeproj: "Runner.xcodeproj")
+    
+    # Build the iOS app
+    build_app(
+      workspace: "Runner.xcworkspace",
+      scheme: "Runner",
+      export_method: "app-store"
+    )
+    
+    # Upload to TestFlight
+    upload_to_testflight(
+      skip_waiting_for_build_processing: true,
+      changelog: "New build with latest features and improvements"
+    )
+  end
+
   desc "Build Flutter iOS app"
   private_lane :flutter_build_ios do
     sh("cd .. && flutter clean")
