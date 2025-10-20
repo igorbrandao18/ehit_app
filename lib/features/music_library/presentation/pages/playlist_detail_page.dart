@@ -120,7 +120,7 @@ class PlaylistDetailPage extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: DesignTokens.sectionSpacing),
+          SizedBox(height: DesignTokens.spaceMD), // Reduzido de sectionSpacing para spaceMD
           
           // Playlist info - Centralizado
           Center(
@@ -130,7 +130,7 @@ class PlaylistDetailPage extends StatelessWidget {
                   playlist.name,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: DesignTokens.titleFontSize, // 20px (menor que headingFontSize 24px)
+                    fontSize: DesignTokens.subtitleFontSize, // Diminuído de titleFontSize (20px) para subtitleFontSize (18px)
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
