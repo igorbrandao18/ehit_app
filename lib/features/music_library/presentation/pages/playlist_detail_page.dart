@@ -264,7 +264,13 @@ class PlaylistDetailPage extends StatelessWidget {
     
     int totalSeconds = 0;
     for (final song in playlist.musicsData) {
-      totalSeconds += song.duration;
+      // Converter duration de string (formato "MM:SS") para segundos
+      final durationParts = song.duration.split(':');
+      if (durationParts.length == 2) {
+        final minutes = int.tryParse(durationParts[0]) ?? 0;
+        final seconds = int.tryParse(durationParts[1]) ?? 0;
+        totalSeconds += minutes * 60 + seconds;
+      }
     }
     
     int minutes = totalSeconds ~/ 60;
