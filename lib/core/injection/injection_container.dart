@@ -4,6 +4,9 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Core Services
+import '../audio/audio_player_service.dart';
+
 // Data Sources - Music Library
 import '../../features/music_library/data/datasources/music_remote_datasource.dart';
 import '../../features/music_library/data/datasources/music_local_datasource.dart';
@@ -84,6 +87,9 @@ Future<void> init() async {
   // ============================================================================
   // SERVICES
   // ============================================================================
+  
+  // Audio Player Service
+  sl.registerLazySingleton<AudioPlayerService>(() => AudioPlayerService());
   
   // Offline Audio Service
   sl.registerLazySingleton<OfflineAudioService>(() => OfflineAudioService());

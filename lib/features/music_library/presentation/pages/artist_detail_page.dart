@@ -8,7 +8,7 @@ import '../../../../shared/design/app_colors.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
 import '../../../../shared/widgets/music_components/artist_hero_section.dart';
 import '../../../../shared/widgets/music_components/songs_list_section.dart';
-import '../../../../features/music_player/presentation/controllers/audio_player_controller.dart';
+import '../../../../core/audio/audio_player_service.dart';
 import '../../../../core/injection/injection_container.dart' as di;
 import '../controllers/artist_detail_controller.dart';
 import '../../domain/entities/song.dart';
@@ -186,40 +186,46 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
   }
 
   void _onSongTap(Song song) {
-    // Usa o AudioPlayerController para tocar a música
-    final audioPlayer = Provider.of<AudioPlayerController>(context, listen: false);
+    // Usa o AudioPlayerService para tocar a música
+    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
     final songs = _controller.songs;
     
-    // Configura a playlist com todas as músicas do artista antes de tocar
-    if (songs.isNotEmpty) {
-      audioPlayer.setPlaylist(songs);
-      print('🎵 Playlist configurada com ${songs.length} músicas do artista');
-    }
+    // Encontra o índice da música na lista
+    final songIndex = songs.indexWhere((s) => s.id == song.id);
     
-    audioPlayer.playSong(song);
+    if (songIndex >= 0) {
+      audioPlayer.playPlaylist(songs, startIndex: songIndex);
+      debugPrint('🎵 Tocando artista: ${_controller.artist!.name}');
+      debugPrint('🎵 Música atual: ${song.title} - ${song.artist}');
+    } else {
+      // Fallback: toca apenas a música
+      audioPlayer.playSong(song);
+    }
     
     // Navegar para o player
     context.pushNamed('player');
   }
 
   void _onShuffleTap() {
-    // Usa o AudioPlayerController para tocar todas as músicas em ordem aleatória
-    final audioPlayer = Provider.of<AudioPlayerController>(context, listen: false);
+    // Usa o AudioPlayerService para tocar todas as músicas em ordem aleatória
+    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
     final songs = _controller.songs;
     if (songs.isNotEmpty) {
-      // TODO: Implement shuffle functionality
-      print('Shuffle play: ${songs.length} songs');
+      // Embaralha a lista de músicas
+      final shuffledSongs = List<Song>.from(songs)..shuffle();
+      audioPlayer.playPlaylist(shuffledSongs, startIndex: 0);
+      debugPrint('🔀 Shuffle play: ${songs.length} músicas do artista ${_controller.artist!.name}');
       context.pushNamed('player');
     }
   }
 
   void _onRepeatTap() {
-    // Usa o AudioPlayerController para tocar todas as músicas
-    final audioPlayer = Provider.of<AudioPlayerController>(context, listen: false);
+    // Usa o AudioPlayerService para tocar todas as músicas
+    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
     final songs = _controller.songs;
     if (songs.isNotEmpty) {
-      // TODO: Implement repeat functionality
-      print('Repeat play: ${songs.length} songs');
+      audioPlayer.playPlaylist(songs, startIndex: 0);
+      debugPrint('🔁 Repeat play: ${songs.length} músicas do artista ${_controller.artist!.name}');
       context.pushNamed('player');
     }
   }

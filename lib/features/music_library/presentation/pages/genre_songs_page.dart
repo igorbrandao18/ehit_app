@@ -5,10 +5,9 @@ import 'package:go_router/go_router.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
 import '../../../../shared/widgets/music_components/songs_list_section.dart';
 import '../../../../shared/design/design_tokens.dart';
+import '../../../../core/audio/audio_player_service.dart';
 import '../controllers/music_library_controller.dart';
 import '../../domain/entities/song.dart';
-import '../../../music_player/presentation/controllers/audio_player_controller.dart';
-import '../../../../core/utils/result.dart';
 
 class GenreSongsPage extends StatelessWidget {
   final String genre;
@@ -96,93 +95,53 @@ class GenreSongsPage extends StatelessWidget {
               
               // Songs list
               Expanded(
-                child: FutureBuilder(
-                  future: controller.getSongsByGenre(genre),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
+                child: Consumer<MusicLibraryController>(
+                  builder: (context, controller, child) {
+                    if (controller.isLoading) {
                       return const Center(
                         child: CircularProgressIndicator(),
                       );
                     }
-                    
-                    if (snapshot.hasError) {
-                      return Center(
+
+                    // Filtrar músicas por gênero das playlists
+                    final songs = <Song>[];
+                    for (final playlist in controller.playlists) {
+                      for (final song in playlist.musicsData) {
+                        if (song.genre.toLowerCase().contains(genre.toLowerCase())) {
+                          songs.add(song);
+                        }
+                      }
+                    }
+
+                    if (songs.isEmpty) {
+                      return const Center(
                         child: Column(
                           children: [
-                            const Icon(
-                              Icons.error_outline,
+                            Icon(
+                              Icons.music_off,
                               size: 64,
-                              color: Colors.red,
+                              color: Colors.grey,
                             ),
-                            const SizedBox(height: 16),
+                            SizedBox(height: 16),
                             Text(
-                              'Erro ao carregar músicas',
-                              style: Theme.of(context).textTheme.headlineSmall,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              snapshot.error.toString(),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    
-                    final result = snapshot.data;
-                    if (result is Success<List<Song>>) {
-                      final songs = result.data;
-                      if (songs.isEmpty) {
-                        return const Center(
-                          child: Column(
-                            children: [
-                              Icon(
-                                Icons.music_off,
-                                size: 64,
+                              'Nenhuma música encontrada',
+                              style: TextStyle(
+                                fontSize: 18,
                                 color: Colors.grey,
                               ),
-                              SizedBox(height: 16),
-                              Text(
-                                'Nenhuma música encontrada',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-                      
-                      return SongsListSection(
-                        songs: songs,
-                        artistName: genre,
-                        onSongTap: (song) => _onSongTap(context, song, songs),
-                        onShuffleTap: () => _onShuffleTap(context, songs),
-                        onRepeatTap: () => _onRepeatTap(context, songs),
-                      );
-                    } else if (result is Error<List<Song>>) {
-                      return Center(
-                        child: Column(
-                          children: [
-                            const Icon(
-                              Icons.error_outline,
-                              size: 64,
-                              color: Colors.red,
                             ),
-                            const SizedBox(height: 16),
-                            Text(
-                              'Erro ao carregar músicas',
-                              style: Theme.of(context).textTheme.headlineSmall,
-                            ),
-                            const SizedBox(height: 8),
-                            Text(result.message),
                           ],
                         ),
                       );
                     }
-                    
-                    return const SizedBox.shrink();
+
+                    return SongsListSection(
+                      songs: songs,
+                      artistName: genre,
+                      onSongTap: (song) => _onSongTap(context, song, songs),
+                      onShuffleTap: () => _onShuffleTap(context, songs),
+                      onRepeatTap: () => _onRepeatTap(context, songs),
+                    );
                   },
                 ),
               ),
@@ -197,37 +156,43 @@ class GenreSongsPage extends StatelessWidget {
   }
 
   void _onSongTap(BuildContext context, Song song, List<Song> songs) {
-    // Usa o AudioPlayerController para tocar a música
-    final audioPlayer = Provider.of<AudioPlayerController>(context, listen: false);
+    // Usa o AudioPlayerService para tocar a música
+    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
     
-    // Configura a playlist com todas as músicas do gênero antes de tocar
-    if (songs.isNotEmpty) {
-      audioPlayer.setPlaylist(songs);
-      debugPrint('🎵 Playlist configurada com ${songs.length} músicas do gênero $genre');
+    // Encontra o índice da música na lista
+    final songIndex = songs.indexWhere((s) => s.id == song.id);
+    
+    if (songIndex >= 0) {
+      audioPlayer.playPlaylist(songs, startIndex: songIndex);
+      debugPrint('🎵 Tocando gênero: $genre');
+      debugPrint('🎵 Música atual: ${song.title} - ${song.artist}');
+    } else {
+      // Fallback: toca apenas a música
+      audioPlayer.playSong(song);
     }
-    
-    audioPlayer.playSong(song);
     
     // Navegar para o player
     context.pushNamed('player');
   }
 
   void _onShuffleTap(BuildContext context, List<Song> songs) {
-    // Usa o AudioPlayerController para tocar todas as músicas em ordem aleatória
-    final audioPlayer = Provider.of<AudioPlayerController>(context, listen: false);
+    // Usa o AudioPlayerService para tocar todas as músicas em ordem aleatória
+    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
     if (songs.isNotEmpty) {
-      // TODO: Implement shuffle functionality
-      debugPrint('Shuffle play: ${songs.length} songs do gênero $genre');
+      // Embaralha a lista de músicas
+      final shuffledSongs = List<Song>.from(songs)..shuffle();
+      audioPlayer.playPlaylist(shuffledSongs, startIndex: 0);
+      debugPrint('🔀 Shuffle play: ${songs.length} músicas do gênero $genre');
       context.pushNamed('player');
     }
   }
 
   void _onRepeatTap(BuildContext context, List<Song> songs) {
-    // Usa o AudioPlayerController para tocar todas as músicas
-    final audioPlayer = Provider.of<AudioPlayerController>(context, listen: false);
+    // Usa o AudioPlayerService para tocar todas as músicas
+    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
     if (songs.isNotEmpty) {
-      // TODO: Implement repeat functionality
-      debugPrint('Repeat play: ${songs.length} songs do gênero $genre');
+      audioPlayer.playPlaylist(songs, startIndex: 0);
+      debugPrint('🔁 Repeat play: ${songs.length} músicas do gênero $genre');
       context.pushNamed('player');
     }
   }

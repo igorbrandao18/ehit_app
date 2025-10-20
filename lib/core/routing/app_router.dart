@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../features/music_library/presentation/pages/home_page.dart';
 import '../../features/music_library/presentation/pages/category_detail_page.dart';
 import '../../features/music_library/presentation/pages/artist_detail_page.dart';
+import '../../features/music_library/presentation/pages/playlist_detail_page.dart';
 import '../../features/music_library/presentation/controllers/music_library_controller.dart';
 import '../../features/music_player/presentation/pages/player_page.dart';
 import '../../shared/design/app_theme.dart';
@@ -289,27 +290,6 @@ class AlbumDetailPage extends StatelessWidget {
     );
   }
 }
-
-class PlaylistDetailPage extends StatelessWidget {
-  final String playlistId;
-
-  const PlaylistDetailPage({super.key, required this.playlistId});
-
-  @override
-  Widget build(BuildContext context) {
-    return GradientScaffold(
-      appBar: AppBar(
-        title: Text('Playlist: $playlistId'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: Center(
-        child: Text('Detalhes da Playlist: $playlistId'),
-      ),
-    );
-  }
-}
-
 
 class QueuePage extends StatelessWidget {
   const QueuePage({super.key});

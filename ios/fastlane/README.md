@@ -47,6 +47,14 @@ Build app for App Store
 
 Setup certificates and provisioning profiles for the first time
 
+### ios beta_without_match
+
+```sh
+[bundle exec] fastlane ios beta_without_match
+```
+
+Build and upload to TestFlight without Match (using local certificates)
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../../features/music_player/presentation/controllers/audio_player_controller.dart';
+import '../../../core/audio/audio_player_service.dart';
 import '../../design/app_colors.dart';
 import '../../design/design_tokens.dart';
 
@@ -13,10 +13,10 @@ class MiniPlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AudioPlayerController>(
+    return Consumer<AudioPlayerService>(
       builder: (context, audioPlayer, child) {
-        // Só mostra se há uma música tocando
-        if (!audioPlayer.isPlaying && audioPlayer.currentSong == null) {
+        // Só mostra se há uma música atual (tocando ou pausada)
+        if (audioPlayer.currentSong == null) {
           return const SizedBox.shrink();
         }
 
@@ -67,7 +67,7 @@ class MiniPlayer extends StatelessWidget {
     );
   }
 
-  Widget _buildAlbumArt(AudioPlayerController audioPlayer) {
+  Widget _buildAlbumArt(AudioPlayerService audioPlayer) {
     return Container(
       width: 60,
       height: 60,
@@ -115,7 +115,7 @@ class MiniPlayer extends StatelessWidget {
     );
   }
 
-  Widget _buildSongInfo(AudioPlayerController audioPlayer) {
+  Widget _buildSongInfo(AudioPlayerService audioPlayer) {
     if (audioPlayer.currentSong == null) {
       return const SizedBox.shrink();
     }
@@ -165,7 +165,7 @@ class MiniPlayer extends StatelessWidget {
     return '$minutes:$seconds';
   }
 
-  Widget _buildControls(AudioPlayerController audioPlayer) {
+  Widget _buildControls(AudioPlayerService audioPlayer) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [

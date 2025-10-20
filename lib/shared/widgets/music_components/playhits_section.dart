@@ -30,8 +30,25 @@ class PlayHitsSection extends StatelessWidget {
           return const LoadingSection(message: 'Carregando PlayHITS...');
         }
 
-        // Usar playlists como PlayHITS temporariamente
-        final playHits = controller.playlists.take(5).toList();
+        // Usar músicas das playlists como PlayHITS
+        final playHits = <Map<String, String>>[];
+        
+        // Coletar músicas de todas as playlists para criar PlayHITS
+        for (final playlist in controller.playlists) {
+          for (final song in playlist.musicsData.take(2)) { // Pegar até 2 músicas por playlist
+            playHits.add({
+              'title': song.title,
+              'artist': song.artist,
+              'imageUrl': song.imageUrl,
+              'songId': song.id,
+              'playlistId': playlist.id.toString(),
+              'playlistName': playlist.name,
+            });
+          }
+        }
+        
+        // Limitar a 12 PlayHITS como era antes
+        final limitedPlayHits = playHits.take(12).toList();
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,21 +71,21 @@ class PlayHitsSection extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                   horizontal: DesignTokens.screenPadding,
                 ),
-                itemCount: playHits.length,
+                itemCount: limitedPlayHits.length,
                 itemBuilder: (context, index) {
-                  final playlist = playHits[index];
+                  final playHit = limitedPlayHits[index];
                   return Container(
                     margin: EdgeInsets.only(
-                      right: index < playHits.length - 1 ? DesignTokens.cardSpacing : 0,
+                      right: index < limitedPlayHits.length - 1 ? DesignTokens.cardSpacing : 0,
                     ),
                     child: PlayHitsCard(
-                      title: playlist.name,
-                      artist: 'Ehit App',
-                      imageUrl: playlist.cover,
+                      title: playHit['title']!,
+                      artist: playHit['artist']!,
+                      imageUrl: playHit['imageUrl']!,
                       isLarge: index == 0, // First card is large
                       onTap: onCardTap ?? () {
                         // Default navigation logic
-                        _navigateToPlaylist(context, playlist);
+                        _navigateToPlaylist(context, playHit);
                       },
                     ),
                   );
@@ -81,12 +98,12 @@ class PlayHitsSection extends StatelessWidget {
     );
   }
 
-  void _navigateToPlaylist(BuildContext context, playlist) {
-    // Navigate to playlist detail page
+  void _navigateToPlaylist(BuildContext context, Map<String, String> playHit) {
+    // Navegar para a página de detalhes da playlist
     context.pushNamed(
       'playlist-detail',
-      pathParameters: {'playlistId': playlist.id.toString()},
-      extra: playlist.name,
+      pathParameters: {'playlistId': playHit['playlistId']!},
+      extra: playHit['playlistName'],
     );
   }
 }

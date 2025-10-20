@@ -1,6 +1,7 @@
 // features/music_library/data/datasources/music_remote_datasource.dart
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../models/song_model.dart';
 import '../models/playlist_model.dart';
 
@@ -47,13 +48,17 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
 
   List<SongModel> _parseMusicsData(List<dynamic> musicsData) {
     return musicsData.map((musicData) {
+      final coverUrl = musicData['cover'];
+      debugPrint('🎵 Parsing música: ${musicData['title']}');
+      debugPrint('🎵 Cover URL: $coverUrl');
+      
       return SongModel(
         id: musicData['id'].toString(),
         title: musicData['title'],
         artist: musicData['artist_name'],
         album: musicData['album_data']?['title'] ?? 'Unknown Album',
         duration: musicData['duration_formatted'],
-        imageUrl: musicData['cover'],
+        imageUrl: coverUrl,
         audioUrl: musicData['file'],
         isExplicit: false, // Não disponível na API
         releaseDate: DateTime.parse(musicData['release_date']),
