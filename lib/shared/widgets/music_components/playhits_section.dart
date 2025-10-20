@@ -30,6 +30,9 @@ class PlayHitsSection extends StatelessWidget {
           return const LoadingSection(message: 'Carregando PlayHITS...');
         }
 
+        // Usar playlists como PlayHITS temporariamente
+        final playHits = controller.playlists.take(5).toList();
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -51,21 +54,21 @@ class PlayHitsSection extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                   horizontal: DesignTokens.screenPadding,
                 ),
-                itemCount: controller.playHits.length,
+                itemCount: playHits.length,
                 itemBuilder: (context, index) {
-                  final playHit = controller.playHits[index];
+                  final playlist = playHits[index];
                   return Container(
                     margin: EdgeInsets.only(
-                      right: index < controller.playHits.length - 1 ? DesignTokens.cardSpacing : 0,
+                      right: index < playHits.length - 1 ? DesignTokens.cardSpacing : 0,
                     ),
                     child: PlayHitsCard(
-                      title: playHit['title']!,
-                      artist: playHit['artist']!,
-                      imageUrl: playHit['imageUrl']!,
+                      title: playlist.name,
+                      artist: 'Ehit App',
+                      imageUrl: playlist.cover,
                       isLarge: index == 0, // First card is large
                       onTap: onCardTap ?? () {
                         // Default navigation logic
-                        _navigateToPlaylist(context, playHit);
+                        _navigateToPlaylist(context, playlist);
                       },
                     ),
                   );
@@ -78,18 +81,12 @@ class PlayHitsSection extends StatelessWidget {
     );
   }
 
-  void _navigateToPlaylist(BuildContext context, Map<String, String> playHit) {
-    // Navigate immediately to category detail page using GoRouter
-    final controller = Provider.of<MusicLibraryController>(context, listen: false);
-    
-    // Load artists data in background
-    controller.loadCategoryArtists(playHit['title']!);
-    
-    // Navigate immediately without waiting
+  void _navigateToPlaylist(BuildContext context, playlist) {
+    // Navigate to playlist detail page
     context.pushNamed(
-      'category-detail',
-      pathParameters: {'categoryTitle': playHit['title']!},
-      extra: playHit['artist']!,
+      'playlist-detail',
+      pathParameters: {'playlistId': playlist.id.toString()},
+      extra: playlist.name,
     );
   }
 }

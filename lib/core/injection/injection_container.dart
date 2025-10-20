@@ -19,8 +19,8 @@ import '../../features/authentication/data/datasources/auth_remote_datasource.da
 import '../../features/authentication/data/datasources/auth_local_datasource.dart';
 
 // Repositories - Music Library
-import '../../features/music_library/data/repositories/music_repository_impl.dart';
-import '../../features/music_library/domain/repositories/music_repository.dart';
+import '../../features/music_library/data/repositories/music_repository_impl.dart' as music_lib_impl;
+import '../../features/music_library/domain/repositories/playlist_repository.dart' as music_lib;
 
 // Repositories - Music Player
 import '../../features/music_player/data/repositories/playlist_repository_impl.dart';
@@ -33,8 +33,7 @@ import '../../features/authentication/data/repositories/auth_repository_impl.dar
 import '../../features/authentication/domain/repositories/auth_repository.dart';
 
 // Use Cases - Music Library
-import '../../features/music_library/domain/usecases/get_songs_usecase.dart';
-import '../../features/music_library/domain/usecases/get_artists_usecase.dart';
+import '../../features/music_library/domain/usecases/get_playlists_usecase.dart';
 
 // Use Cases - Music Player
 import '../../features/music_player/domain/usecases/playlist_usecases.dart';
@@ -133,15 +132,8 @@ Future<void> init() async {
   // ============================================================================
   
   // Music Library Repositories
-  sl.registerLazySingleton<MusicRepository>(
-    () => MusicRepositoryImpl(
-      sl<MusicRemoteDataSource>(),
-      sl<MusicLocalDataSource>(),
-    ),
-  );
-
-  sl.registerLazySingleton<ArtistRepository>(
-    () => ArtistRepositoryImpl(sl<MusicRemoteDataSource>()),
+  sl.registerLazySingleton<music_lib.PlaylistRepository>(
+    () => music_lib_impl.PlaylistRepositoryImpl(sl<MusicRemoteDataSource>()),
   );
 
   // Music Player Repositories
@@ -169,17 +161,7 @@ Future<void> init() async {
   // ============================================================================
   
   // Music Library Use Cases
-  sl.registerLazySingleton(() => GetSongsUseCase(sl<MusicRepository>()));
-  sl.registerLazySingleton(() => GetSongByIdUseCase(sl<MusicRepository>()));
-  sl.registerLazySingleton(() => GetSongsByArtistUseCase(sl<MusicRepository>()));
-  sl.registerLazySingleton(() => GetPopularSongsUseCase(sl<MusicRepository>()));
-  sl.registerLazySingleton(() => GetRecentSongsUseCase(sl<MusicRepository>()));
-  sl.registerLazySingleton(() => SearchSongsUseCase(sl<MusicRepository>()));
-  sl.registerLazySingleton(() => GetArtistsUseCase(sl<ArtistRepository>()));
-  sl.registerLazySingleton(() => GetArtistByIdUseCase(sl<ArtistRepository>()));
-  sl.registerLazySingleton(() => GetPopularArtistsUseCase(sl<ArtistRepository>()));
-  sl.registerLazySingleton(() => GetArtistsByGenreUseCase(sl<ArtistRepository>()));
-  sl.registerLazySingleton(() => SearchArtistsUseCase(sl<ArtistRepository>()));
+  sl.registerLazySingleton(() => GetPlaylistsUseCase(sl<music_lib.PlaylistRepository>()));
 
   // Music Player Use Cases - Playlists
   sl.registerLazySingleton(() => GetUserPlaylistsUseCase(sl<playlist_repo.PlaylistRepository>()));
@@ -229,15 +211,7 @@ Future<void> init() async {
   
   // Music Library Controllers
   sl.registerLazySingleton(() => MusicLibraryController(
-    getSongsUseCase: sl<GetSongsUseCase>(),
-    getPopularSongsUseCase: sl<GetPopularSongsUseCase>(),
-    getArtistsUseCase: sl<GetArtistsUseCase>(),
-    getPopularArtistsUseCase: sl<GetPopularArtistsUseCase>(),
-  ));
-
-  sl.registerLazySingleton(() => ArtistDetailController(
-    getArtistByIdUseCase: sl(),
-    getSongsByArtistUseCase: sl(),
+    getPlaylistsUseCase: sl<GetPlaylistsUseCase>(),
   ));
 
   // Music Player Controllers

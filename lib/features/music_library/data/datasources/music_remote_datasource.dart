@@ -1,305 +1,65 @@
 // features/music_library/data/datasources/music_remote_datasource.dart
 
 import 'package:dio/dio.dart';
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/constants/app_config.dart';
-import '../../../../core/errors/failures.dart';
-import '../../../../core/supabase/supabase_music_service.dart';
-import '../../../../core/utils/result.dart';
 import '../models/song_model.dart';
-import '../models/artist_model.dart';
+import '../models/playlist_model.dart';
 
 /// Data source remoto para dados de música
 abstract class MusicRemoteDataSource {
-  Future<List<SongModel>> getSongs();
-  Future<SongModel> getSongById(String id);
-  Future<List<SongModel>> getSongsByArtist(String artistId);
-  Future<List<SongModel>> searchSongs(String query);
-  Future<List<SongModel>> getPopularSongs();
-  Future<List<SongModel>> getRecentSongs();
-  
-  Future<List<ArtistModel>> getArtists();
-  Future<ArtistModel> getArtistById(String id);
-  Future<List<ArtistModel>> getPopularArtists();
-  Future<List<ArtistModel>> searchArtists(String query);
+  Future<List<PlaylistModel>> getPlaylists();
 }
 
-/// Implementação do data source remoto usando Supabase
+/// Implementação do data source remoto
 class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
   final Dio _dio;
-  final SupabaseMusicService _musicService;
+  static const String _baseUrl = 'https://prod.ehitapp.com.br/api';
 
-  MusicRemoteDataSourceImpl(this._dio) : _musicService = SupabaseMusicService();
+  MusicRemoteDataSourceImpl(this._dio);
 
   @override
-  Future<List<SongModel>> getSongs() async {
+  Future<List<PlaylistModel>> getPlaylists() async {
     try {
-      final result = await _musicService.getSongs();
+      final response = await _dio.get('$_baseUrl/playlists/');
       
-      return result.when(
-        success: (songs) => songs.map((song) => SongModel.fromEntity(song)).toList(),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
+      if (response.statusCode == 200) {
+        final data = response.data;
+        final results = data['results'] as List;
+        
+        return results.map((playlistData) {
+          return PlaylistModel(
+            id: playlistData['id'],
+            name: playlistData['name'],
+            cover: playlistData['cover'],
+            musicsCount: playlistData['musics_count'],
+            musicsData: _parseMusicsData(playlistData['musics_data']),
+            createdAt: playlistData['created_at'],
+            updatedAt: playlistData['updated_at'],
+            isActive: playlistData['is_active'],
+          );
+        }).toList();
+      } else {
+        throw Exception('Failed to load playlists: ${response.statusCode}');
+      }
     } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar músicas: $e',
-      );
+      throw Exception('Error fetching playlists: $e');
     }
   }
 
-  @override
-  Future<SongModel> getSongById(String id) async {
-    try {
-      final result = await _musicService.getSongById(id);
-      
-      return result.when(
-        success: (song) => SongModel.fromEntity(song),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
+  List<SongModel> _parseMusicsData(List<dynamic> musicsData) {
+    return musicsData.map((musicData) {
+      return SongModel(
+        id: musicData['id'].toString(),
+        title: musicData['title'],
+        artist: musicData['artist_name'],
+        album: musicData['album_data']?['title'] ?? 'Unknown Album',
+        duration: musicData['duration_formatted'],
+        imageUrl: musicData['cover'],
+        audioUrl: musicData['file'],
+        isExplicit: false, // Não disponível na API
+        releaseDate: DateTime.parse(musicData['release_date']),
+        playCount: musicData['streams_count'] ?? 0,
+        genre: musicData['genre_data']?['name'] ?? 'Unknown',
       );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar música: $e',
-      );
-    }
-  }
-
-  @override
-  Future<List<SongModel>> getSongsByArtist(String artistId) async {
-    try {
-      final result = await _musicService.getSongsByArtist(artistId);
-      
-      return result.when(
-        success: (songs) => songs.map((song) => SongModel.fromEntity(song)).toList(),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar músicas do artista: $e',
-      );
-    }
-  }
-
-  @override
-  Future<List<SongModel>> searchSongs(String query) async {
-    try {
-      final result = await _musicService.searchSongs(query);
-      
-      return result.when(
-        success: (songs) => songs.map((song) => SongModel.fromEntity(song)).toList(),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar músicas: $e',
-      );
-    }
-  }
-
-  @override
-  Future<List<SongModel>> getPopularSongs() async {
-    try {
-      final result = await _musicService.getPopularSongs();
-      
-      return result.when(
-        success: (songs) => songs.map((song) => SongModel.fromEntity(song)).toList(),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar músicas populares: $e',
-      );
-    }
-  }
-
-  @override
-  Future<List<SongModel>> getRecentSongs() async {
-    try {
-      final result = await _musicService.getRecentSongs();
-      
-      return result.when(
-        success: (songs) => songs.map((song) => SongModel.fromEntity(song)).toList(),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar músicas recentes: $e',
-      );
-    }
-  }
-
-  @override
-  Future<List<ArtistModel>> getArtists() async {
-    try {
-      final result = await _musicService.getArtists();
-      
-      return result.when(
-        success: (artists) => artists.map((artist) => ArtistModel.fromEntity(artist)).toList(),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar artistas: $e',
-      );
-    }
-  }
-
-  @override
-  Future<ArtistModel> getArtistById(String id) async {
-    try {
-      final result = await _musicService.getArtistById(id);
-      
-      return result.when(
-        success: (artist) => ArtistModel.fromEntity(artist),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar artista: $e',
-      );
-    }
-  }
-
-  @override
-  Future<List<ArtistModel>> getPopularArtists() async {
-    try {
-      final result = await _musicService.getPopularArtists();
-      
-      return result.when(
-        success: (artists) => artists.map((artist) => ArtistModel.fromEntity(artist)).toList(),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar artistas populares: $e',
-      );
-    }
-  }
-
-  @override
-  Future<List<ArtistModel>> searchArtists(String query) async {
-    try {
-      final result = await _musicService.searchArtists(query);
-      
-      return result.when(
-        success: (artists) => artists.map((artist) => ArtistModel.fromEntity(artist)).toList(),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar artistas: $e',
-      );
-    }
-  }
-
-  // ============================================================================
-  // MOCK DATA (temporary until real API is implemented)
-  // ============================================================================
-  
-  List<SongModel> _getMockSongs() {
-    return [
-      SongModel(
-        id: '1',
-        title: 'Leão',
-        artist: 'Marília Mendonça',
-        album: 'Decretos Reais',
-        duration: '3:30',
-        imageUrl: AppConfig.sampleAlbumCover1,
-        audioUrl: AppConfig.getAudioUrl('1'),
-        isExplicit: false,
-        releaseDate: DateTime(2023),
-        playCount: 1000000,
-        genre: 'Sertanejo',
-      ),
-      SongModel(
-        id: '2',
-        title: 'Música 2',
-        artist: 'Zé Neto & Cristiano',
-        album: 'Álbum 2',
-        duration: '4:15',
-        imageUrl: AppConfig.sampleAlbumCover2,
-        audioUrl: AppConfig.getAudioUrl('2'),
-        isExplicit: false,
-        releaseDate: DateTime(2023),
-        playCount: 800000,
-        genre: 'Sertanejo',
-      ),
-      // Adicionar mais músicas mock conforme necessário
-    ];
-  }
-
-  List<ArtistModel> _getMockArtists() {
-    return [
-      ArtistModel(
-        id: '1',
-        name: 'Marília Mendonça',
-        imageUrl: AppConfig.sampleArtistImage1,
-        bio: 'Cantora sertaneja brasileira',
-        totalSongs: 150,
-        totalDuration: '8:45:30',
-        genres: [AppConstants.sertanejoCategory],
-        followers: 5000000,
-      ),
-      ArtistModel(
-        id: '2',
-        name: 'Zé Neto & Cristiano',
-        imageUrl: AppConfig.sampleArtistImage2,
-        bio: 'Dupla sertaneja brasileira',
-        totalSongs: 120,
-        totalDuration: '7:20:15',
-        genres: [AppConstants.sertanejoCategory],
-        followers: 3000000,
-      ),
-      // Adicionar mais artistas mock conforme necessário
-    ];
+    }).toList();
   }
 }

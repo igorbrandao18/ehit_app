@@ -10,9 +10,9 @@ import '../../../../shared/widgets/music_components/artist_card.dart';
 import '../../../../shared/design/design_tokens.dart';
 import '../../../../shared/design/app_colors.dart';
 import '../controllers/music_library_controller.dart';
-import '../../domain/entities/artist.dart';
+import '../../domain/entities/playlist.dart';
 
-/// Página de detalhes da categoria com lista de artistas
+/// Página de detalhes da categoria com lista de playlists
 class CategoryDetailPage extends StatelessWidget {
   final String categoryTitle;
   final String categoryArtists;
@@ -54,8 +54,8 @@ class CategoryDetailPage extends StatelessWidget {
             // Header section
             _buildHeaderSection(),
             
-            // Artists section
-            _buildArtistsSection(),
+            // Playlists section
+            _buildPlaylistsSection(),
             
             // Bottom padding
             const SizedBox(height: 100),
@@ -69,7 +69,7 @@ class CategoryDetailPage extends StatelessWidget {
     return const SizedBox.shrink();
   }
 
-  Widget _buildArtistsSection() {
+  Widget _buildPlaylistsSection() {
     return Consumer<MusicLibraryController>(
       builder: (context, controller, child) {
         if (controller.isLoading) {
@@ -93,7 +93,7 @@ class CategoryDetailPage extends StatelessWidget {
               Consumer<MusicLibraryController>(
                 builder: (context, controller, child) {
                   return Text(
-                    '${controller.categoryArtists.length} artistas',
+                    '${controller.playlists.length} playlists',
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
@@ -103,14 +103,14 @@ class CategoryDetailPage extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 12),
-              // Artists list
-              ...controller.categoryArtists.asMap().entries.map((entry) {
+              // Playlists list
+              ...controller.playlists.asMap().entries.map((entry) {
                 final index = entry.key;
-                final artist = entry.value;
+                final playlist = entry.value;
                 return Column(
                   children: [
-                    _buildArtistListItem(context, artist, index + 1),
-                    if (index < controller.categoryArtists.length - 1)
+                    _buildPlaylistListItem(context, playlist, index + 1),
+                    if (index < controller.playlists.length - 1)
                       const SizedBox(height: 6),
                   ],
                 );
@@ -122,14 +122,14 @@ class CategoryDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildArtistListItem(BuildContext context, Artist artist, int rank) {
+  Widget _buildPlaylistListItem(BuildContext context, Playlist playlist, int rank) {
     return GestureDetector(
       onTap: () {
-        // Navigate to artist detail page using GoRouter
+        // Navigate to playlist detail page using GoRouter
         context.pushNamed(
-          'artist-detail',
+          'playlist-detail',
           pathParameters: {
-            'artistId': artist.id,
+            'playlistId': playlist.id.toString(),
           },
         );
       },
@@ -166,11 +166,11 @@ class CategoryDetailPage extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             
-            // Artist image
+            // Playlist image
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
-                artist.imageUrl,
+                playlist.cover,
                 width: 56,
                 height: 56,
                 fit: BoxFit.cover,
@@ -183,7 +183,7 @@ class CategoryDetailPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Icon(
-                      Icons.person,
+                      Icons.music_note,
                       color: Colors.grey,
                       size: 28,
                     ),
@@ -193,13 +193,13 @@ class CategoryDetailPage extends StatelessWidget {
             ),
             const SizedBox(width: 16),
             
-            // Artist info
+            // Playlist info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    artist.name,
+                    playlist.name,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -210,7 +210,7 @@ class CategoryDetailPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    _getArtistSubtitle(rank),
+                    '${playlist.musicsCount} músicas • Ehit App',
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.7),
                       fontSize: 14,
@@ -225,23 +225,5 @@ class CategoryDetailPage extends StatelessWidget {
       ),
     );
   }
-
-  String _getArtistSubtitle(int rank) {
-    // Generate different subtitles based on rank
-    if (rank <= 3) {
-      return '${_getRandomSongCount(rank)} músicas • Top ${rank}';
-    } else if (rank <= 10) {
-      return '${_getRandomSongCount(rank)} músicas • Popular';
-    } else {
-      return '${_getRandomSongCount(rank)} músicas • Artista';
-    }
-  }
-
-  String _getRandomSongCount(int rank) {
-    // Generate random song count between 15-150
-    final counts = [15, 23, 28, 34, 42, 51, 67, 78, 89, 95, 112, 134, 147];
-    return counts[rank % counts.length].toString();
-  }
-
 }
 
