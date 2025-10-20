@@ -126,17 +126,7 @@ class PlaylistDetailPage extends StatelessWidget {
           ),
           SizedBox(height: DesignTokens.sectionSpacing),
           
-          // Playlist info
-          Text(
-            playlist.name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: DesignTokens.headingFontSize,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: DesignTokens.spaceSM),
+          // Playlist info - apenas contagem de músicas
           Text(
             '${playlist.musicsCount} músicas',
             style: TextStyle(
