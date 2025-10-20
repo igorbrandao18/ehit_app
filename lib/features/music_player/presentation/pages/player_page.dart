@@ -43,11 +43,6 @@ class PlayerPage extends StatelessWidget {
                           
                           SizedBox(height: MediaQuery.of(context).size.height * 0.04), // 4% da altura
                           
-                          // Informações da música
-                          _buildSongInfo(context),
-                          
-                          SizedBox(height: MediaQuery.of(context).size.height * 0.04), // 4% da altura
-                          
                           // Progress bar
                           _buildProgressBar(context, audioPlayer),
                           
