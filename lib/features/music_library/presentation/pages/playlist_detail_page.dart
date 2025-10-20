@@ -91,8 +91,7 @@ class PlaylistDetailPage extends StatelessWidget {
         children: [
           // Playlist cover
           Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(DesignTokens.radiusLG),
+            child: ClipOval(
               child: Image.network(
                 playlist.cover,
                 width: DesignTokens.albumArtSize * 0.8, // Diminuído para 80%
@@ -104,7 +103,7 @@ class PlaylistDetailPage extends StatelessWidget {
                     height: DesignTokens.albumArtSize * 0.8,
                     decoration: BoxDecoration(
                       color: Colors.grey.shade800,
-                      borderRadius: BorderRadius.circular(DesignTokens.radiusLG),
+                      shape: BoxShape.circle,
                     ),
                     child: const Icon(
                       Icons.music_note,
@@ -118,24 +117,30 @@ class PlaylistDetailPage extends StatelessWidget {
           ),
           SizedBox(height: DesignTokens.sectionSpacing),
           
-          // Playlist info
-          Text(
-            playlist.name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: DesignTokens.headingFontSize,
-              fontWeight: FontWeight.bold,
+          // Playlist info - Centralizado
+          Center(
+            child: Column(
+              children: [
+                Text(
+                  playlist.name,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: DesignTokens.headingFontSize,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: DesignTokens.spaceSM),
+                Text(
+                  '${playlist.musicsCount} Músicas • ${_calculateTotalDuration(playlist)}min',
+                  style: TextStyle(
+                    color: Colors.white.withOpacity(0.7),
+                    fontSize: DesignTokens.bodyFontSize,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(height: DesignTokens.spaceSM),
-          Text(
-            '${playlist.musicsCount} Músicas • ${_calculateTotalDuration(playlist)}min',
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
-              fontSize: DesignTokens.bodyFontSize,
-            ),
-            textAlign: TextAlign.center,
           ),
         ],
       ),
