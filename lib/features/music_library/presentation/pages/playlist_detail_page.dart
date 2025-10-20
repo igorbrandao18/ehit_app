@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
 import '../../../../shared/design/app_colors.dart';
+import '../../../../shared/design/design_tokens.dart';
 import '../../../../shared/widgets/music_components/song_list_item.dart';
 import '../../../../core/audio/audio_player_service.dart';
 import '../controllers/music_library_controller.dart';
@@ -81,7 +82,7 @@ class PlaylistDetailPage extends StatelessWidget {
                 _buildSongsSection(context, playlist),
                 
                 // Bottom padding
-                const SizedBox(height: 100),
+                SizedBox(height: DesignTokens.miniPlayerHeight + DesignTokens.spaceLG),
               ],
             ),
           ),
@@ -92,55 +93,55 @@ class PlaylistDetailPage extends StatelessWidget {
 
   Widget _buildHeaderSection(BuildContext context, Playlist playlist) {
     return Padding(
-      padding: const EdgeInsets.all(24),
+      padding: DesignTokens.getResponsivePadding(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Playlist cover
           Center(
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(DesignTokens.cardBorderRadius),
               child: Image.network(
                 playlist.cover,
-                width: 200,
-                height: 200,
+                width: DesignTokens.albumArtSize,
+                height: DesignTokens.albumArtSize,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    width: 200,
-                    height: 200,
+                    width: DesignTokens.albumArtSize,
+                    height: DesignTokens.albumArtSize,
                     decoration: BoxDecoration(
                       color: Colors.grey.shade800,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(DesignTokens.cardBorderRadius),
                     ),
                     child: const Icon(
                       Icons.music_note,
                       color: Colors.grey,
-                      size: 80,
+                      size: DesignTokens.iconXXL,
                     ),
                   );
                 },
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: DesignTokens.sectionSpacing),
           
           // Playlist info
           Text(
             playlist.name,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 24,
+              fontSize: DesignTokens.headingFontSize,
               fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: DesignTokens.spaceSM),
           Text(
             '${playlist.musicsCount} músicas',
             style: TextStyle(
               color: Colors.white.withOpacity(0.7),
-              fontSize: 16,
+              fontSize: DesignTokens.bodyFontSize,
             ),
             textAlign: TextAlign.center,
           ),
@@ -152,13 +153,13 @@ class PlaylistDetailPage extends StatelessWidget {
   Widget _buildSongsSection(BuildContext context, Playlist playlist) {
     if (playlist.musicsData.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.all(24),
+        padding: DesignTokens.getResponsivePadding(context),
         child: Center(
           child: Text(
             'Esta playlist não possui músicas',
             style: TextStyle(
               color: Colors.white.withOpacity(0.7),
-              fontSize: 16,
+              fontSize: DesignTokens.bodyFontSize,
             ),
           ),
         ),
@@ -166,7 +167,7 @@ class PlaylistDetailPage extends StatelessWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: DesignTokens.getResponsiveHorizontalPadding(context),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -174,11 +175,11 @@ class PlaylistDetailPage extends StatelessWidget {
             'Músicas',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 20,
+              fontSize: DesignTokens.titleFontSize,
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: DesignTokens.spaceMD),
           
           // Songs list
           ...playlist.musicsData.asMap().entries.map((entry) {
@@ -192,7 +193,7 @@ class PlaylistDetailPage extends StatelessWidget {
                   onTap: () => _onSongTap(context, song),
                 ),
                 if (index < playlist.musicsData.length - 1)
-                  const SizedBox(height: 8),
+                  SizedBox(height: DesignTokens.songItemSpacing),
               ],
             );
           }).toList(),
