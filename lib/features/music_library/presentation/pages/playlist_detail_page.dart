@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
 import '../../../../shared/design/app_colors.dart';
 import '../../../../shared/design/design_tokens.dart';
-import '../../../../shared/widgets/music_components/song_list_item.dart';
+import '../../../../shared/widgets/music_components/songs_list_section.dart';
 import '../../../../core/audio/audio_player_service.dart';
 import '../controllers/music_library_controller.dart';
 import '../../domain/entities/playlist.dart';
@@ -153,81 +153,12 @@ class PlaylistDetailPage extends StatelessWidget {
   }
 
   Widget _buildSongsSection(BuildContext context, Playlist playlist) {
-    if (playlist.musicsData.isEmpty) {
-      return Padding(
-        padding: DesignTokens.getResponsivePadding(context),
-        child: Center(
-          child: Text(
-            'Esta playlist não possui músicas',
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
-              fontSize: DesignTokens.bodyFontSize,
-            ),
-          ),
-        ),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Header da lista de músicas com padding
-        Padding(
-          padding: DesignTokens.getResponsiveHorizontalPadding(context),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Lista de sons',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: DesignTokens.titleFontSize,
-                  fontWeight: FontWeight.w500,
-                  fontStyle: FontStyle.italic,
-                ),
-              ),
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () => _onShuffleTap(context, playlist),
-                    icon: const Icon(
-                      Icons.shuffle,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () => _onRepeatTap(context, playlist),
-                    icon: const Icon(
-                      Icons.repeat,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: DesignTokens.spaceMD),
-        
-        // Songs list sem padding
-        ...playlist.musicsData.asMap().entries.map((entry) {
-          final index = entry.key;
-          final song = entry.value;
-          return Column(
-            children: [
-              SongListItem(
-                song: song,
-                index: index,
-                onTap: () => _onSongTap(context, song),
-              ),
-              if (index < playlist.musicsData.length - 1)
-                SizedBox(height: DesignTokens.songItemSpacing),
-            ],
-          );
-        }).toList(),
-      ],
+    return SongsListSection(
+      songs: playlist.musicsData,
+      artistName: playlist.name, // Usando o nome da playlist como contexto
+      onSongTap: (song) => _onSongTap(context, song),
+      onShuffleTap: () => _onShuffleTap(context, playlist),
+      onRepeatTap: () => _onRepeatTap(context, playlist),
     );
   }
 
