@@ -69,8 +69,8 @@ class PlaylistDetailPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Status bar padding
-                SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight),
+                // Status bar padding - Aumentado para subir a foto mais
+                SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight + DesignTokens.spaceXL),
                 
                 // Header section
                 _buildHeaderSection(context, playlist),
