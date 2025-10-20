@@ -39,7 +39,7 @@ class ArtistHeroSection extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = constraints.maxWidth;
-        final imageSize = screenWidth * 0.4; // 40% da largura da tela (reduzido de 60%)
+        final imageSize = screenWidth * DesignTokens.artistHeroImageSizeRatio;
         
         return Container(
           width: imageSize,
@@ -48,9 +48,9 @@ class ArtistHeroSection extends StatelessWidget {
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
+                color: Colors.black.withOpacity(DesignTokens.opacityShadow),
+                blurRadius: DesignTokens.artistHeroShadowBlur,
+                offset: const Offset(0, DesignTokens.artistHeroShadowOffset),
               ),
             ],
           ),
@@ -83,7 +83,7 @@ class ArtistHeroSection extends StatelessWidget {
                   child: Icon(
                     Icons.person,
                     color: Colors.grey,
-                    size: imageSize * 0.3,
+                    size: imageSize * DesignTokens.artistHeroIconSizeRatio,
                   ),
                 );
               },
@@ -98,7 +98,7 @@ class ArtistHeroSection extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = constraints.maxWidth;
-        final fontSize = screenWidth * 0.08; // 8% da largura da tela
+        final fontSize = screenWidth * DesignTokens.artistHeroFontSizeRatio;
         
         return Text(
           artist.name,

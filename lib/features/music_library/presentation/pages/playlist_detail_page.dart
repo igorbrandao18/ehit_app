@@ -99,13 +99,13 @@ class PlaylistDetailPage extends StatelessWidget {
             child: ClipOval(
               child: Image.network(
                 playlist.cover,
-                width: DesignTokens.albumArtSize * 0.8, // Diminuído para 80%
-                height: DesignTokens.albumArtSize * 0.8, // Diminuído para 80%
+                width: DesignTokens.albumArtSize * DesignTokens.playlistCoverSizeRatio,
+                height: DesignTokens.albumArtSize * DesignTokens.playlistCoverSizeRatio,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    width: DesignTokens.albumArtSize * 0.8,
-                    height: DesignTokens.albumArtSize * 0.8,
+                    width: DesignTokens.albumArtSize * DesignTokens.playlistCoverSizeRatio,
+                    height: DesignTokens.albumArtSize * DesignTokens.playlistCoverSizeRatio,
                     decoration: BoxDecoration(
                       color: Colors.grey.shade800,
                       shape: BoxShape.circle,
@@ -139,7 +139,7 @@ class PlaylistDetailPage extends StatelessWidget {
                 Text(
                   '${playlist.musicsCount} Músicas • ${_calculateTotalDuration(playlist)}min',
                   style: TextStyle(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withOpacity(DesignTokens.opacityTextSecondary),
                     fontSize: DesignTokens.subtitleFontSize, // 18px (menor que bodyFontSize 16px)
                   ),
                   textAlign: TextAlign.center,

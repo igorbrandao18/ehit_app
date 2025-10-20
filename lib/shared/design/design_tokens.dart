@@ -360,8 +360,66 @@ class DesignTokens {
   }
 
   // ============================================================================
-  // ARTIST DETAIL PAGE
+  // PLAYER PAGE SPECIFIC DIMENSIONS
   // ============================================================================
+  
+  // Player page spacing percentages (converted to fixed values for consistency)
+  static const double playerVerticalSpacing = spaceXL; // 32px
+  static const double playerHorizontalSpacing = spaceLG; // 24px
+  static const double playerAlbumSizeRatio = 0.6; // 60% of screen width
+  static const double playerIconSizeRatio = 0.08; // 8% of screen width
+  static const double playerFontSizeRatio = 0.045; // 4.5% of screen width
+  static const double playerTitleFontSizeRatio = 0.06; // 6% of screen width
+  static const double playerButtonSizeRatio = 0.14; // 14% of screen width
+  static const double playerMainButtonSizeRatio = 0.2; // 20% of screen width
+  static const double playerMainIconSizeRatio = 0.1; // 10% of screen width
+  static const double playerSmallIconSizeRatio = 0.07; // 7% of screen width
+  static const double playerSmallSpacingRatio = 0.02; // 2% of screen width
+  
+  // Player page fixed dimensions
+  static const double playerShadowBlur = 20.0;
+  static const double playerShadowOffset = 10.0;
+  static const double playerProgressBarPadding = 16.0;
+  
+  // ============================================================================
+  // ARTIST HERO SECTION DIMENSIONS
+  // ============================================================================
+  
+  static const double artistHeroImageSizeRatio = 0.4; // 40% of screen width
+  static const double artistHeroFontSizeRatio = 0.08; // 8% of screen width
+  static const double artistHeroIconSizeRatio = 0.3; // 30% of image size
+  static const double artistHeroShadowBlur = 20.0;
+  static const double artistHeroShadowOffset = 10.0;
+  
+  // ============================================================================
+  // MINI PLAYER DIMENSIONS
+  // ============================================================================
+  
+  static const double miniPlayerShadowBlur = 10.0;
+  static const double miniPlayerShadowOffset = 2.0;
+  static const double miniPlayerButtonSize = 32.0;
+  
+  // ============================================================================
+  // OPACITY VALUES
+  // ============================================================================
+  
+  static const double opacityShadow = 0.3;
+  static const double opacityOverlayLight = 0.2;
+  static const double opacityTextSecondary = 0.7;
+
+  // ============================================================================
+  // CARD COMPONENTS DIMENSIONS
+  // ============================================================================
+  
+  static const double cardIconSizeRatio = 0.3; // 30% of card size
+  static const double cardShadowBlur = 4.0;
+  static const double cardShadowOffset = 2.0;
+  static const double cardOverlayOpacity = 0.2;
+  static const double cardGradientStop1 = 0.0;
+  static const double cardGradientStop2 = 0.6;
+  static const double cardGradientStop3 = 1.0;
+  
+  static const double playlistCoverSizeRatio = 0.8; // 80% of albumArtSize
   
   static const double artistHeroHeight = 300.0;
   static const int floatingParticlesCount = 20;

@@ -117,7 +117,7 @@ class _MusicCardState extends State<MusicCard>
                             child: Icon(
                               widget.isCircular ? Icons.person : Icons.music_note,
                               color: AppColors.textTertiary,
-                              size: (widget.width ?? DesignTokens.artistCardSize) * 0.3,
+                              size: (widget.width ?? DesignTokens.artistCardSize) * DesignTokens.cardIconSizeRatio,
                             ),
                           );
                         },
@@ -134,10 +134,10 @@ class _MusicCardState extends State<MusicCard>
                               end: Alignment.bottomCenter,
                               colors: [
                                 Colors.transparent,
-                                Colors.black.withOpacity(0.3),
-                                Colors.black.withOpacity(0.7),
+                                Colors.black.withOpacity(DesignTokens.opacityShadow),
+                                Colors.black.withOpacity(DesignTokens.opacityStrong),
                               ],
-                              stops: const [0.0, 0.6, 1.0],
+                              stops: const [DesignTokens.cardGradientStop1, DesignTokens.cardGradientStop2, DesignTokens.cardGradientStop3],
                             ),
                             borderRadius: widget.isCircular
                                 ? BorderRadius.circular(DesignTokens.radiusCircular)
@@ -216,7 +216,7 @@ class _MusicCardState extends State<MusicCard>
                                   child: Icon(
                                     widget.isCircular ? Icons.person : Icons.music_note,
                                     color: AppColors.textTertiary,
-                                    size: (widget.width ?? DesignTokens.artistCardSize) * 0.3,
+                                    size: (widget.width ?? DesignTokens.artistCardSize) * DesignTokens.cardIconSizeRatio,
                                   ),
                                 );
                               },
@@ -226,7 +226,7 @@ class _MusicCardState extends State<MusicCard>
                             Positioned.fill(
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withOpacity(0.3),
+                                  color: Colors.black.withOpacity(DesignTokens.opacityShadow),
                                   borderRadius: widget.isCircular
                                       ? BorderRadius.circular(DesignTokens.radiusCircular)
                                       : BorderRadius.circular(DesignTokens.cardBorderRadius),

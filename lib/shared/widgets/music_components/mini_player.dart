@@ -26,9 +26,9 @@ class MiniPlayer extends StatelessWidget {
             gradient: AppColors.subtleGradient,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 10,
-                offset: const Offset(0, -2),
+                color: Colors.black.withOpacity(DesignTokens.opacityShadow),
+                blurRadius: DesignTokens.miniPlayerShadowBlur,
+                offset: const Offset(0, -DesignTokens.miniPlayerShadowOffset),
               ),
             ],
           ),
@@ -75,9 +75,9 @@ class MiniPlayer extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+          color: Colors.black.withOpacity(DesignTokens.opacityShadow),
+          blurRadius: DesignTokens.miniPlayerShadowBlur,
+          offset: const Offset(0, DesignTokens.miniPlayerShadowOffset),
           ),
         ],
       ),
@@ -198,9 +198,9 @@ class MiniPlayer extends StatelessWidget {
           },
           child: Container(
             width: 32,
-            height: 32,
+            height: DesignTokens.miniPlayerButtonSize,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withOpacity(DesignTokens.opacityOverlayLight),
               shape: BoxShape.circle,
             ),
             child: const Icon(

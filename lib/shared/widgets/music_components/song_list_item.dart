@@ -50,9 +50,9 @@ class SongListItem extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: Colors.black.withOpacity(DesignTokens.cardOverlayOpacity),
+            blurRadius: DesignTokens.cardShadowBlur,
+            offset: const Offset(0, DesignTokens.cardShadowOffset),
           ),
         ],
       ),
@@ -85,7 +85,7 @@ class SongListItem extends StatelessWidget {
               child: Icon(
                 Icons.music_note,
                 color: Colors.grey,
-                size: DesignTokens.songThumbnailSize * 0.4,
+                size: DesignTokens.songThumbnailSize * DesignTokens.cardIconSizeRatio,
               ),
             );
           },

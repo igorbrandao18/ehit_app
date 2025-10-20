@@ -74,7 +74,7 @@ class _AppButtonState extends State<AppButton>
         animation: _scaleAnimation,
         builder: (context, child) {
           return Transform.scale(
-            scale: 1.0 - (_scaleAnimation.value * 0.05),
+            scale: 1.0 - (_scaleAnimation.value * DesignTokens.scaleAnimationValue),
             child: Container(
               width: widget.isFullWidth ? double.infinity : null,
               height: _getButtonHeight(),

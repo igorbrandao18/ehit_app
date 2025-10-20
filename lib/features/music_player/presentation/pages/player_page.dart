@@ -32,16 +32,21 @@ class PlayerPage extends StatelessWidget {
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.06, // 6% da largura
+                        horizontal: DesignTokens.playerHorizontalSpacing,
                       ),
                       child: Column(
                         children: [
-                          SizedBox(height: MediaQuery.of(context).size.height * 0.04), // 4% da altura
+                          SizedBox(height: DesignTokens.playerVerticalSpacing),
                           
                           // Album Art
                           _buildAlbumArt(context),
                           
-                          SizedBox(height: MediaQuery.of(context).size.height * 0.04), // 4% da altura
+                          SizedBox(height: DesignTokens.playerVerticalSpacing),
+                          
+                          // Informações da música
+                          _buildSongInfo(context),
+                          
+                          SizedBox(height: DesignTokens.playerVerticalSpacing),
                           
                           // Progress bar
                           _buildProgressBar(context, audioPlayer),
@@ -51,7 +56,7 @@ class PlayerPage extends StatelessWidget {
                           // Controles do player
                           _buildPlayerControls(context, audioPlayer),
                           
-                          SizedBox(height: MediaQuery.of(context).size.height * 0.04), // 4% da altura
+                          SizedBox(height: DesignTokens.playerVerticalSpacing),
                         ],
                       ),
                     ),
@@ -66,9 +71,9 @@ class PlayerPage extends StatelessWidget {
 
   Widget _buildHeader(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final iconSize = screenWidth * 0.08; // 8% da largura
-    final fontSize = screenWidth * 0.045; // 4.5% da largura
-    final padding = screenWidth * 0.04; // 4% da largura
+    final iconSize = screenWidth * DesignTokens.playerIconSizeRatio;
+    final fontSize = screenWidth * DesignTokens.playerFontSizeRatio;
+    final padding = DesignTokens.playerHorizontalSpacing;
     
     return Padding(
       padding: EdgeInsets.all(padding),
@@ -102,7 +107,7 @@ class PlayerPage extends StatelessWidget {
   Widget _buildAlbumArt(BuildContext context) {
     final audioPlayer = Provider.of<AudioPlayerService>(context);
     final screenWidth = MediaQuery.of(context).size.width;
-    final albumSize = screenWidth * 0.6; // 60% da largura da tela
+    final albumSize = screenWidth * DesignTokens.playerAlbumSizeRatio;
     final imageUrl = audioPlayer.currentSong?.imageUrl ?? '';
     
     return Container(
@@ -112,9 +117,9 @@ class PlayerPage extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.5),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: Colors.black.withOpacity(DesignTokens.opacityShadow),
+            blurRadius: DesignTokens.playerShadowBlur,
+            offset: const Offset(0, DesignTokens.playerShadowOffset),
           ),
         ],
       ),
@@ -132,7 +137,7 @@ class PlayerPage extends StatelessWidget {
                     child: Icon(
                       Icons.music_note,
                       color: Colors.white,
-                      size: albumSize * 0.3,
+                      size: albumSize * DesignTokens.artistHeroIconSizeRatio,
                     ),
                   );
                 },
@@ -155,8 +160,8 @@ class PlayerPage extends StatelessWidget {
   Widget _buildSongInfo(BuildContext context) {
     final audioPlayer = Provider.of<AudioPlayerService>(context);
     final screenWidth = MediaQuery.of(context).size.width;
-    final titleFontSize = screenWidth * 0.06; // 6% da largura
-    final artistFontSize = screenWidth * 0.045; // 4.5% da largura
+    final titleFontSize = screenWidth * DesignTokens.playerTitleFontSizeRatio;
+    final artistFontSize = screenWidth * DesignTokens.playerFontSizeRatio;
     
     return Column(
       children: [
@@ -169,7 +174,7 @@ class PlayerPage extends StatelessWidget {
           ),
           textAlign: TextAlign.center,
         ),
-        SizedBox(height: screenWidth * 0.02), // 2% da largura
+        SizedBox(height: screenWidth * DesignTokens.playerSmallSpacingRatio),
         Text(
           audioPlayer.currentSong?.artist ?? 'Artista desconhecido',
           style: TextStyle(
@@ -208,7 +213,7 @@ class PlayerPage extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.symmetric(horizontal: DesignTokens.playerProgressBarPadding),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -263,8 +268,8 @@ class PlayerPage extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final buttonSize = screenWidth * 0.14; // 14% da largura
-    final iconSize = screenWidth * 0.07; // 7% da largura
+    final buttonSize = screenWidth * DesignTokens.playerButtonSizeRatio;
+    final iconSize = screenWidth * DesignTokens.playerSmallIconSizeRatio;
     
     return GestureDetector(
       onTap: onTap,
@@ -286,8 +291,8 @@ class PlayerPage extends StatelessWidget {
 
   Widget _buildMainControlButton(BuildContext context, AudioPlayerService audioPlayer) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final buttonSize = screenWidth * 0.2; // 20% da largura
-    final iconSize = screenWidth * 0.1; // 10% da largura
+    final buttonSize = screenWidth * DesignTokens.playerMainButtonSizeRatio;
+    final iconSize = screenWidth * DesignTokens.playerMainIconSizeRatio;
     
     return GestureDetector(
       onTap: () {
