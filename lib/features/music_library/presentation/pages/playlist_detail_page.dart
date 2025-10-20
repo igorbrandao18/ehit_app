@@ -58,15 +58,7 @@ class PlaylistDetailPage extends StatelessWidget {
               icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () => context.pop(),
             ),
-            title: Text(
-              playlist.name,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            centerTitle: true,
+            // Removido o título do AppBar
           ),
           body: SingleChildScrollView(
             child: Column(
@@ -126,9 +118,19 @@ class PlaylistDetailPage extends StatelessWidget {
           ),
           SizedBox(height: DesignTokens.sectionSpacing),
           
-          // Playlist info - apenas contagem de músicas
+          // Playlist info
           Text(
-            '${playlist.musicsCount} músicas',
+            playlist.name,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: DesignTokens.headingFontSize,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: DesignTokens.spaceSM),
+          Text(
+            '${playlist.musicsCount} Músicas • ${_calculateTotalDuration(playlist)}min',
             style: TextStyle(
               color: Colors.white.withOpacity(0.7),
               fontSize: DesignTokens.bodyFontSize,
@@ -161,13 +163,47 @@ class PlaylistDetailPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Músicas',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: DesignTokens.titleFontSize,
-              fontWeight: FontWeight.bold,
-            ),
+          // Divider
+          Container(
+            height: 1,
+            color: Colors.white.withOpacity(0.2),
+            margin: EdgeInsets.symmetric(vertical: DesignTokens.spaceMD),
+          ),
+          
+          // Header da lista de músicas
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Lista de sons',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: DesignTokens.titleFontSize,
+                  fontWeight: FontWeight.w500,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () => _onShuffleTap(context, playlist),
+                    icon: const Icon(
+                      Icons.shuffle,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => _onRepeatTap(context, playlist),
+                    icon: const Icon(
+                      Icons.repeat,
+                      color: Colors.white,
+                      size: 24,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
           SizedBox(height: DesignTokens.spaceMD),
           
@@ -221,5 +257,37 @@ class PlaylistDetailPage extends StatelessWidget {
     
     // Navegar para o player
     context.pushNamed('player');
+  }
+
+  String _calculateTotalDuration(Playlist playlist) {
+    if (playlist.musicsData.isEmpty) return '0';
+    
+    int totalSeconds = 0;
+    for (final song in playlist.musicsData) {
+      totalSeconds += song.duration;
+    }
+    
+    int minutes = totalSeconds ~/ 60;
+    return minutes.toString();
+  }
+
+  void _onShuffleTap(BuildContext context, Playlist playlist) {
+    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
+    if (playlist.musicsData.isNotEmpty) {
+      // Embaralha a lista de músicas
+      final shuffledSongs = List<Song>.from(playlist.musicsData)..shuffle();
+      audioPlayer.playPlaylist(shuffledSongs, startIndex: 0);
+      debugPrint('🔀 Shuffle play: ${playlist.musicsData.length} músicas da playlist ${playlist.name}');
+      context.pushNamed('player');
+    }
+  }
+
+  void _onRepeatTap(BuildContext context, Playlist playlist) {
+    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
+    if (playlist.musicsData.isNotEmpty) {
+      audioPlayer.playPlaylist(playlist.musicsData, startIndex: 0);
+      debugPrint('🔁 Repeat play: ${playlist.musicsData.length} músicas da playlist ${playlist.name}');
+      context.pushNamed('player');
+    }
   }
 }
