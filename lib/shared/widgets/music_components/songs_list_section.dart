@@ -30,7 +30,8 @@ class SongsListSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildSectionHeader(context),
-        Expanded(
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.4, // 40% da altura da tela
           child: _buildSongsList(context),
         ),
       ],
@@ -100,7 +101,11 @@ class SongsListSection extends StatelessWidget {
     }
 
     return ListView.builder(
-      padding: EdgeInsets.zero,
+      padding: EdgeInsets.only(
+        top: ResponsiveUtils.getResponsiveSpacing(context, mobile: 16, tablet: 20, desktop: 24),
+        left: ResponsiveUtils.getResponsiveSpacing(context, mobile: 16, tablet: 20, desktop: 24),
+        right: ResponsiveUtils.getResponsiveSpacing(context, mobile: 16, tablet: 20, desktop: 24),
+      ),
       itemCount: songs.length,
       itemBuilder: (context, index) {
         final song = songs[index];
