@@ -213,22 +213,21 @@ class PlaylistDetailPage extends StatelessWidget {
         
         // Songs list sem padding
         ...playlist.musicsData.asMap().entries.map((entry) {
-            final index = entry.key;
-            final song = entry.value;
-            return Column(
-              children: [
-                SongListItem(
-                  song: song,
-                  index: index,
-                  onTap: () => _onSongTap(context, song),
-                ),
-                if (index < playlist.musicsData.length - 1)
-                  SizedBox(height: DesignTokens.songItemSpacing),
-              ],
-            );
-          }).toList(),
-        ],
-      ),
+          final index = entry.key;
+          final song = entry.value;
+          return Column(
+            children: [
+              SongListItem(
+                song: song,
+                index: index,
+                onTap: () => _onSongTap(context, song),
+              ),
+              if (index < playlist.musicsData.length - 1)
+                SizedBox(height: DesignTokens.songItemSpacing),
+            ],
+          );
+        }).toList(),
+      ],
     );
   }
 
