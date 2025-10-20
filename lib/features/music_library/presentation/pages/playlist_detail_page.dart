@@ -92,19 +92,19 @@ class PlaylistDetailPage extends StatelessWidget {
           // Playlist cover
           Center(
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(DesignTokens.cardBorderRadius),
+              borderRadius: BorderRadius.circular(DesignTokens.radiusLG),
               child: Image.network(
                 playlist.cover,
-                width: DesignTokens.albumArtSize,
-                height: DesignTokens.albumArtSize,
+                width: DesignTokens.albumArtSize * 0.8, // Diminuído para 80%
+                height: DesignTokens.albumArtSize * 0.8, // Diminuído para 80%
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
-                    width: DesignTokens.albumArtSize,
-                    height: DesignTokens.albumArtSize,
+                    width: DesignTokens.albumArtSize * 0.8,
+                    height: DesignTokens.albumArtSize * 0.8,
                     decoration: BoxDecoration(
                       color: Colors.grey.shade800,
-                      borderRadius: BorderRadius.circular(DesignTokens.cardBorderRadius),
+                      borderRadius: BorderRadius.circular(DesignTokens.radiusLG),
                     ),
                     child: const Icon(
                       Icons.music_note,
