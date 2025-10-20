@@ -1,5 +1,6 @@
 // features/music_library/presentation/pages/playlist_detail_page.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
@@ -54,6 +55,10 @@ class PlaylistDetailPage extends StatelessWidget {
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: Brightness.light,
+            ),
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () => context.pop(),
@@ -125,7 +130,7 @@ class PlaylistDetailPage extends StatelessWidget {
                   playlist.name,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: DesignTokens.headingFontSize,
+                    fontSize: DesignTokens.titleFontSize, // 20px (menor que headingFontSize 24px)
                     fontWeight: FontWeight.bold,
                   ),
                   textAlign: TextAlign.center,
@@ -135,7 +140,7 @@ class PlaylistDetailPage extends StatelessWidget {
                   '${playlist.musicsCount} Músicas • ${_calculateTotalDuration(playlist)}min',
                   style: TextStyle(
                     color: Colors.white.withOpacity(0.7),
-                    fontSize: DesignTokens.bodyFontSize,
+                    fontSize: DesignTokens.subtitleFontSize, // 18px (menor que bodyFontSize 16px)
                   ),
                   textAlign: TextAlign.center,
                 ),
