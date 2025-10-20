@@ -30,17 +30,18 @@ class PlayHitsSection extends StatelessWidget {
           return const LoadingSection(message: 'Carregando PlayHITS...');
         }
 
-        // Usar músicas das playlists como PlayHITS
+        // Usar playlists como PlayHITS (1 card por playlist)
         final playHits = <Map<String, String>>[];
         
-        // Coletar músicas de todas as playlists para criar PlayHITS
+        // Coletar playlists para criar PlayHITS
         for (final playlist in controller.playlists) {
-          for (final song in playlist.musicsData.take(2)) { // Pegar até 2 músicas por playlist
+          if (playlist.musicsData.isNotEmpty) {
+            final firstSong = playlist.musicsData.first;
             playHits.add({
-              'title': song.title,
-              'artist': song.artist,
-              'imageUrl': song.imageUrl,
-              'songId': song.id,
+              'title': playlist.name,
+              'artist': firstSong.artist,
+              'imageUrl': playlist.cover, // Usar cover da playlist
+              'songId': firstSong.id,
               'playlistId': playlist.id.toString(),
               'playlistName': playlist.name,
             });

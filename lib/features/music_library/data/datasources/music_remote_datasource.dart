@@ -26,6 +26,8 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
         final data = response.data;
         final results = data['results'] as List;
         
+        debugPrint('🎵 API retornou ${results.length} PlayHITS');
+        
         return results.map((playlistData) {
           return PlaylistModel(
             id: playlistData['id'],

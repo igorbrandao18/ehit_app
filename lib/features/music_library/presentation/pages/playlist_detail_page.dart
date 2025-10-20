@@ -136,13 +136,24 @@ class PlaylistDetailPage extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: DesignTokens.spaceSM),
-                Text(
-                  '${playlist.musicsCount} Músicas • ${_calculateTotalDuration(playlist)}min',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(DesignTokens.opacityTextSecondary),
-                    fontSize: DesignTokens.subtitleFontSize, // 18px (menor que bodyFontSize 16px)
-                  ),
-                  textAlign: TextAlign.center,
+                FutureBuilder<Duration>(
+                  future: _calculateTotalDurationAsync(context, playlist),
+                  builder: (context, snapshot) {
+                    final duration = snapshot.hasData 
+                        ? snapshot.data! 
+                        : Duration(minutes: _calculateTotalDurationFallback(playlist));
+                    
+                    final durationText = _formatDuration(duration);
+                    
+                    return Text(
+                      '${playlist.musicsCount} Músicas • $durationText',
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(DesignTokens.opacityTextSecondary),
+                        fontSize: DesignTokens.subtitleFontSize, // 18px (menor que bodyFontSize 16px)
+                      ),
+                      textAlign: TextAlign.center,
+                    );
+                  },
                 ),
               ],
             ),
@@ -193,8 +204,17 @@ class PlaylistDetailPage extends StatelessWidget {
     context.pushNamed('player');
   }
 
-  String _calculateTotalDuration(Playlist playlist) {
-    if (playlist.musicsData.isEmpty) return '0';
+  /// Calcula a duração total usando metadata real dos arquivos de áudio
+  Future<Duration> _calculateTotalDurationAsync(BuildContext context, Playlist playlist) async {
+    if (playlist.musicsData.isEmpty) return Duration.zero;
+    
+    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
+    return await audioPlayer.calculateTotalDuration(playlist.musicsData);
+  }
+
+  /// Fallback para calcular duração usando strings (método antigo)
+  int _calculateTotalDurationFallback(Playlist playlist) {
+    if (playlist.musicsData.isEmpty) return 0;
     
     int totalSeconds = 0;
     for (final song in playlist.musicsData) {
@@ -207,8 +227,19 @@ class PlaylistDetailPage extends StatelessWidget {
       }
     }
     
-    int minutes = totalSeconds ~/ 60;
-    return minutes.toString();
+    return totalSeconds ~/ 60;
+  }
+
+  /// Formata a duração para exibição (ex: "3min 45s" ou "5min")
+  String _formatDuration(Duration duration) {
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds % 60;
+    
+    if (seconds == 0) {
+      return '${minutes}min';
+    } else {
+      return '${minutes}min ${seconds}s';
+    }
   }
 
   void _onShuffleTap(BuildContext context, Playlist playlist) {

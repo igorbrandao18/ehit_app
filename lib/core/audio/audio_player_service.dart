@@ -221,6 +221,68 @@ class AudioPlayerService extends ChangeNotifier {
     }
   }
   
+  /// Obtém a duração de uma música específica usando metadata do arquivo
+  Future<Duration?> getSongDuration(String audioUrl) async {
+    try {
+      // Se o plugin não estiver disponível, retorna null
+      if (kIsWeb || !await _isAudioPlayerAvailable()) {
+        debugPrint('⚠️ Plugin de áudio não disponível para obter duração');
+        return null;
+      }
+      
+      // Cria um player temporário para obter a duração
+      final tempPlayer = AudioPlayer();
+      await tempPlayer.setUrl(audioUrl);
+      
+      // Aguarda a duração ser carregada
+      Duration? duration;
+      await for (final d in tempPlayer.durationStream) {
+        if (d != null) {
+          duration = d;
+          break;
+        }
+      }
+      
+      await tempPlayer.dispose();
+      return duration;
+    } catch (e) {
+      debugPrint('❌ Erro ao obter duração da música: $e');
+      return null;
+    }
+  }
+
+  /// Calcula a duração total de uma lista de músicas
+  Future<Duration> calculateTotalDuration(List<Song> songs) async {
+    if (songs.isEmpty) return Duration.zero;
+    
+    int totalSeconds = 0;
+    
+    for (final song in songs) {
+      // Primeiro tenta obter a duração real do arquivo
+      final realDuration = await getSongDuration(song.audioUrl);
+      
+      if (realDuration != null) {
+        totalSeconds += realDuration.inSeconds;
+        debugPrint('🎵 Duração real de "${song.title}": ${realDuration.inMinutes}:${(realDuration.inSeconds % 60).toString().padLeft(2, '0')}');
+      } else {
+        // Fallback: usa a duração da string se disponível
+        final durationParts = song.duration.split(':');
+        if (durationParts.length == 2) {
+          final minutes = int.tryParse(durationParts[0]) ?? 0;
+          final seconds = int.tryParse(durationParts[1]) ?? 0;
+          totalSeconds += minutes * 60 + seconds;
+          debugPrint('🎵 Duração fallback de "${song.title}": ${song.duration}');
+        } else {
+          // Se não conseguir obter duração, assume 3:30 como padrão
+          totalSeconds += 210; // 3:30 em segundos
+          debugPrint('🎵 Duração padrão para "${song.title}": 3:30');
+        }
+      }
+    }
+    
+    return Duration(seconds: totalSeconds);
+  }
+
   /// Simula reprodução quando o plugin não está disponível
   void _simulatePlayback() {
     _isPlaying = true;

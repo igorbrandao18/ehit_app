@@ -42,10 +42,16 @@ class MusicLibraryController extends ChangeNotifier {
       
       result.when(
         success: (playlists) {
+          debugPrint('🎵 PlayHITS carregadas: ${playlists.length}');
+          for (int i = 0; i < playlists.length; i++) {
+            final playlist = playlists[i];
+            debugPrint('🎵 PlayHIT ${i + 1}: ${playlist.name} (ID: ${playlist.id}) - ${playlist.musicsCount} músicas');
+          }
           _playlists = playlists;
           notifyListeners();
         },
         error: (message, code) {
+          debugPrint('❌ Erro ao carregar PlayHITS: $message');
           _setError(message);
         },
       );
