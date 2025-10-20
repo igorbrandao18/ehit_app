@@ -173,13 +173,6 @@ class PlaylistDetailPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Divider
-          Container(
-            height: 1,
-            color: Colors.white.withOpacity(0.2),
-            margin: EdgeInsets.symmetric(vertical: DesignTokens.spaceMD),
-          ),
-          
           // Header da lista de músicas
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
