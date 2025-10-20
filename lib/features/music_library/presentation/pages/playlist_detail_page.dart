@@ -168,13 +168,13 @@ class PlaylistDetailPage extends StatelessWidget {
       );
     }
 
-    return Padding(
-      padding: DesignTokens.getResponsiveHorizontalPadding(context),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header da lista de músicas
-          Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Header da lista de músicas com padding
+        Padding(
+          padding: DesignTokens.getResponsiveHorizontalPadding(context),
+          child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
@@ -208,10 +208,11 @@ class PlaylistDetailPage extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: DesignTokens.spaceMD),
-          
-          // Songs list
-          ...playlist.musicsData.asMap().entries.map((entry) {
+        ),
+        SizedBox(height: DesignTokens.spaceMD),
+        
+        // Songs list sem padding
+        ...playlist.musicsData.asMap().entries.map((entry) {
             final index = entry.key;
             final song = entry.value;
             return Column(

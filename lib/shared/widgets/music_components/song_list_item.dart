@@ -25,7 +25,7 @@ class SongListItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: DesignTokens.spaceMD,
+          horizontal: 0, // Removido padding horizontal
           vertical: DesignTokens.spaceSM,
         ),
         child: Row(
