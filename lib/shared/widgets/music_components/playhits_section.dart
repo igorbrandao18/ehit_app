@@ -79,7 +79,7 @@ class PlayHitsSection extends StatelessWidget {
                       right: index < limitedPlayHits.length - 1 ? DesignTokens.cardSpacing : 0,
                     ),
                     child: PlayHitsCard(
-                      title: playHit['title']!,
+                      title: playHit['playlistName']!, // Usar nome da playlist em vez do nome da música
                       artist: playHit['artist']!,
                       imageUrl: playHit['imageUrl']!,
                       isLarge: index == 0, // First card is large
