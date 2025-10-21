@@ -9,8 +9,8 @@ import '../../../../core/utils/result.dart';
 
 /// Controller responsável por gerenciar o estado da página de detalhes do artista
 class ArtistDetailController extends ChangeNotifier {
-  final GetArtistByIdUseCase _getArtistByIdUseCase;
-  final GetSongsByArtistUseCase _getSongsByArtistUseCase;
+  final GetArtistsUseCase _getArtistsUseCase;
+  final GetSongsUseCase _getSongsUseCase;
   
   bool _isLoading = true;
   String? _error;
@@ -18,10 +18,10 @@ class ArtistDetailController extends ChangeNotifier {
   List<Song> _songs = [];
 
   ArtistDetailController({
-    required GetArtistByIdUseCase getArtistByIdUseCase,
-    required GetSongsByArtistUseCase getSongsByArtistUseCase,
-  }) : _getArtistByIdUseCase = getArtistByIdUseCase,
-       _getSongsByArtistUseCase = getSongsByArtistUseCase;
+    required GetArtistsUseCase getArtistsUseCase,
+    required GetSongsUseCase getSongsUseCase,
+  }) : _getArtistsUseCase = getArtistsUseCase,
+       _getSongsUseCase = getSongsUseCase;
 
   // Getters
   bool get isLoading => _isLoading;
@@ -39,12 +39,16 @@ class ArtistDetailController extends ChangeNotifier {
 
       debugPrint('ArtistDetailController: Loading artist with ID: $artistId');
 
-      // Busca artista do Supabase
-      final artistResult = await _getArtistByIdUseCase(artistId);
-      artistResult.when(
-        success: (artist) {
-          _artist = artist;
-          debugPrint('ArtistDetailController: Artist loaded: ${artist.name}');
+      // Busca todos os artistas e encontra o específico
+      final artistsResult = await _getArtistsUseCase();
+      artistsResult.when(
+        success: (artists) {
+          _artist = artists.where((a) => a.id.toString() == artistId).firstOrNull;
+          if (_artist != null) {
+            debugPrint('ArtistDetailController: Artist loaded: ${_artist!.name}');
+          } else {
+            _error = 'Artista não encontrado';
+          }
         },
         error: (message, code) {
           _error = 'Erro ao carregar artista: $message';
@@ -52,16 +56,14 @@ class ArtistDetailController extends ChangeNotifier {
         },
       );
 
-      // Busca músicas do artista do Supabase
+      // Busca músicas do artista
       if (_artist != null) {
-        final songsResult = await _getSongsByArtistUseCase(artistId);
+        final songsResult = await _getSongsUseCase();
         songsResult.when(
           success: (songs) {
-            _songs = songs;
-            debugPrint('ArtistDetailController: Songs loaded: ${songs.length} songs');
-            
-            // Atualiza o artista com informações calculadas das músicas
-            _updateArtistWithSongsInfo(songs);
+            // Filtra músicas do artista específico
+            _songs = songs.where((s) => s.artist == _artist!.name).toList();
+            debugPrint('ArtistDetailController: Songs loaded: ${_songs.length} songs');
           },
           error: (message, code) {
             _error = 'Erro ao carregar músicas: $message';
@@ -79,85 +81,18 @@ class ArtistDetailController extends ChangeNotifier {
     }
   }
 
-  /// Atualiza o artista com informações calculadas das músicas
-  void _updateArtistWithSongsInfo(List<Song> songs) {
-    if (_artist == null) return;
-    
-    // Calcula o total de músicas
-    final totalSongs = songs.length;
-    
-    // Calcula a duração total
-    int totalDurationMs = 0;
-    int songsWithValidDuration = 0;
-    
-    for (final song in songs) {
-      final durationMs = _parseDurationToMs(song.duration);
-      if (durationMs > 0) {
-        totalDurationMs += durationMs;
-        songsWithValidDuration++;
-      }
-    }
-    
-    // Se não há durações válidas, usa uma duração padrão estimada
-    String totalDuration;
-    if (totalDurationMs > 0) {
-      // Converte para formato legível (MM:SS)
-      final totalMinutes = totalDurationMs ~/ (60 * 1000);
-      final totalSeconds = (totalDurationMs % (60 * 1000)) ~/ 1000;
-      totalDuration = '${totalMinutes.toString().padLeft(2, '0')}:${totalSeconds.toString().padLeft(2, '0')}';
-    } else {
-      // Duração padrão estimada: 3:30 por música
-      final estimatedMinutes = totalSongs * 3;
-      final estimatedSeconds = totalSongs * 30;
-      final finalMinutes = estimatedMinutes + (estimatedSeconds ~/ 60);
-      final finalSeconds = estimatedSeconds % 60;
-      totalDuration = '${finalMinutes.toString().padLeft(2, '0')}:${finalSeconds.toString().padLeft(2, '0')}';
-    }
-    
-    // Atualiza o artista com as informações calculadas
-    _artist = _artist!.copyWith(
-      totalSongs: totalSongs,
-      totalDuration: totalDuration,
-    );
-    
-    debugPrint('ArtistDetailController: Updated artist - $totalSongs songs, $totalDuration total duration');
-    debugPrint('ArtistDetailController: Songs with valid duration: $songsWithValidDuration/$totalSongs');
-  }
-  
-  /// Converte string de duração (MM:SS) para milissegundos
-  int _parseDurationToMs(String duration) {
-    debugPrint('Parsing duration: "$duration"');
-    try {
-      final parts = duration.split(':');
-      if (parts.length == 2) {
-        final minutes = int.parse(parts[0]);
-        final seconds = int.parse(parts[1]);
-        final totalMs = (minutes * 60 + seconds) * 1000;
-        debugPrint('Parsed: $minutes minutes, $seconds seconds = $totalMs ms');
-        return totalMs;
-      }
-    } catch (e) {
-      debugPrint('Error parsing duration: "$duration" - $e');
-    }
-    debugPrint('Failed to parse duration, returning 0');
-    return 0; // Default to 0 if parsing fails
-  }
-
   /// Reproduz uma música
   void playSong(Song song) {
-    // A reprodução será feita pelo AudioPlayerService via Provider
     debugPrint('Reproduzindo: ${song.title} - ${song.artist}');
   }
 
   /// Reproduz todas as músicas em ordem aleatória
   void shufflePlay() {
-    // A reprodução será feita pelo AudioPlayerService via Provider
     debugPrint('Reproduzindo músicas em ordem aleatória');
   }
 
   /// Reproduz todas as músicas em loop
   void repeatPlay() {
-    // A reprodução será feita pelo AudioPlayerService via Provider
     debugPrint('Reproduzindo músicas em loop');
   }
 

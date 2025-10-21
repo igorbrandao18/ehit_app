@@ -68,6 +68,9 @@ class AudioPlayerService extends ChangeNotifier {
       _playlist = [song];
       _currentIndex = 0;
       
+      // Pré-carrega a duração da música se disponível
+      _preloadDuration(song);
+      
       // Simula reprodução se o plugin não estiver disponível
       if (kIsWeb || !await _isAudioPlayerAvailable()) {
         debugPrint('⚠️ Plugin de áudio não disponível, simulando reprodução...');
@@ -97,6 +100,9 @@ class AudioPlayerService extends ChangeNotifier {
       
       debugPrint('🎵 Tocando playlist: ${songs.length} músicas');
       debugPrint('🎵 Começando em: ${_currentSong!.title}');
+      
+      // Pré-carrega a duração da música atual se disponível
+      _preloadDuration(_currentSong!);
       
       // Se o plugin não estiver disponível, simula
       if (kIsWeb || !await _isAudioPlayerAvailable()) {
@@ -154,6 +160,9 @@ class AudioPlayerService extends ChangeNotifier {
     
     debugPrint('⏭️ Próxima música: ${_currentSong!.title}');
     
+    // Pré-carrega a duração da próxima música se disponível
+    _preloadDuration(_currentSong!);
+    
     try {
       // Se o plugin não estiver disponível, simula
       if (kIsWeb || !await _isAudioPlayerAvailable()) {
@@ -179,6 +188,9 @@ class AudioPlayerService extends ChangeNotifier {
     _currentSong = _playlist[_currentIndex];
     
     debugPrint('⏮️ Música anterior: ${_currentSong!.title}');
+    
+    // Pré-carrega a duração da música anterior se disponível
+    _preloadDuration(_currentSong!);
     
     try {
       // Se o plugin não estiver disponível, simula
@@ -283,11 +295,34 @@ class AudioPlayerService extends ChangeNotifier {
     return Duration(seconds: totalSeconds);
   }
 
+  /// Pré-carrega a duração da música a partir da string de duração
+  void _preloadDuration(Song song) {
+    try {
+      // Tenta converter a duração da string para Duration
+      final durationParts = song.duration.split(':');
+      if (durationParts.length == 2) {
+        final minutes = int.tryParse(durationParts[0]) ?? 0;
+        final seconds = int.tryParse(durationParts[1]) ?? 0;
+        _duration = Duration(minutes: minutes, seconds: seconds);
+        debugPrint('🎵 Duração pré-carregada: ${song.title} - ${song.duration}');
+        notifyListeners();
+      } else {
+        debugPrint('⚠️ Formato de duração inválido: ${song.duration}');
+      }
+    } catch (e) {
+      debugPrint('❌ Erro ao pré-carregar duração: $e');
+    }
+  }
+
   /// Simula reprodução quando o plugin não está disponível
   void _simulatePlayback() {
     _isPlaying = true;
     _position = Duration.zero;
-    _duration = const Duration(minutes: 3, seconds: 30); // Duração simulada
+    
+    // Se não há duração pré-carregada, usa uma duração simulada padrão
+    if (_duration == Duration.zero) {
+      _duration = const Duration(minutes: 3, seconds: 30);
+    }
     
     // Simula progresso da música
     Timer.periodic(const Duration(seconds: 1), (timer) {

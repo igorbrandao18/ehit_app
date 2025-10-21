@@ -12,15 +12,26 @@ class ArtistModel extends Artist {
     required super.id,
     required super.name,
     required super.imageUrl,
-    required super.bio,
-    required super.totalSongs,
-    required super.totalDuration,
-    required super.genres,
-    required super.followers,
+    required super.genre,
+    required super.albumsCount,
+    required super.isActive,
+    required super.createdAt,
+    required super.updatedAt,
   });
 
-  /// Cria ArtistModel a partir de JSON
-  factory ArtistModel.fromJson(Map<String, dynamic> json) => _$ArtistModelFromJson(json);
+  /// Cria ArtistModel a partir de JSON da API
+  factory ArtistModel.fromJson(Map<String, dynamic> json) {
+    return ArtistModel(
+      id: json['id'] as int,
+      name: json['stage_name'] as String,
+      imageUrl: json['photo'] as String? ?? '',
+      genre: json['genre_data']?['name'] as String? ?? 'Unknown',
+      albumsCount: json['albums_count'] as int? ?? 0,
+      isActive: json['is_active'] as bool? ?? true,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
+    );
+  }
 
   /// Converte ArtistModel para JSON
   Map<String, dynamic> toJson() => _$ArtistModelToJson(this);
@@ -31,11 +42,11 @@ class ArtistModel extends Artist {
       id: artist.id,
       name: artist.name,
       imageUrl: artist.imageUrl,
-      bio: artist.bio,
-      totalSongs: artist.totalSongs,
-      totalDuration: artist.totalDuration,
-      genres: artist.genres,
-      followers: artist.followers,
+      genre: artist.genre,
+      albumsCount: artist.albumsCount,
+      isActive: artist.isActive,
+      createdAt: artist.createdAt,
+      updatedAt: artist.updatedAt,
     );
   }
 
@@ -45,39 +56,11 @@ class ArtistModel extends Artist {
       id: id,
       name: name,
       imageUrl: imageUrl,
-      bio: bio,
-      totalSongs: totalSongs,
-      totalDuration: totalDuration,
-      genres: genres,
-      followers: followers,
+      genre: genre,
+      albumsCount: albumsCount,
+      isActive: isActive,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
     );
-  }
-
-  /// Cria ArtistModel a partir de Map (para dados mock)
-  factory ArtistModel.fromMap(Map<String, dynamic> map) {
-    return ArtistModel(
-      id: map['id'] as String,
-      name: map['name'] as String,
-      imageUrl: map['imageUrl'] as String,
-      bio: map['bio'] as String? ?? '',
-      totalSongs: map['totalSongs'] as int? ?? 0,
-      totalDuration: map['totalDuration'] as String? ?? '0:00',
-      genres: (map['genres'] as List<dynamic>?)?.cast<String>() ?? [],
-      followers: map['followers'] as int? ?? 0,
-    );
-  }
-
-  /// Converte ArtistModel para Map
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'imageUrl': imageUrl,
-      'bio': bio,
-      'totalSongs': totalSongs,
-      'totalDuration': totalDuration,
-      'genres': genres,
-      'followers': followers,
-    };
   }
 }

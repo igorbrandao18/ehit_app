@@ -1,72 +1,91 @@
 // shared/widgets/music_components/artist_card.dart
 import 'package:flutter/material.dart';
+import '../../../features/music_library/domain/entities/artist.dart';
 import '../../design/app_colors.dart';
 import '../../design/app_text_styles.dart';
 import '../../design/design_tokens.dart';
+import '../../utils/responsive_utils.dart';
 
 /// Card circular para exibir artistas
 class ArtistCard extends StatelessWidget {
-  final String name;
-  final String imageUrl;
+  final Artist artist;
   final VoidCallback? onTap;
   final double? size;
 
   const ArtistCard({
     super.key,
-    required this.name,
-    required this.imageUrl,
+    required this.artist,
     this.onTap,
     this.size,
   });
 
   @override
   Widget build(BuildContext context) {
-    final cardSize = size ?? DesignTokens.artistCardSize;
+    // Responsive sizing based on device type
+    final deviceType = ResponsiveUtils.getDeviceType(context);
+    final cardSize = size ?? _getResponsiveCardSize(deviceType);
+    final imageSize = cardSize * 0.85; // Make image slightly smaller to leave space for text
+    final spacing = ResponsiveUtils.getResponsiveSpacing(context);
+    final fontSize = ResponsiveUtils.getResponsiveFontSize(context);
     
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: SizedBox(
         width: cardSize,
-        height: cardSize,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Circular image
+            // Square image with rounded corners
             Container(
-              width: cardSize,
-              height: cardSize,
+              width: imageSize,
+              height: imageSize,
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
+                borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.3),
-                    blurRadius: 8,
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: ResponsiveUtils.getResponsiveSpacing(context, mobile: 4, tablet: 6, desktop: 8),
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              child: ClipOval(
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: AppColors.backgroundCard,
-                      child: Icon(
-                        Icons.person,
-                        color: AppColors.textTertiary,
-                        size: cardSize * 0.3,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+                child: artist.imageUrl.isNotEmpty
+                    ? Image.network(
+                        artist.imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: AppColors.backgroundCard,
+                            child: Icon(
+                              Icons.person,
+                              color: AppColors.textTertiary,
+                              size: imageSize * 0.3,
+                            ),
+                          );
+                        },
+                      )
+                    : Container(
+                        color: AppColors.backgroundCard,
+                        child: Icon(
+                          Icons.person,
+                          color: AppColors.textTertiary,
+                          size: imageSize * 0.3,
+                        ),
                       ),
-                    );
-                  },
-                ),
               ),
             ),
             
             // Artist name
-            const SizedBox(height: DesignTokens.spaceSM),
+            SizedBox(height: spacing / 2),
             Text(
-              name,
-              style: AppTextStyles.bodySmall,
+              artist.name,
+              style: AppTextStyles.bodySmall.copyWith(
+                fontSize: fontSize - 1,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -75,5 +94,17 @@ class ArtistCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /// Retorna o tamanho responsivo do card baseado no tipo de dispositivo
+  double _getResponsiveCardSize(DeviceType deviceType) {
+    switch (deviceType) {
+      case DeviceType.mobile:
+        return 90.0; // Smaller for mobile to match image
+      case DeviceType.tablet:
+        return 110.0; // Medium for tablet
+      case DeviceType.desktop:
+        return 130.0; // Larger for desktop
+    }
   }
 }

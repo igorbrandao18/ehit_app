@@ -2,46 +2,46 @@
 
 /// Entidade que representa um artista musical
 class Artist {
-  final String id;
+  final int id;
   final String name;
   final String imageUrl;
-  final String bio;
-  final int totalSongs;
-  final String totalDuration;
-  final List<String> genres;
-  final int followers;
+  final String genre;
+  final int albumsCount;
+  final bool isActive;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 
   const Artist({
     required this.id,
     required this.name,
     required this.imageUrl,
-    required this.bio,
-    required this.totalSongs,
-    required this.totalDuration,
-    required this.genres,
-    required this.followers,
+    required this.genre,
+    required this.albumsCount,
+    required this.isActive,
+    required this.createdAt,
+    required this.updatedAt,
   });
 
   /// Cria uma cópia do artista com campos modificados
   Artist copyWith({
-    String? id,
+    int? id,
     String? name,
     String? imageUrl,
-    String? bio,
-    int? totalSongs,
-    String? totalDuration,
-    List<String>? genres,
-    int? followers,
+    String? genre,
+    int? albumsCount,
+    bool? isActive,
+    DateTime? createdAt,
+    DateTime? updatedAt,
   }) {
     return Artist(
       id: id ?? this.id,
       name: name ?? this.name,
       imageUrl: imageUrl ?? this.imageUrl,
-      bio: bio ?? this.bio,
-      totalSongs: totalSongs ?? this.totalSongs,
-      totalDuration: totalDuration ?? this.totalDuration,
-      genres: genres ?? this.genres,
-      followers: followers ?? this.followers,
+      genre: genre ?? this.genre,
+      albumsCount: albumsCount ?? this.albumsCount,
+      isActive: isActive ?? this.isActive,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -56,6 +56,6 @@ class Artist {
 
   @override
   String toString() {
-    return 'Artist(id: $id, name: $name, totalSongs: $totalSongs)';
+    return 'Artist(id: $id, name: $name, genre: $genre, albumsCount: $albumsCount)';
   }
 }

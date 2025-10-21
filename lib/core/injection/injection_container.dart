@@ -10,6 +10,7 @@ import '../audio/audio_player_service.dart';
 // Data Sources - Music Library
 import '../../features/music_library/data/datasources/music_remote_datasource.dart';
 import '../../features/music_library/data/datasources/music_local_datasource.dart';
+import '../../features/music_library/data/datasources/artist_remote_datasource.dart';
 
 // Data Sources - Music Player
 import '../../features/music_player/data/datasources/playlist_remote_datasource.dart';
@@ -23,7 +24,10 @@ import '../../features/authentication/data/datasources/auth_local_datasource.dar
 
 // Repositories - Music Library
 import '../../features/music_library/data/repositories/music_repository_impl.dart' as music_lib_impl;
+import '../../features/music_library/data/repositories/artist_repository_impl.dart';
 import '../../features/music_library/domain/repositories/playlist_repository.dart' as music_lib;
+import '../../features/music_library/domain/repositories/music_repository.dart';
+import '../../features/music_library/domain/repositories/artist_repository.dart' as artist_repo;
 
 // Repositories - Music Player
 import '../../features/music_player/data/repositories/playlist_repository_impl.dart';
@@ -37,6 +41,8 @@ import '../../features/authentication/domain/repositories/auth_repository.dart';
 
 // Use Cases - Music Library
 import '../../features/music_library/domain/usecases/get_playlists_usecase.dart';
+import '../../features/music_library/domain/usecases/get_artists_usecase.dart';
+import '../../features/music_library/domain/usecases/get_songs_usecase.dart';
 
 // Use Cases - Music Player
 import '../../features/music_player/domain/usecases/playlist_usecases.dart';
@@ -50,6 +56,7 @@ import '../../features/authentication/domain/usecases/auth_usecases.dart';
 // Controllers
 import '../../features/music_library/presentation/controllers/music_library_controller.dart';
 import '../../features/music_library/presentation/controllers/artist_detail_controller.dart';
+import '../../features/music_library/presentation/controllers/artists_controller.dart';
 import '../../features/music_player/presentation/controllers/music_player_controller.dart';
 import '../../features/music_player/presentation/controllers/playlist_controller.dart';
 import '../../features/music_player/presentation/controllers/audio_player_controller.dart';
@@ -110,6 +117,11 @@ Future<void> init() async {
     () => MusicLocalDataSourceImpl(sl<SharedPreferences>()),
   );
 
+  // Artist Data Sources
+  sl.registerLazySingleton<ArtistRemoteDataSource>(
+    () => ArtistRemoteDataSourceImpl(sl<Dio>()),
+  );
+
   // Music Player Data Sources
   sl.registerLazySingleton<PlaylistRemoteDataSource>(
     () => PlaylistRemoteDataSourceImpl(sl<Dio>()),
@@ -142,6 +154,14 @@ Future<void> init() async {
     () => music_lib_impl.PlaylistRepositoryImpl(sl<MusicRemoteDataSource>()),
   );
 
+  sl.registerLazySingleton<MusicRepository>(
+    () => music_lib_impl.MusicRepositoryImpl(sl<MusicRemoteDataSource>()),
+  );
+
+  sl.registerLazySingleton<artist_repo.ArtistRepository>(
+    () => ArtistRepositoryImpl(sl<ArtistRemoteDataSource>()),
+  );
+
   // Music Player Repositories
   sl.registerLazySingleton<playlist_repo.PlaylistRepository>(
     () => PlaylistRepositoryImpl(
@@ -168,6 +188,8 @@ Future<void> init() async {
   
   // Music Library Use Cases
   sl.registerLazySingleton(() => GetPlaylistsUseCase(sl<music_lib.PlaylistRepository>()));
+  sl.registerLazySingleton(() => GetArtistsUseCase(sl<artist_repo.ArtistRepository>()));
+  sl.registerLazySingleton(() => GetSongsUseCase(sl<MusicRepository>()));
 
   // Music Player Use Cases - Playlists
   sl.registerLazySingleton(() => GetUserPlaylistsUseCase(sl<playlist_repo.PlaylistRepository>()));
@@ -218,6 +240,13 @@ Future<void> init() async {
   // Music Library Controllers
   sl.registerLazySingleton(() => MusicLibraryController(
     getPlaylistsUseCase: sl<GetPlaylistsUseCase>(),
+  ));
+
+  sl.registerLazySingleton(() => ArtistsController(sl<GetArtistsUseCase>()));
+
+  sl.registerLazySingleton(() => ArtistDetailController(
+    getArtistsUseCase: sl<GetArtistsUseCase>(),
+    getSongsUseCase: sl<GetSongsUseCase>(),
   ));
 
   // Music Player Controllers

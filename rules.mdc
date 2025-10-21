@@ -681,6 +681,109 @@ class MusicController extends ChangeNotifier {
 
 ---
 
+## 📱 iOS App Upload Guide
+
+### 🔑 Credenciais de Upload
+- **Apple ID**: `brandaodeveloperapp@gmail.com`
+- **App-Specific Password**: `hxtw-sqnv-lsee-grbp`
+- **Team ID**: `W66MTSPZ69`
+- **App Store Connect Team ID**: `127134714`
+- **App Apple ID**: `6754223373`
+- **Bundle ID**: `br.com.brandaodeveloper.ehitapp`
+
+### 🚀 Processo de Upload iOS
+
+#### 1. Gerar Build iOS
+```bash
+# Na raiz do projeto
+./build_ios.sh
+
+# Ou com versão específica
+./build_ios.sh 1.0.14 8
+```
+
+#### 2. Verificar Providers Disponíveis
+```bash
+cd ios
+xcrun altool --list-providers -u brandaodeveloperapp@gmail.com -p "hxtw-sqnv-lsee-grbp"
+```
+
+#### 3. Listar Apps Disponíveis
+```bash
+xcrun altool --list-apps -u brandaodeveloperapp@gmail.com -p "hxtw-sqnv-lsee-grbp"
+```
+
+#### 4. Fazer Upload do IPA
+```bash
+xcrun altool --upload-package ehit_app.ipa \
+  --type ios \
+  --asc-public-id 93ba92dc-e85e-4f56-8631-859cd972cd83 \
+  --apple-id 6754223373 \
+  --bundle-version 7 \
+  --bundle-short-version-string 1.0.13 \
+  --bundle-id br.com.brandaodeveloper.ehitapp \
+  -u brandaodeveloperapp@gmail.com \
+  -p "hxtw-sqnv-lsee-grbp"
+```
+
+### 📋 Informações Importantes
+
+#### Provider Correto
+- **Nome**: IGOR LEVI OLIVEIRA BRANDAO
+- **Public ID**: `93ba92dc-e85e-4f56-8631-859cd972cd83`
+- **Team ID**: `W66MTSPZ69`
+
+#### App "Éhit Music"
+- **Apple ID**: `6754223373`
+- **Bundle ID**: `br.com.brandaodeveloper.ehitapp`
+- **SKU**: `ehitmusic`
+
+### 🔧 Troubleshooting
+
+#### Se o upload falhar:
+1. Verificar se o IPA foi gerado corretamente
+2. Confirmar se as credenciais estão corretas
+3. Verificar se o bundle ID corresponde ao app
+4. Confirmar se a versão/build number são únicos
+
+#### Comandos de Verificação:
+```bash
+# Verificar se o IPA existe
+ls -la ehit_app.ipa
+
+# Verificar tamanho do arquivo
+du -h ehit_app.ipa
+
+# Verificar providers
+xcrun altool --list-providers -u brandaodeveloperapp@gmail.com -p "hxtw-sqnv-lsee-grbp"
+```
+
+### 📱 Após o Upload
+
+1. **Acesse**: https://appstoreconnect.apple.com
+2. **Vá para**: "Meus Apps" → "Éhit Music"
+3. **Verifique**: Nova build na seção "TestFlight" ou "App Store"
+4. **Aguarde**: Processamento da build (alguns minutos)
+5. **Configure**: Metadados se necessário
+6. **Envie**: Para revisão quando estiver pronto
+
+### ⚠️ Segurança
+
+- **NUNCA** commite a senha no Git
+- **NUNCA** compartilhe a senha publicamente
+- **SEMPRE** use App-Specific Password
+- **MANTENHA** as credenciais seguras
+
+### 📝 Logs de Sucesso
+
+```
+UPLOAD SUCCEEDED with 0 warnings, 0 messages
+Delivery UUID: 82047301-4122-4bc9-b416-7a73073c5492
+Transferred 28883028 bytes in 1.196 seconds (24.1MB/s)
+```
+
+---
+
 **Last updated**: December 2024  
 **Version**: 2.0.0  
 **Architecture Status**: ✅ Complete Implementation  

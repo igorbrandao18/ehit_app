@@ -117,7 +117,7 @@ class ArtistHeroSection extends StatelessWidget {
 
   Widget _buildAlbumInfo() {
     return Text(
-      '${artist.totalSongs} Músicas • ${artist.totalDuration}',
+      '${artist.albumsCount} Álbuns • ${artist.genre}',
       style: const TextStyle(
         color: Colors.white70,
         fontSize: 16,

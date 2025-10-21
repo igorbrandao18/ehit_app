@@ -34,8 +34,8 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
     super.initState();
     // Criar nova instância para cada página
     _controller = ArtistDetailController(
-      getArtistByIdUseCase: di.sl(),
-      getSongsByArtistUseCase: di.sl(),
+      getArtistsUseCase: di.sl(),
+      getSongsUseCase: di.sl(),
     );
     _loadArtistData();
   }

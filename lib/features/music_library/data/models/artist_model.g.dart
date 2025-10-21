@@ -7,15 +7,14 @@ part of 'artist_model.dart';
 // **************************************************************************
 
 ArtistModel _$ArtistModelFromJson(Map<String, dynamic> json) => ArtistModel(
-      id: json['id'] as String,
+      id: (json['id'] as num).toInt(),
       name: json['name'] as String,
       imageUrl: json['imageUrl'] as String,
-      bio: json['bio'] as String,
-      totalSongs: (json['totalSongs'] as num).toInt(),
-      totalDuration: json['totalDuration'] as String,
-      genres:
-          (json['genres'] as List<dynamic>).map((e) => e as String).toList(),
-      followers: (json['followers'] as num).toInt(),
+      genre: json['genre'] as String,
+      albumsCount: (json['albumsCount'] as num).toInt(),
+      isActive: json['isActive'] as bool,
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
 
 Map<String, dynamic> _$ArtistModelToJson(ArtistModel instance) =>
@@ -23,9 +22,9 @@ Map<String, dynamic> _$ArtistModelToJson(ArtistModel instance) =>
       'id': instance.id,
       'name': instance.name,
       'imageUrl': instance.imageUrl,
-      'bio': instance.bio,
-      'totalSongs': instance.totalSongs,
-      'totalDuration': instance.totalDuration,
-      'genres': instance.genres,
-      'followers': instance.followers,
+      'genre': instance.genre,
+      'albumsCount': instance.albumsCount,
+      'isActive': instance.isActive,
+      'createdAt': instance.createdAt.toIso8601String(),
+      'updatedAt': instance.updatedAt.toIso8601String(),
     };

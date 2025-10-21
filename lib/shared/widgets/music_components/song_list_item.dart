@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../../../features/music_library/domain/entities/song.dart';
 import '../../../features/music_player/presentation/controllers/music_player_controller.dart';
 import '../../design/design_tokens.dart';
+import '../../utils/responsive_utils.dart';
 
 /// Componente para item individual da lista de músicas
 class SongListItem extends StatelessWidget {
@@ -21,36 +22,37 @@ class SongListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final spacing = ResponsiveUtils.getResponsiveSpacing(context);
+    final thumbnailSize = ResponsiveUtils.getResponsiveImageSize(context);
+    
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          vertical: DesignTokens.spaceSM,
-        ),
+        padding: EdgeInsets.symmetric(vertical: spacing),
         child: Row(
           children: [
-            _buildAlbumArt(),
-            const SizedBox(width: DesignTokens.spaceMD),
+            _buildAlbumArt(context, thumbnailSize),
+            SizedBox(width: spacing),
             Expanded(
-              child: _buildSongInfo(),
+              child: _buildSongInfo(context),
             ),
-            _buildDownloadButton(),
+            _buildDownloadButton(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAlbumArt() {
+  Widget _buildAlbumArt(BuildContext context, double thumbnailSize) {
     return Container(
-      width: DesignTokens.songThumbnailSize,
-      height: DesignTokens.songThumbnailSize,
+      width: thumbnailSize,
+      height: thumbnailSize,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(DesignTokens.cardOverlayOpacity),
-            blurRadius: DesignTokens.cardShadowBlur,
+            blurRadius: ResponsiveUtils.getResponsiveSpacing(context, mobile: 4, tablet: 6, desktop: 8),
             offset: const Offset(0, DesignTokens.cardShadowOffset),
           ),
         ],
@@ -84,7 +86,7 @@ class SongListItem extends StatelessWidget {
               child: Icon(
                 Icons.music_note,
                 color: Colors.grey,
-                size: DesignTokens.songThumbnailSize * DesignTokens.cardIconSizeRatio,
+                size: thumbnailSize * DesignTokens.cardIconSizeRatio,
               ),
             );
           },
@@ -93,26 +95,29 @@ class SongListItem extends StatelessWidget {
     );
   }
 
-  Widget _buildSongInfo() {
+  Widget _buildSongInfo(BuildContext context) {
+    final fontSize = ResponsiveUtils.getResponsiveFontSize(context);
+    final spacing = ResponsiveUtils.getResponsiveSpacing(context);
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           song.title,
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
-            fontSize: DesignTokens.fontSizeMD,
+            fontSize: fontSize,
             fontWeight: FontWeight.w600,
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: DesignTokens.songItemSpacing),
+        SizedBox(height: spacing / 2),
         Text(
           song.artist,
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white70,
-            fontSize: DesignTokens.fontSizeSM,
+            fontSize: fontSize - 2,
             fontWeight: FontWeight.w400,
           ),
           maxLines: 1,
@@ -122,7 +127,10 @@ class SongListItem extends StatelessWidget {
     );
   }
 
-  Widget _buildDownloadButton() {
+  Widget _buildDownloadButton(BuildContext context) {
+    final iconSize = ResponsiveUtils.getResponsiveIconSize(context);
+    final spacing = ResponsiveUtils.getResponsiveSpacing(context);
+    
     return Consumer<MusicPlayerController>(
       builder: (context, playerController, child) {
         return FutureBuilder<bool>(
@@ -133,11 +141,11 @@ class SongListItem extends StatelessWidget {
             return GestureDetector(
               onTap: () => _handleDownloadTap(context),
               child: Container(
-                padding: const EdgeInsets.all(DesignTokens.spaceSM),
+                padding: EdgeInsets.all(spacing),
                 child: Icon(
                   isAvailableOffline ? Icons.check_circle : Icons.download,
                   color: isAvailableOffline ? Colors.green : Colors.white70,
-                  size: DesignTokens.iconSM,
+                  size: iconSize,
                 ),
               ),
             );
