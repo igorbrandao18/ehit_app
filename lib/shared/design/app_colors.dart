@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 /// Elimina duplicações e centraliza todas as cores
 class AppColors {
   // ============================================================================
-  // PRIMARY COLORS (ÊHIT Theme - Dark Red)
+  // PRIMARY COLORS (ÊHIT Theme - #ef2731)
   // ============================================================================
   
-  static const Color primaryRed = Color(0xFF8B0000); // Dark red background
-  static const Color primaryDark = Color(0xFF660000); // Darker red
-  static const Color backgroundDark = Color(0xFF8B0000); // Main background color
+  static const Color primaryRed = Color(0xFFEF2731); // Main brand color
+  static const Color primaryDark = Color(0xFFC41E3A); // Darker red
+  static const Color backgroundDark = Color(0xFFEF2731); // Main background color
   static const Color backgroundCard = Color(0xFF2A0000); // Dark red card background
   static const Color backgroundLight = Color(0xFF1A1A1A); // Light background
   static const Color backgroundElevated = Color(0xFF2A2A2A); // Elevated background
@@ -58,11 +58,11 @@ class AppColors {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFF8B0000), // Dark red top-left
-      Color(0xFF660000), // Darker red
-      Color(0xFF4A0000), // Very dark red
-      Color(0xFF2A0000), // Almost black with red tint
-      Color(0xFF1A0000), // Almost black
+      Color(0xFFEF2731), // Main brand color top-left
+      Color(0xFFE0242F), // Slightly darker red
+      Color(0xFFD11F2D), // A bit darker
+      Color(0xFFC21C2B), // Darker red
+      Color(0xFFB31929), // Darkest red
     ],
     stops: [0.0, 0.25, 0.5, 0.75, 1.0],
   );
@@ -71,9 +71,9 @@ class AppColors {
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0xFF8B0000), // Dark red (top)
-      Color(0xFF6B0000), // Medium dark red (middle)
-      Color(0xFF4B0000), // Darker red (bottom) - menos preto
+      Color(0xFFEF2731), // Main brand color (top)
+      Color(0xFFE0242F), // Slightly darker red (middle)
+      Color(0xFFD11F2D), // A bit darker (bottom)
     ],
     stops: [0.0, 0.6, 1.0],
   );
