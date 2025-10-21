@@ -38,28 +38,39 @@ log "Iniciando build iOS..."
 log "Versão: $VERSION"
 log "Build Number: $BUILD_NUMBER"
 
-# 1. Limpar projeto
+# 1. Atualizar versão no pubspec.yaml
+log "Atualizando versão no pubspec.yaml..."
+sed -i '' "s/version: [0-9.]*+[0-9]*/version: $VERSION+$BUILD_NUMBER/" pubspec.yaml
+
+# Verificar se a atualização foi feita
+if grep -q "version: $VERSION+$BUILD_NUMBER" pubspec.yaml; then
+    log "✅ Versão atualizada no pubspec.yaml: $VERSION+$BUILD_NUMBER"
+else
+    error "❌ Falha ao atualizar versão no pubspec.yaml"
+fi
+
+# 2. Limpar projeto
 log "Limpando projeto..."
 flutter clean
 flutter pub get
 
-# 2. Executar testes
+# 3. Executar testes
 log "Executando testes..."
 flutter test || warning "Alguns testes falharam, continuando..."
 
-# 3. Build Flutter iOS
+# 4. Build Flutter iOS
 log "Fazendo build Flutter iOS..."
 flutter build ios --release --no-codesign
 
-# 4. Navegar para iOS e configurar Xcode
+# 5. Navegar para iOS e configurar Xcode
 cd ios
 
-# 5. Atualizar versão no Info.plist
+# 6. Atualizar versão no Info.plist
 log "Atualizando versão no Info.plist..."
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" Runner/Info.plist
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" Runner/Info.plist
 
-# 6. Build com Xcode
+# 7. Build com Xcode
 log "Fazendo build com Xcode..."
 xcodebuild -workspace Runner.xcworkspace \
     -scheme Runner \
@@ -68,15 +79,19 @@ xcodebuild -workspace Runner.xcworkspace \
     -archivePath Runner.xcarchive \
     archive
 
-# 7. Exportar IPA
+# 8. Exportar IPA
 log "Exportando IPA..."
 xcodebuild -exportArchive \
     -archivePath Runner.xcarchive \
     -exportPath . \
     -exportOptionsPlist ExportOptions.plist
 
-# 8. Verificar se o IPA foi criado
-if [ -f "Runner.ipa" ]; then
+# 9. Verificar se o IPA foi criado
+if [ -f "ehit_app.ipa" ]; then
+    log "✅ Build concluído com sucesso!"
+    log "IPA criado: $(pwd)/ehit_app.ipa"
+    log "Tamanho: $(du -h ehit_app.ipa | cut -f1)"
+elif [ -f "Runner.ipa" ]; then
     log "✅ Build concluído com sucesso!"
     log "IPA criado: $(pwd)/Runner.ipa"
     log "Tamanho: $(du -h Runner.ipa | cut -f1)"
@@ -84,7 +99,7 @@ else
     error "❌ Falha ao criar IPA"
 fi
 
-# 9. Voltar para diretório raiz
+# 10. Voltar para diretório raiz
 cd ..
 
 log "🎉 Build iOS finalizado!"

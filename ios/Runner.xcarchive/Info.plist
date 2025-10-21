@@ -13,9 +13,9 @@
 		<key>CFBundleIdentifier</key>
 		<string>br.com.brandaodeveloper.ehitapp</string>
 		<key>CFBundleShortVersionString</key>
-		<string>1.0.13</string>
+		<string>1.0.14</string>
 		<key>CFBundleVersion</key>
-		<string>7</string>
+		<string>8</string>
 		<key>SigningIdentity</key>
 		<string>Apple Development: IGOR BRANDÃO (T8G3QHLKF8)</string>
 		<key>Team</key>
@@ -24,7 +24,7 @@
 	<key>ArchiveVersion</key>
 	<integer>2</integer>
 	<key>CreationDate</key>
-	<date>2025-10-21T03:21:05Z</date>
+	<date>2025-10-21T04:06:38Z</date>
 	<key>Name</key>
 	<string>Runner</string>
 	<key>SchemeName</key>
