@@ -8,7 +8,8 @@ class AppRoutes {
   static const String home = '/';
   static const String search = '/search';
   static const String library = '/library';
-  static const String profile = '/profile';
+  static const String radios = '/radios';
+  static const String more = '/more';
 
   // Music routes
   static const String categoryDetail = '/category';

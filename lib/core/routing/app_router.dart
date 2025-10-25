@@ -10,6 +10,7 @@ import '../../features/music_library/presentation/pages/playlist_detail_page.dar
 import '../../features/music_library/presentation/controllers/music_library_controller.dart';
 import '../../features/music_player/presentation/pages/player_page.dart';
 import '../../shared/design/app_theme.dart';
+import '../../shared/design/app_colors.dart';
 import '../../shared/widgets/layout/gradient_scaffold.dart';
 import 'app_routes.dart';
 
@@ -19,32 +20,45 @@ class AppRouter {
     initialLocation: AppRoutes.home,
     debugLogDiagnostics: true,
     routes: [
-      // Home route
-      GoRoute(
-        path: AppRoutes.home,
-        name: 'home',
-        builder: (context, state) => const HomePage(),
-      ),
-      
-      // Search route
-      GoRoute(
-        path: AppRoutes.search,
-        name: 'search',
-        builder: (context, state) => const SearchPage(),
-      ),
-      
-      // Library route
-      GoRoute(
-        path: AppRoutes.library,
-        name: 'library',
-        builder: (context, state) => const LibraryPage(),
-      ),
-      
-      // Profile route
-      GoRoute(
-        path: AppRoutes.profile,
-        name: 'profile',
-        builder: (context, state) => const ProfilePage(),
+      // Shell route com bottom navigation
+      ShellRoute(
+        builder: (context, state, child) => MainPage(child: child),
+        routes: [
+          // Home route
+          GoRoute(
+            path: AppRoutes.home,
+            name: 'home',
+            builder: (context, state) => const HomePage(),
+          ),
+          
+          // Search route
+          GoRoute(
+            path: AppRoutes.search,
+            name: 'search',
+            builder: (context, state) => const SearchPage(),
+          ),
+          
+          // Library route
+          GoRoute(
+            path: AppRoutes.library,
+            name: 'library',
+            builder: (context, state) => const LibraryPage(),
+          ),
+          
+          // Radios route
+          GoRoute(
+            path: AppRoutes.radios,
+            name: 'radios',
+            builder: (context, state) => const RadiosPage(),
+          ),
+          
+          // More route
+          GoRoute(
+            path: AppRoutes.more,
+            name: 'more',
+            builder: (context, state) => const MorePage(),
+          ),
+        ],
       ),
 
       // Category detail route (full screen)
@@ -160,19 +174,24 @@ class _MainPageState extends State<MainPage> {
       route: AppRoutes.home,
     ),
     NavigationItem(
+      icon: Icons.library_music,
+      label: 'Minha música',
+      route: AppRoutes.library,
+    ),
+    NavigationItem(
       icon: Icons.search,
       label: 'Buscar',
       route: AppRoutes.search,
     ),
     NavigationItem(
-      icon: Icons.library_music,
-      label: 'Sua Biblioteca',
-      route: AppRoutes.library,
+      icon: Icons.radio,
+      label: 'Rádios',
+      route: AppRoutes.radios,
     ),
     NavigationItem(
-      icon: Icons.person,
-      label: 'Perfil',
-      route: AppRoutes.profile,
+      icon: Icons.menu,
+      label: 'Mais',
+      route: AppRoutes.more,
     ),
   ];
 
@@ -180,24 +199,35 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: widget.child,
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.black,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.grey,
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-          context.go(_navigationItems[index].route);
-        },
-        items: _navigationItems.map((item) {
-          return BottomNavigationBarItem(
-            icon: Icon(item.icon),
-            label: item.label,
-          );
-        }).toList(),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [AppColors.primaryRed, AppColors.primaryDark],
+            ),
+          ),
+          child: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
+            backgroundColor: Colors.transparent,
+            selectedItemColor: Colors.white,
+            unselectedItemColor: Colors.white.withOpacity(0.6),
+            currentIndex: _currentIndex,
+            onTap: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+              context.go(_navigationItems[index].route);
+            },
+            items: _navigationItems.map((item) {
+              return BottomNavigationBarItem(
+                icon: Icon(item.icon),
+                label: item.label,
+              );
+            }).toList(),
+          ),
+        ),
       ),
     );
   }
@@ -252,19 +282,37 @@ class LibraryPage extends StatelessWidget {
   }
 }
 
-class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+class RadiosPage extends StatelessWidget {
+  const RadiosPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
       appBar: AppBar(
-        title: const Text('Perfil'),
+        title: const Text('Rádios'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: const Center(
-        child: Text('Página do Perfil'),
+        child: Text('Página de Rádios'),
+      ),
+    );
+  }
+}
+
+class MorePage extends StatelessWidget {
+  const MorePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return GradientScaffold(
+      appBar: AppBar(
+        title: const Text('Mais'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: const Center(
+        child: Text('Página Mais'),
       ),
     );
   }
