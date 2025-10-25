@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
-      extendBodyBehindAppBar: false,
+      extendBodyBehindAppBar: true,
       appBar: _buildAppBar(context),
       body: Consumer<MusicLibraryController>(
         builder: (context, controller, child) {
@@ -61,13 +61,6 @@ class HomePage extends StatelessWidget {
       preferredSize: Size.fromHeight(60 + safeAreaTop),
       child: Container(
         padding: EdgeInsets.only(top: safeAreaTop),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [AppColors.primaryRed, AppColors.primaryDark],
-          ),
-        ),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: LayoutTokens.paddingMD),
           child: Row(
