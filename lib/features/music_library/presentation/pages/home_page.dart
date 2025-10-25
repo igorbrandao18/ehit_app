@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
 import '../../../../shared/widgets/layout/app_header.dart';
+import '../../../../shared/widgets/music_components/banner_section.dart';
 import '../../../../shared/widgets/music_components/playhits_personalized_section.dart';
 import '../../../../shared/widgets/music_components/playhits_featured_section.dart';
 import '../../../../shared/design/design_tokens.dart';
@@ -26,6 +27,11 @@ class HomePage extends StatelessWidget {
           return SafeArea(
             child: CustomScrollView(
               slivers: [
+                // Banner Section
+                const SliverToBoxAdapter(
+                  child: BannerSection(),
+                ),
+                
                 // Seção "PlayHITS para você"
                 const SliverToBoxAdapter(
                   child: PlayHitsPersonalizedSection(),
