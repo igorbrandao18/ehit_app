@@ -224,8 +224,14 @@ class AudioPlayerService extends ChangeNotifier {
   /// Verifica se o plugin de áudio está disponível
   Future<bool> _isAudioPlayerAvailable() async {
     try {
-      // Tenta uma operação simples para verificar se o plugin funciona
-      await _audioPlayer.setUrl('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+      // Verifica se estamos em web (onde o plugin pode ter limitações)
+      if (kIsWeb) {
+        debugPrint('⚠️ Executando em web, usando simulação de áudio');
+        return false;
+      }
+      
+      // Para mobile/desktop, assume que o plugin está disponível
+      // O just_audio funciona nativamente nessas plataformas
       return true;
     } catch (e) {
       debugPrint('⚠️ Plugin de áudio não disponível: $e');

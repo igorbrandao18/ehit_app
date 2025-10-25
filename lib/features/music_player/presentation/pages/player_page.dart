@@ -52,12 +52,12 @@ class PlayerPage extends StatelessWidget {
                           // Progress bar
                           _buildProgressBar(context, audioPlayer),
                           
-                          const Spacer(),
+                          SizedBox(height: DesignTokens.playerVerticalSpacing * 2),
                           
                           // Controles do player
                           _buildPlayerControls(context, audioPlayer),
                           
-                          SizedBox(height: DesignTokens.playerVerticalSpacing),
+                          SizedBox(height: DesignTokens.playerVerticalSpacing * 3),
                         ],
                       ),
                     ),
@@ -250,8 +250,14 @@ class PlayerPage extends StatelessWidget {
           onTap: () => audioPlayer.previous(),
         ),
         
+        // Espaçamento maior antes do botão principal
+        SizedBox(width: MediaQuery.of(context).size.width * 0.05),
+        
         // Botão play/pause principal
         _buildMainControlButton(context, audioPlayer),
+        
+        // Espaçamento maior depois do botão principal
+        SizedBox(width: MediaQuery.of(context).size.width * 0.05),
         
         // Botão próximo
         _buildControlButton(
@@ -269,12 +275,13 @@ class PlayerPage extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final buttonSize = screenWidth * DesignTokens.playerButtonSizeRatio;
-    final iconSize = screenWidth * DesignTokens.playerSmallIconSizeRatio;
+    final buttonSize = screenWidth * 0.14; // Aumentado de 0.12 para 0.14
+    final iconSize = screenWidth * 0.07; // Aumentado de 0.06 para 0.07
     
     return GestureDetector(
       onTap: onTap,
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         width: buttonSize,
         height: buttonSize,
         decoration: const BoxDecoration(
@@ -283,7 +290,7 @@ class PlayerPage extends StatelessWidget {
         ),
         child: Icon(
           icon,
-          color: Colors.black,
+          color: Colors.black87,
           size: iconSize,
         ),
       ),
@@ -292,24 +299,40 @@ class PlayerPage extends StatelessWidget {
 
   Widget _buildMainControlButton(BuildContext context, AudioPlayerService audioPlayer) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final buttonSize = screenWidth * DesignTokens.playerMainButtonSizeRatio;
-    final iconSize = screenWidth * DesignTokens.playerMainIconSizeRatio;
+    final buttonSize = screenWidth * 0.25; // Aumentado de 0.18 para 0.25
+    final iconSize = screenWidth * 0.12; // Aumentado de 0.09 para 0.12
     
     return GestureDetector(
       onTap: () {
         audioPlayer.togglePlayPause();
       },
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
         width: buttonSize,
         height: buttonSize,
-        decoration: const BoxDecoration(
-          color: AppColors.primaryRed,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.primaryRed,
+              AppColors.primaryRed.withOpacity(0.8),
+            ],
+          ),
           shape: BoxShape.circle,
+          border: Border.all(
+            color: AppColors.primaryRed,
+            width: 3,
+          ),
         ),
-        child: Icon(
-          audioPlayer.isPlaying ? Icons.pause : Icons.play_arrow,
-          color: Colors.white,
-          size: iconSize,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: Icon(
+            audioPlayer.isPlaying ? Icons.pause : Icons.play_arrow,
+            key: ValueKey(audioPlayer.isPlaying),
+            color: Colors.white,
+            size: iconSize,
+          ),
         ),
       ),
     );

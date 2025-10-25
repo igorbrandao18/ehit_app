@@ -25,129 +25,37 @@ class PlayHitsFeaturedSection extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        // Usar playlists como PlayHITS em destaque (pegar mais 3 após os 6 primeiros)
-        final featuredPlayHits = controller.playlists.skip(6).take(3).toList();
+        // Usar PlayHITS em destaque específicos
+        final featuredPlayHits = controller.featuredPlayHits;
         
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // Título da seção
             Padding(
-              padding: const EdgeInsets.only(left: DesignTokens.screenPadding),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'PlayHITS em destaque',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
+              padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
+              child: Text(
+                'PlayHITS em destaque',
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
             ),
-            const SizedBox(height: DesignTokens.screenPadding),
             
-            // Lista horizontal de PlayHITS
+            const SizedBox(height: DesignTokens.spaceMD),
+            
+            // Lista horizontal de cards
             SizedBox(
-              height: DesignTokens.playlistCardSize + DesignTokens.paddingMD, // Reduzido paddingLG para paddingMD
+              height: DesignTokens.playhitsCardHeight + DesignTokens.spaceLG,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
                 itemCount: featuredPlayHits.length,
                 itemBuilder: (context, index) {
                   final playHit = featuredPlayHits[index];
-                  return GestureDetector(
-                    onTap: () => _navigateToPlaylist(context, playHit.id.toString(), playHit.name),
-                    child: Container(
-                      width: DesignTokens.playlistCardSize,
-                      margin: const EdgeInsets.only(right: DesignTokens.cardMargin),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(DesignTokens.radiusLG),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
-                          width: 1,
-                        ),
-                      ),
-                    child: Column(
-                      children: [
-                        // Imagem da playlist
-                        Expanded(
-                          flex: 3,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(DesignTokens.radiusLG),
-                                topRight: Radius.circular(DesignTokens.radiusLG),
-                              ),
-                              image: DecorationImage(
-                                image: NetworkImage(playHit.cover),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(DesignTokens.radiusLG),
-                                  topRight: Radius.circular(DesignTokens.radiusLG),
-                                ),
-                                color: Colors.black.withOpacity(0.2),
-                              ),
-                              child: Center(
-                                child: Container(
-                                  padding: const EdgeInsets.all(DesignTokens.paddingSM),
-                                  decoration: BoxDecoration(
-                                    color: AppColors.primaryRed,
-                                    borderRadius: BorderRadius.circular(DesignTokens.radiusCircular),
-                                  ),
-                                  child: const Icon(
-                                    Icons.play_arrow,
-                                    color: Colors.white,
-                                    size: 20,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        // Texto da playlist
-                        Expanded(
-                          flex: 1,
-                          child: Padding(
-                            padding: const EdgeInsets.all(DesignTokens.paddingSM),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  playHit.name,
-                                  style: const TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  '${playHit.musicsCount} músicas',
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: Colors.white.withOpacity(0.7),
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    ),
-                  );
+                  return _buildPlaylistCard(context, playHit);
                 },
               ),
             ),
@@ -157,12 +65,61 @@ class PlayHitsFeaturedSection extends StatelessWidget {
     );
   }
 
+  Widget _buildPlaylistCard(BuildContext context, dynamic playHit) {
+    return Container(
+      width: DesignTokens.playhitsCardWidth,
+      margin: const EdgeInsets.only(right: DesignTokens.spaceMD),
+      child: GestureDetector(
+        onTap: () => _navigateToPlaylist(context, playHit.id.toString(), playHit.name),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Imagem da playlist
+            Container(
+              height: DesignTokens.playhitsCardWidth, // Quadrado perfeito
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+                image: DecorationImage(
+                  image: NetworkImage(playHit.cover),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            
+            const SizedBox(height: DesignTokens.spaceSM),
+            
+            // Título da playlist
+            Text(
+              _capitalizeTitle(playHit.name),
+              style: const TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w500,
+                color: Colors.white,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   void _navigateToPlaylist(BuildContext context, String playlistId, String playlistName) {
-    // Navegar para a página de detalhes da playlist
     context.pushNamed(
       'playlist-detail',
       pathParameters: {'playlistId': playlistId},
       extra: playlistName,
     );
+  }
+
+  /// Capitaliza o título deixando apenas a primeira letra maiúscula
+  String _capitalizeTitle(String title) {
+    if (title.isEmpty) return title;
+    
+    return title.toLowerCase().split(' ').map((word) {
+      if (word.isEmpty) return word;
+      return word[0].toUpperCase() + word.substring(1).toLowerCase();
+    }).join(' ');
   }
 }

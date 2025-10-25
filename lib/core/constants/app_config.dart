@@ -47,19 +47,6 @@ class AppConfig {
   static const Duration retryDelay = Duration(seconds: 1);
 
   // ============================================================================
-  // SUPABASE CONFIGURATION
-  // ============================================================================
-  
-  // Supabase project configuration
-  static const String supabaseUrl = 'https://hblvhdqjkwmgvshrkzko.supabase.co';
-  static const String supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhibHZoZHFqa3dtZ3ZzaHJremtvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAyNjQ0MTgsImV4cCI6MjA3NTg0MDQxOH0.JIEqgJO08XiSYyYYjOoPqJ56tX_TaDn5wTGdezmcjbo';
-  
-  // Supabase storage buckets
-  static const String audioStorageBucket = 'audio-files';
-  static const String imageStorageBucket = 'images';
-  static const String profileImageBucket = 'profile-images';
-
-  // ============================================================================
   // AUDIO CONFIGURATION
   // ============================================================================
   

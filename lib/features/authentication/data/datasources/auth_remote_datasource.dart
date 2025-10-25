@@ -4,8 +4,6 @@ import 'package:dio/dio.dart';
 import '../models/user_model.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/constants/app_config.dart';
-import '../../../../core/supabase/supabase_auth_service.dart';
-import '../../../../core/utils/result.dart';
 
 /// Interface para fonte de dados remota de autenticação
 abstract class AuthRemoteDataSource {
@@ -79,12 +77,11 @@ abstract class AuthRemoteDataSource {
   Future<Map<String, dynamic>> getSecurityStats();
 }
 
-/// Implementação da fonte de dados remota de autenticação usando Supabase
+/// Implementação da fonte de dados remota de autenticação usando mock data
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final Dio _dio;
-  final SupabaseAuthService _authService;
 
-  AuthRemoteDataSourceImpl(this._dio) : _authService = SupabaseAuthService();
+  AuthRemoteDataSourceImpl(this._dio);
 
   @override
   Future<UserModel> loginWithEmail({
@@ -92,42 +89,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
     bool rememberMe = false,
   }) async {
-    try {
-      final result = await _authService.signInWithEmail(
-        email: email,
-        password: password,
-      );
-
-      return result.when(
-        success: (user) => UserModel.fromEntity(user),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao fazer login: $e',
-      );
-    }
+    // Simular delay de rede
+    await Future.delayed(const Duration(seconds: 1));
+    return _getMockUser();
   }
 
   @override
   Future<UserModel> loginWithBiometric() async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(seconds: 1));
-      return _getMockUser();
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao fazer login biométrico: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao fazer login biométrico: $e');
-    }
+    await Future.delayed(const Duration(seconds: 1));
+    return _getMockUser();
   }
 
   @override
@@ -137,92 +107,32 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String username,
     String? displayName,
   }) async {
-    try {
-      final result = await _authService.signUpWithEmail(
-        email: email,
-        password: password,
-        username: username,
-        displayName: displayName,
-      );
-
-      return result.when(
-        success: (user) => UserModel.fromEntity(user),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao registrar: $e',
-      );
-    }
+    await Future.delayed(const Duration(seconds: 1));
+    return _getMockUser();
   }
 
   @override
   Future<void> logout() async {
-    try {
-      final result = await _authService.signOut();
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao fazer logout: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    // Mock logout - não faz nada
   }
 
   @override
   Future<void> sendEmailVerification() async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(seconds: 1));
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao enviar verificação de email: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao enviar verificação de email: $e');
-    }
+    await Future.delayed(const Duration(seconds: 1));
+    // Mock verification - não faz nada
   }
 
   @override
   Future<void> verifyEmail(String verificationCode) async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(seconds: 1));
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao verificar email: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao verificar email: $e');
-    }
+    await Future.delayed(const Duration(seconds: 1));
+    // Mock verification - não faz nada
   }
 
   @override
   Future<void> requestPasswordReset(String email) async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(seconds: 1));
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao solicitar reset de senha: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao solicitar reset de senha: $e');
-    }
+    await Future.delayed(const Duration(seconds: 1));
+    // Mock reset - não faz nada
   }
 
   @override
@@ -230,17 +140,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String token,
     required String newPassword,
   }) async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(seconds: 1));
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao resetar senha: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao resetar senha: $e');
-    }
+    await Future.delayed(const Duration(seconds: 1));
+    // Mock reset - não faz nada
   }
 
   @override
@@ -249,18 +150,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String? bio,
     String? profileImageUrl,
   }) async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(seconds: 1));
-      return _getMockUser();
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao atualizar perfil: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao atualizar perfil: $e');
-    }
+    await Future.delayed(const Duration(seconds: 1));
+    return _getMockUser();
   }
 
   @override
@@ -268,222 +159,98 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String currentPassword,
     required String newPassword,
   }) async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(seconds: 1));
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao alterar senha: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao alterar senha: $e');
-    }
+    await Future.delayed(const Duration(seconds: 1));
+    // Mock change - não faz nada
   }
 
   @override
   Future<void> deleteAccount(String password) async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(seconds: 1));
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao deletar conta: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao deletar conta: $e');
-    }
+    await Future.delayed(const Duration(seconds: 1));
+    // Mock delete - não faz nada
   }
 
   @override
   Future<bool> isBiometricAvailable() async {
-    try {
-      // TODO: Implementar verificação real de biometria
-      await Future.delayed(const Duration(milliseconds: 500));
-      return true; // Mock response
-    } catch (e) {
-      return false;
-    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    return true; // Mock response
   }
 
   @override
   Future<bool> isBiometricEnabled() async {
-    try {
-      // TODO: Implementar verificação real de biometria
-      await Future.delayed(const Duration(milliseconds: 500));
-      return false; // Mock response
-    } catch (e) {
-      return false;
-    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    return false; // Mock response
   }
 
   @override
   Future<UserModel> getCurrentUser() async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(milliseconds: 500));
-      return _getMockUser();
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao obter usuário atual: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao obter usuário atual: $e');
-    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    return _getMockUser();
   }
 
   @override
   Future<bool> isTokenValid() async {
-    try {
-      // TODO: Implementar verificação real de token
-      await Future.delayed(const Duration(milliseconds: 500));
-      return true; // Mock response
-    } catch (e) {
-      return false;
-    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    return true; // Mock response
   }
 
   @override
   Future<String> refreshToken() async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(seconds: 1));
-      return 'mock_refresh_token'; // Mock response
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao renovar token: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao renovar token: $e');
-    }
+    await Future.delayed(const Duration(seconds: 1));
+    return 'mock_refresh_token'; // Mock response
   }
 
   @override
   Future<void> setUserPreferences(Map<String, dynamic> preferences) async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(seconds: 1));
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao salvar preferências: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao salvar preferências: $e');
-    }
+    await Future.delayed(const Duration(seconds: 1));
+    // Mock save - não faz nada
   }
 
   @override
   Future<Map<String, dynamic>> getUserPreferences() async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(milliseconds: 500));
-      return {}; // Mock response
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao obter preferências: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao obter preferências: $e');
-    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    return {}; // Mock response
   }
 
   @override
   Future<bool> isUserOnline() async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(milliseconds: 500));
-      return true; // Mock response
-    } catch (e) {
-      return false;
-    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    return true; // Mock response
   }
 
   @override
   Future<void> updateOnlineStatus(bool isOnline) async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(milliseconds: 500));
-    } catch (e) {
-      // Ignore errors for online status updates
-    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    // Mock update - não faz nada
   }
 
   @override
   Future<List<Map<String, dynamic>>> getLoginHistory() async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(milliseconds: 500));
-      return []; // Mock response
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao obter histórico de logins: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao obter histórico de logins: $e');
-    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    return []; // Mock response
   }
 
   @override
   Future<void> clearLoginHistory() async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(seconds: 1));
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao limpar histórico de logins: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao limpar histórico de logins: $e');
-    }
+    await Future.delayed(const Duration(seconds: 1));
+    // Mock clear - não faz nada
   }
 
   @override
   Future<bool> isAccountLocked() async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(milliseconds: 500));
-      return false; // Mock response
-    } catch (e) {
-      return false;
-    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    return false; // Mock response
   }
 
   @override
   Future<void> unlockAccount() async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(seconds: 1));
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao desbloquear conta: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao desbloquear conta: $e');
-    }
+    await Future.delayed(const Duration(seconds: 1));
+    // Mock unlock - não faz nada
   }
 
   @override
   Future<Map<String, dynamic>> getSecurityStats() async {
-    try {
-      // TODO: Implementar chamada real para API
-      await Future.delayed(const Duration(milliseconds: 500));
-      return {}; // Mock response
-    } on DioException catch (e) {
-      throw ServerFailure(
-        message: 'Erro ao obter estatísticas de segurança: ${e.message}',
-        code: e.response?.statusCode,
-      );
-    } catch (e) {
-      throw ServerFailure(message: 'Erro desconhecido ao obter estatísticas de segurança: $e');
-    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    return {}; // Mock response
   }
 
   // Mock data methods

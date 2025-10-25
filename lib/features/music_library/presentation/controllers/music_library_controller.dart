@@ -9,6 +9,7 @@ class MusicLibraryController extends ChangeNotifier {
 
   // State
   List<Playlist> _playlists = [];
+  List<Playlist> _featuredPlayHits = [];
   bool _isLoading = false;
   String? _errorMessage;
   bool _isDisposed = false;
@@ -20,12 +21,14 @@ class MusicLibraryController extends ChangeNotifier {
 
   // Getters
   List<Playlist> get playlists => _playlists;
+  List<Playlist> get featuredPlayHits => _featuredPlayHits;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
   /// Inicializa o controller carregando dados
   Future<void> initialize() async {
     await loadPlaylists();
+    await loadFeaturedPlayHits();
   }
 
   /// Carrega as playlists
@@ -66,9 +69,57 @@ class MusicLibraryController extends ChangeNotifier {
     }
   }
 
+  /// Carrega PlayHITS em destaque
+  Future<void> loadFeaturedPlayHits() async {
+    if (_isDisposed) return;
+    
+    try {
+      // Por enquanto, usar dados mock diretamente
+      // Em produção, isso viria de um use case específico
+      _featuredPlayHits = [
+        Playlist(
+          id: 1001,
+          name: 'PlayHITS em Alta',
+          cover: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400',
+          musicsCount: 15,
+          musicsData: [],
+          createdAt: DateTime.now().subtract(const Duration(days: 1)),
+          updatedAt: DateTime.now(),
+          isActive: true,
+        ),
+        Playlist(
+          id: 1002,
+          name: 'Top Semanal',
+          cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400',
+          musicsCount: 20,
+          musicsData: [],
+          createdAt: DateTime.now().subtract(const Duration(days: 2)),
+          updatedAt: DateTime.now(),
+          isActive: true,
+        ),
+        Playlist(
+          id: 1003,
+          name: 'Trending Now',
+          cover: 'https://images.unsplash.com/photo-1571330735066-03aaa9429d89?w=400',
+          musicsCount: 18,
+          musicsData: [],
+          createdAt: DateTime.now().subtract(const Duration(days: 3)),
+          updatedAt: DateTime.now(),
+          isActive: true,
+        ),
+      ];
+      
+      debugPrint('🎵 PlayHITS em destaque carregados: ${_featuredPlayHits.length}');
+      notifyListeners();
+    } catch (e) {
+      debugPrint('❌ Erro ao carregar PlayHITS em destaque: $e');
+    }
+  }
+
   /// Recarrega os dados
   Future<void> refresh() async {
     await loadPlaylists();
+    await loadFeaturedPlayHits();
   }
 
   void _setLoading(bool loading) {

@@ -4,8 +4,6 @@ import 'package:dio/dio.dart';
 import '../models/playlist_model.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../../core/constants/app_config.dart';
-import '../../../../core/supabase/supabase_playlist_service.dart';
-import '../../../../core/utils/result.dart';
 
 /// Interface para fonte de dados remota de playlists
 abstract class PlaylistRemoteDataSource {
@@ -27,365 +25,107 @@ abstract class PlaylistRemoteDataSource {
   Future<List<PlaylistModel>> getFollowedPlaylists();
 }
 
-/// Implementação da fonte de dados remota de playlists usando Supabase
+/// Implementação da fonte de dados remota de playlists usando mock data
 class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
   final Dio _dio;
-  final SupabasePlaylistService _playlistService;
 
-  PlaylistRemoteDataSourceImpl(this._dio) : _playlistService = SupabasePlaylistService();
+  PlaylistRemoteDataSourceImpl(this._dio);
 
   @override
   Future<List<PlaylistModel>> getUserPlaylists() async {
-    try {
-      final result = await _playlistService.getUserPlaylists();
-      
-      return result.when(
-        success: (playlists) => playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList(),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar playlists do usuário: $e',
-      );
-    }
+    // Simular delay de rede
+    await Future.delayed(const Duration(milliseconds: 500));
+    return _getMockUserPlaylists();
   }
 
   @override
   Future<PlaylistModel> getPlaylistById(String playlistId) async {
-    try {
-      final result = await _playlistService.getPlaylistById(playlistId);
-      
-      return result.when(
-        success: (playlist) => PlaylistModel.fromEntity(playlist),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar playlist: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 300));
+    return _getMockPlaylistById(playlistId);
   }
 
   @override
   Future<List<PlaylistModel>> getPublicPlaylists() async {
-    try {
-      final result = await _playlistService.getPublicPlaylists();
-      
-      return result.when(
-        success: (playlists) => playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList(),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar playlists públicas: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 400));
+    return _getMockPublicPlaylists();
   }
 
   @override
   Future<List<PlaylistModel>> getPopularPlaylists() async {
-    try {
-      final result = await _playlistService.getPopularPlaylists();
-      
-      return result.when(
-        success: (playlists) => playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList(),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar playlists populares: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 400));
+    return _getMockPopularPlaylists();
   }
 
   @override
   Future<List<PlaylistModel>> getPlaylistsByGenre(String genre) async {
-    try {
-      final result = await _playlistService.getPlaylistsByGenre(genre);
-      
-      return result.when(
-        success: (playlists) => playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList(),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar playlists por gênero: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 400));
+    return _getMockPlaylistsByGenre(genre);
   }
 
   @override
   Future<List<PlaylistModel>> searchPlaylists(String query) async {
-    try {
-      final result = await _playlistService.searchPlaylists(query);
-      
-      return result.when(
-        success: (playlists) => playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList(),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar playlists: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 400));
+    return _getMockSearchPlaylists(query);
   }
 
   @override
   Future<PlaylistModel> createPlaylist(Map<String, dynamic> playlistData) async {
-    try {
-      final result = await _playlistService.createPlaylist(
-        name: playlistData['name'] as String,
-        description: playlistData['description'] as String? ?? '',
-        isPublic: playlistData['isPublic'] as bool? ?? true,
-        isCollaborative: playlistData['isCollaborative'] as bool? ?? false,
-      );
-      
-      return result.when(
-        success: (playlist) => PlaylistModel.fromEntity(playlist),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao criar playlist: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 600));
+    return _getMockCreatePlaylist(playlistData);
   }
 
   @override
   Future<PlaylistModel> updatePlaylist(String playlistId, Map<String, dynamic> playlistData) async {
-    try {
-      final result = await _playlistService.updatePlaylist(
-        playlistId: playlistId,
-        name: playlistData['name'] as String?,
-        description: playlistData['description'] as String?,
-        isPublic: playlistData['isPublic'] as bool?,
-        isCollaborative: playlistData['isCollaborative'] as bool?,
-      );
-      
-      return result.when(
-        success: (playlist) => PlaylistModel.fromEntity(playlist),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao atualizar playlist: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    return _getMockUpdatePlaylist(playlistId, playlistData);
   }
 
   @override
   Future<void> deletePlaylist(String playlistId) async {
-    try {
-      final result = await _playlistService.deletePlaylist(playlistId);
-      
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao deletar playlist: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 400));
+    // Mock delete - não faz nada
   }
 
   @override
   Future<PlaylistModel> addSongToPlaylist(String playlistId, String songId) async {
-    try {
-      final result = await _playlistService.addSongToPlaylist(
-        playlistId: playlistId,
-        songId: songId,
-      );
-      
-      return result.when(
-        success: (playlist) => PlaylistModel.fromEntity(playlist),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao adicionar música à playlist: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    return _getMockPlaylistById(playlistId);
   }
 
   @override
   Future<PlaylistModel> removeSongFromPlaylist(String playlistId, String songId) async {
-    try {
-      final result = await _playlistService.removeSongFromPlaylist(
-        playlistId: playlistId,
-        songId: songId,
-      );
-      
-      return result.when(
-        success: (playlist) => PlaylistModel.fromEntity(playlist),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao remover música da playlist: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    return _getMockPlaylistById(playlistId);
   }
 
   @override
   Future<PlaylistModel> reorderPlaylistSongs(String playlistId, int oldIndex, int newIndex) async {
-    try {
-      final result = await _playlistService.reorderPlaylistSongs(
-        playlistId: playlistId,
-        oldIndex: oldIndex,
-        newIndex: newIndex,
-      );
-      
-      return result.when(
-        success: (playlist) => PlaylistModel.fromEntity(playlist),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao reordenar músicas da playlist: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 500));
+    return _getMockPlaylistById(playlistId);
   }
 
   @override
   Future<void> followPlaylist(String playlistId) async {
-    try {
-      final result = await _playlistService.followPlaylist(playlistId);
-      
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao seguir playlist: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 400));
+    // Mock follow - não faz nada
   }
 
   @override
   Future<void> unfollowPlaylist(String playlistId) async {
-    try {
-      final result = await _playlistService.unfollowPlaylist(playlistId);
-      
-      if (result is Error) {
-        throw ServerFailure(
-          message: result.message,
-          code: result.code,
-        );
-      }
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao parar de seguir playlist: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 400));
+    // Mock unfollow - não faz nada
   }
 
   @override
   Future<bool> isFollowingPlaylist(String playlistId) async {
-    try {
-      final result = await _playlistService.isFollowingPlaylist(playlistId);
-      
-      return result.when(
-        success: (success) => success,
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao verificar se está seguindo playlist: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 300));
+    return false; // Mock - sempre retorna false
   }
 
   @override
   Future<List<PlaylistModel>> getFollowedPlaylists() async {
-    try {
-      final result = await _playlistService.getFollowedPlaylists();
-      
-      return result.when(
-        success: (playlists) => playlists.map((playlist) => PlaylistModel.fromEntity(playlist)).toList(),
-        error: (message, code) => throw ServerFailure(
-          message: message,
-          code: code,
-        ),
-      );
-    } on ServerFailure {
-      rethrow;
-    } catch (e) {
-      throw ServerFailure(
-        message: 'Erro inesperado ao buscar playlists seguidas: $e',
-      );
-    }
+    await Future.delayed(const Duration(milliseconds: 400));
+    return _getMockFollowedPlaylists();
   }
 
   // Mock data methods
