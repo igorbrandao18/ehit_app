@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
+import '../../../../shared/widgets/layout/app_header.dart';
 import '../../../../shared/widgets/music_components/personalized_playlists_section.dart';
 import '../../../../shared/widgets/music_components/category_filter_buttons.dart';
 import '../../../../shared/widgets/music_components/featured_playlists_section.dart';
@@ -16,7 +17,10 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GradientScaffold(
       extendBodyBehindAppBar: true,
-      appBar: _buildAppBar(context),
+      appBar: const AppHeader(
+        title: 'ÊHIT',
+        subtitle: 'Music',
+      ),
       body: Consumer<MusicLibraryController>(
         builder: (context, controller, child) {
           return SafeArea(
@@ -54,45 +58,4 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    final safeAreaTop = LayoutTokens.getSafeAreaPadding(context).top;
-    
-    return PreferredSize(
-      preferredSize: Size.fromHeight(60 + safeAreaTop),
-      child: Container(
-        padding: EdgeInsets.only(top: safeAreaTop),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: LayoutTokens.paddingMD),
-          child: Row(
-            children: [
-              // Logo centralizado
-              Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      'ÊHIT',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      ' Music',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w300,
-                        color: Colors.white.withOpacity(0.8),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }

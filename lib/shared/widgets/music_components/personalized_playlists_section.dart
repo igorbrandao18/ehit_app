@@ -32,8 +32,8 @@ class PersonalizedPlaylistsSection extends StatelessWidget {
           );
         }
 
-        // Usar playlists como PlayHITS
-        final playHits = controller.playlists.take(6).toList(); // 4 para grid + 2 individuais
+        // Usar todas as playlists como PlayHITS scrolláveis
+        final playHits = controller.playlists;
         
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -41,138 +41,38 @@ class PersonalizedPlaylistsSection extends StatelessWidget {
             // Título da seção
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: LayoutTokens.paddingMD),
-              child: Text(
-                'PlayHITS para você',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'PlayHITS para você',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: LayoutTokens.paddingMD),
             
-            // Layout com grid 2x2 + 2 playlists individuais
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: LayoutTokens.paddingMD),
-              child: Row(
-                children: [
-                  // Grid 2x2 "PlayHITS pra você"
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      children: [
-                        // Grid 2x2 sem borda
-                        Container(
-                          height: LayoutTokens.playlistCardSize,
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: _buildGridCard(
-                                        playHits.length > 0 ? playHits[0].name : 'PlayHIT 1',
-                                        playHits.length > 0 ? playHits[0].cover : 'https://via.placeholder.com/150x150/FF6B6B/FFFFFF?text=PlayHIT+1',
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: _buildGridCard(
-                                        playHits.length > 1 ? playHits[1].name : 'PlayHIT 2',
-                                        playHits.length > 1 ? playHits[1].cover : 'https://via.placeholder.com/150x150/4ECDC4/FFFFFF?text=PlayHIT+2',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: _buildGridCard(
-                                        playHits.length > 2 ? playHits[2].name : 'PlayHIT 3',
-                                        playHits.length > 2 ? playHits[2].cover : 'https://via.placeholder.com/150x150/45B7D1/FFFFFF?text=PlayHIT+3',
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: _buildGridCard(
-                                        playHits.length > 3 ? playHits[3].name : 'PlayHIT 4',
-                                        playHits.length > 3 ? playHits[3].cover : 'https://via.placeholder.com/150x150/96CEB4/FFFFFF?text=PlayHIT+4',
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // Texto "PlayHITS pra você"
-                        const SizedBox(height: LayoutTokens.paddingSM),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            'PlayHITS pra você',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
+            // Lista horizontal scrollável
+            SizedBox(
+              height: 200, // Altura fixa para os quadrados + texto
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: LayoutTokens.paddingMD),
+                itemCount: playHits.length,
+                itemBuilder: (context, index) {
+                  final playHit = playHits[index];
+                  return Container(
+                    width: 150, // Largura fixa para cada card
+                    margin: const EdgeInsets.only(right: LayoutTokens.cardMargin),
+                    child: _buildSquareCard(
+                      playHit.name,
+                      playHit.cover,
                     ),
-                  ),
-                  
-                  const SizedBox(width: LayoutTokens.cardMargin),
-                  
-                  // PlayHIT adicional (se disponível)
-                  if (playHits.length > 4)
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        children: [
-                          _buildPlayHitCard(
-                            playHits[4].name,
-                            playHits[4].cover,
-                          ),
-                          const SizedBox(height: LayoutTokens.paddingSM),
-                          Text(
-                            playHits[4].name,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  
-                  const SizedBox(width: LayoutTokens.cardMargin),
-                  
-                  // PlayHIT adicional (se disponível)
-                  if (playHits.length > 5)
-                    Expanded(
-                      flex: 1,
-                      child: Column(
-                        children: [
-                          _buildPlayHitCard(
-                            playHits[5].name,
-                            playHits[5].cover,
-                          ),
-                          const SizedBox(height: LayoutTokens.paddingSM),
-                          Text(
-                            playHits[5].name,
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                ],
+                  );
+                },
               ),
             ),
           ],
@@ -181,29 +81,36 @@ class PersonalizedPlaylistsSection extends StatelessWidget {
     );
   }
 
-  Widget _buildGridCard(String title, String imageUrl) {
-    return Container(
-      margin: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(LayoutTokens.radiusSM),
-        image: DecorationImage(
-          image: NetworkImage(imageUrl),
-          fit: BoxFit.cover,
+  Widget _buildSquareCard(String title, String imageUrl) {
+    return Column(
+      children: [
+        // Quadrado com imagem
+        AspectRatio(
+          aspectRatio: 1.0, // Quadrado perfeito
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(LayoutTokens.radiusLG),
+              image: DecorationImage(
+                image: NetworkImage(imageUrl),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildPlayHitCard(String title, String imageUrl) {
-    return Container(
-      height: LayoutTokens.playlistCardSize,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(LayoutTokens.radiusLG),
-        image: DecorationImage(
-          image: NetworkImage(imageUrl),
-          fit: BoxFit.cover,
+        // Texto abaixo do quadrado
+        const SizedBox(height: LayoutTokens.paddingSM),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: Colors.white,
+          ),
+          textAlign: TextAlign.center,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
-      ),
+      ],
     );
   }
 }

@@ -34,7 +34,8 @@ class GradientScaffold extends StatelessWidget {
       width: double.infinity,
       height: double.infinity,
       decoration: BoxDecoration(
-        gradient: gradient ?? AppColors.subtleGradient,
+        color: gradient != null ? null : AppColors.solidBackground,
+        gradient: gradient,
       ),
       child: body,
     );

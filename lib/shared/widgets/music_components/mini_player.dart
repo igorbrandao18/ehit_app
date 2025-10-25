@@ -23,7 +23,7 @@ class MiniPlayer extends StatelessWidget {
         return Container(
           height: 90,
           decoration: BoxDecoration(
-            gradient: AppColors.subtleGradient,
+            color: AppColors.solidBackground,
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(DesignTokens.opacityShadow),

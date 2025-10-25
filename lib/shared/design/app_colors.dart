@@ -9,7 +9,7 @@ class AppColors {
   // ============================================================================
   
   static const Color primaryRed = Color(0xFFEF2731); // Main brand color
-  static const Color primaryDark = Color(0xFFC41E3A); // Darker red
+  static const Color primaryDark = Color(0xFFEF2731); // Same color
   static const Color backgroundDark = Color(0xFFEF2731); // Main background color
   static const Color backgroundCard = Color(0xFF2A0000); // Dark red card background
   static const Color backgroundLight = Color(0xFF1A1A1A); // Light background
@@ -51,7 +51,7 @@ class AppColors {
   static const LinearGradient primaryGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [primaryRed, primaryDark],
+    colors: [Color(0xFFEF2731), Color(0xFFD11F2D)],
   );
   
   static const LinearGradient backgroundGradient = LinearGradient(
@@ -67,16 +67,7 @@ class AppColors {
     stops: [0.0, 0.25, 0.5, 0.75, 1.0],
   );
 
-  static const LinearGradient subtleGradient = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [
-      Color(0xFFEF2731), // Main brand color (top)
-      Color(0xFFE0242F), // Slightly darker red (middle)
-      Color(0xFFD11F2D), // A bit darker (bottom)
-    ],
-    stops: [0.0, 0.6, 1.0],
-  );
+  static const Color solidBackground = Color(0xFFEF2731); // Solid background color
 
   static const LinearGradient cardGradient = LinearGradient(
     begin: Alignment.topLeft,
