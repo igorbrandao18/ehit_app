@@ -1,6 +1,6 @@
 // shared/widgets/layout/app_header.dart
 import 'package:flutter/material.dart';
-import '../../design/layout_tokens.dart';
+import '../../design/design_tokens.dart';
 
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -20,14 +20,14 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final safeAreaTop = LayoutTokens.getSafeAreaPadding(context).top;
+    final safeAreaTop = DesignTokens.getSafeAreaPadding(context).top;
     
     return PreferredSize(
       preferredSize: Size.fromHeight(60 + safeAreaTop),
       child: Container(
         padding: EdgeInsets.only(top: safeAreaTop),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: LayoutTokens.paddingMD),
+              padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
           child: Row(
             children: [
               // Título alinhado à esquerda

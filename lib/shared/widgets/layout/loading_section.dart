@@ -1,47 +1,45 @@
 // shared/widgets/layout/loading_section.dart
 import 'package:flutter/material.dart';
+import '../../design/app_text_styles.dart';
 import '../../design/app_colors.dart';
+import '../../design/design_tokens.dart';
 
-/// Seção de carregamento reutilizável
+/// Componente reutilizável para seções de carregamento
 class LoadingSection extends StatelessWidget {
-  final String? message;
-  final double? size;
-  final Color? color;
+  final String message;
+  final double? height;
+  final EdgeInsetsGeometry? padding;
 
   const LoadingSection({
     super.key,
-    this.message,
-    this.size,
-    this.color,
+    required this.message,
+    this.height,
+    this.padding,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-            width: size ?? 24,
-            height: size ?? 24,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                color ?? AppColors.primaryRed,
-              ),
+    return Container(
+      height: height ?? 200,
+      padding: padding ?? const EdgeInsets.all(DesignTokens.screenPadding),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CircularProgressIndicator(
+              color: AppColors.primaryRed,
+              strokeWidth: 2.0,
             ),
-          ),
-          if (message != null) ...[
-            const SizedBox(height: 16),
+            const SizedBox(height: DesignTokens.spaceMD),
             Text(
-              message!,
-              style: const TextStyle(
+              message,
+              style: AppTextStyles.bodyMedium.copyWith(
                 color: AppColors.textSecondary,
-                fontSize: 14,
               ),
+              textAlign: TextAlign.center,
             ),
           ],
-        ],
+        ),
       ),
     );
   }

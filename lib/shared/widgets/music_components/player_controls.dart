@@ -1,10 +1,10 @@
 // shared/widgets/music_components/player_controls.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../themes/app_colors.dart';
-import '../../themes/app_borders.dart';
-import '../../themes/app_shadows.dart';
-import '../../themes/app_animations.dart';
+import '../../design/app_colors.dart';
+import '../../design/app_borders.dart';
+import '../../design/app_shadows.dart';
+import '../../design/app_animations.dart';
 import '../../../features/music_player/presentation/controllers/music_player_controller.dart';
 
 class PlayerControls extends StatefulWidget {

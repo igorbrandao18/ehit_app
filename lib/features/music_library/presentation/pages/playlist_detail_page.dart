@@ -94,6 +94,9 @@ class PlaylistDetailPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Espaçamento superior para evitar conflito com botão voltar
+          SizedBox(height: DesignTokens.spaceXL), // Espaçamento reduzido
+          
           // Playlist cover
           Center(
             child: ClipOval(
@@ -120,7 +123,7 @@ class PlaylistDetailPage extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: DesignTokens.spaceMD), // Reduzido de sectionSpacing para spaceMD
+          SizedBox(height: DesignTokens.spaceXL), // Espaçamento maior entre foto e título
           
           // Playlist info - Centralizado
           Center(
@@ -135,7 +138,7 @@ class PlaylistDetailPage extends StatelessWidget {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                SizedBox(height: DesignTokens.spaceSM),
+                SizedBox(height: DesignTokens.spaceSM), // Espaçamento menor entre título e quantidade de músicas
                 FutureBuilder<Duration>(
                   future: _calculateTotalDurationAsync(context, playlist),
                   builder: (context, snapshot) {
@@ -155,6 +158,9 @@ class PlaylistDetailPage extends StatelessWidget {
                     );
                   },
                 ),
+                
+                // Espaçamento adicional abaixo das informações
+                SizedBox(height: DesignTokens.spaceMD),
               ],
             ),
           ),

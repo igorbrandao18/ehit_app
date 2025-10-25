@@ -5,6 +5,7 @@ import '../../design/app_text_styles.dart';
 import '../../design/design_tokens.dart';
 import '../../design/app_shadows.dart';
 import '../../design/app_borders.dart';
+import '../../design/app_animations.dart';
 
 enum AppButtonType { primary, secondary, outline, text }
 enum AppButtonSize { small, medium, large }
@@ -41,8 +42,11 @@ class _AppButtonState extends State<AppButton>
   @override
   void initState() {
     super.initState();
-    _animationController = AppAnimations.createPlayerController(this);
-    _scaleAnimation = AppAnimations.createPlayerAnimation(_animationController);
+    _animationController = AnimationController(
+      duration: AppAnimations.durationFast,
+      vsync: this,
+    );
+    _scaleAnimation = AppAnimations.createScaleAnimation(_animationController);
   }
 
   @override

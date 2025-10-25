@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import '../../../features/music_library/domain/entities/song.dart';
 import '../../../features/music_player/presentation/controllers/music_player_controller.dart';
 import '../../design/design_tokens.dart';
@@ -23,16 +24,24 @@ class SongListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final spacing = ResponsiveUtils.getResponsiveSpacing(context);
-    final thumbnailSize = ResponsiveUtils.getResponsiveImageSize(context);
+    final thumbnailSize = ResponsiveUtils.getResponsiveImageSize(context, 
+      mobile: 40.0,    // Reduzido de 50px para 40px
+      tablet: 50.0,    // Reduzido de 60px para 50px  
+      desktop: 60.0,   // Reduzido de 70px para 60px
+    );
+    final isMobile = ResponsiveUtils.getDeviceType(context) == DeviceType.mobile;
     
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: spacing),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          vertical: isMobile ? spacing * 0.8 : spacing,
+          horizontal: isMobile ? spacing * 0.5 : spacing,
+        ),
         child: Row(
           children: [
             _buildAlbumArt(context, thumbnailSize),
-            SizedBox(width: spacing),
+            SizedBox(width: isMobile ? spacing * 0.8 : spacing),
             Expanded(
               child: _buildSongInfo(context),
             ),
@@ -44,6 +53,9 @@ class SongListItem extends StatelessWidget {
   }
 
   Widget _buildAlbumArt(BuildContext context, double thumbnailSize) {
+    final isMobile = ResponsiveUtils.getDeviceType(context) == DeviceType.mobile;
+    final isTablet = ResponsiveUtils.getDeviceType(context) == DeviceType.tablet;
+    
     return Container(
       width: thumbnailSize,
       height: thumbnailSize,
@@ -52,7 +64,7 @@ class SongListItem extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(DesignTokens.cardOverlayOpacity),
-            blurRadius: ResponsiveUtils.getResponsiveSpacing(context, mobile: 4, tablet: 6, desktop: 8),
+            blurRadius: isMobile ? 4 : (isTablet ? 6 : 8),
             offset: const Offset(0, DesignTokens.cardShadowOffset),
           ),
         ],
@@ -68,10 +80,10 @@ class SongListItem extends StatelessWidget {
                 color: Colors.grey.shade800,
                 shape: BoxShape.circle,
               ),
-              child: const Center(
+              child: Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                  strokeWidth: 2,
+                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: isMobile ? 1.5 : 2,
                 ),
               ),
             );
@@ -98,31 +110,52 @@ class SongListItem extends StatelessWidget {
   Widget _buildSongInfo(BuildContext context) {
     final fontSize = ResponsiveUtils.getResponsiveFontSize(context);
     final spacing = ResponsiveUtils.getResponsiveSpacing(context);
+    final isMobile = ResponsiveUtils.getDeviceType(context) == DeviceType.mobile;
+    final isTablet = ResponsiveUtils.getDeviceType(context) == DeviceType.tablet;
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           song.title,
           style: TextStyle(
             color: Colors.white,
-            fontSize: fontSize,
+            fontSize: isMobile ? fontSize * 0.9 : fontSize,
             fontWeight: FontWeight.w600,
+            height: 1.2,
           ),
-          maxLines: 1,
+          maxLines: isMobile ? 1 : 2,
           overflow: TextOverflow.ellipsis,
         ),
-        SizedBox(height: spacing / 2),
-        Text(
-          song.artist,
-          style: TextStyle(
-            color: Colors.white70,
-            fontSize: fontSize - 2,
-            fontWeight: FontWeight.w400,
+        SizedBox(height: isMobile ? spacing * 0.3 : spacing * 0.4),
+        GestureDetector(
+          onTap: () => _navigateToArtist(context, song.artist),
+          child: Text(
+            song.artist,
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: isMobile ? (fontSize - 3) : (fontSize - 2),
+              fontWeight: FontWeight.w400,
+              height: 1.1,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
         ),
+        if (isTablet || ResponsiveUtils.getDeviceType(context) == DeviceType.desktop) ...[
+          SizedBox(height: spacing * 0.2),
+          Text(
+            '${song.duration} • ${song.genre}',
+            style: TextStyle(
+              color: Colors.white54,
+              fontSize: fontSize - 4,
+              fontWeight: FontWeight.w300,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ],
     );
   }
@@ -130,6 +163,7 @@ class SongListItem extends StatelessWidget {
   Widget _buildDownloadButton(BuildContext context) {
     final iconSize = ResponsiveUtils.getResponsiveIconSize(context);
     final spacing = ResponsiveUtils.getResponsiveSpacing(context);
+    final isMobile = ResponsiveUtils.getDeviceType(context) == DeviceType.mobile;
     
     return Consumer<MusicPlayerController>(
       builder: (context, playerController, child) {
@@ -141,11 +175,21 @@ class SongListItem extends StatelessWidget {
             return GestureDetector(
               onTap: () => _handleDownloadTap(context),
               child: Container(
-                padding: EdgeInsets.all(spacing),
+                padding: EdgeInsets.all(isMobile ? spacing * 0.4 : spacing * 0.8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(
+                    isMobile ? DesignTokens.radiusSM : DesignTokens.radiusMD,
+                  ),
+                  border: Border.all(
+                    color: Colors.white.withOpacity(0.2),
+                    width: 0.5,
+                  ),
+                ),
                 child: Icon(
                   isAvailableOffline ? Icons.check_circle : Icons.download,
                   color: isAvailableOffline ? Colors.green : Colors.white70,
-                  size: iconSize,
+                  size: isMobile ? iconSize * 0.7 : iconSize,
                 ),
               ),
             );
@@ -167,6 +211,21 @@ class SongListItem extends StatelessWidget {
         content: Text('Download de "${song.title}" iniciado'),
         duration: const Duration(seconds: 2),
       ),
+    );
+  }
+
+  void _navigateToArtist(BuildContext context, String artistName) {
+    debugPrint('🎤 Navegando para artista: $artistName');
+    
+    // Por enquanto, vamos usar um ID fictício baseado no nome do artista
+    // Em uma implementação real, você teria uma busca por artista por nome
+    final artistId = artistName.hashCode.abs().toString();
+    
+    // Navegar para a página de detalhes do artista
+    context.pushNamed(
+      'artist-detail',
+      pathParameters: {'artistId': artistId},
+      extra: artistName,
     );
   }
 }

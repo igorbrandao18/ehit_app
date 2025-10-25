@@ -72,17 +72,10 @@ class SongsListSection extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.all(ResponsiveUtils.getResponsiveSpacing(context, mobile: 8, tablet: 10, desktop: 12)),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(ResponsiveUtils.getResponsiveSpacing(context, mobile: 8, tablet: 10, desktop: 12)),
-        ),
-        child: Icon(
-          icon,
-          color: Colors.white,
-          size: ResponsiveUtils.getResponsiveIconSize(context, mobile: 20, tablet: 24, desktop: 28),
-        ),
+      child: Icon(
+        icon,
+        color: Colors.white,
+        size: ResponsiveUtils.getResponsiveIconSize(context, mobile: 20, tablet: 24, desktop: 28),
       ),
     );
   }

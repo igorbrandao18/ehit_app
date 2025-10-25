@@ -2,12 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../design/layout_tokens.dart';
+import '../../design/design_tokens.dart';
 import '../../design/app_colors.dart';
 import '../../../features/music_library/presentation/controllers/music_library_controller.dart';
 
-class FeaturedPlaylistsSection extends StatelessWidget {
-  const FeaturedPlaylistsSection({super.key});
+class PlayHitsFeaturedSection extends StatelessWidget {
+  const PlayHitsFeaturedSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +34,7 @@ class FeaturedPlaylistsSection extends StatelessWidget {
           children: [
             // Título da seção
             Padding(
-              padding: const EdgeInsets.only(left: LayoutTokens.paddingMD),
+              padding: const EdgeInsets.only(left: DesignTokens.screenPadding),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
@@ -47,25 +47,25 @@ class FeaturedPlaylistsSection extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: LayoutTokens.paddingMD),
+            const SizedBox(height: DesignTokens.screenPadding),
             
             // Lista horizontal de PlayHITS
             SizedBox(
-              height: LayoutTokens.playlistCardSize + LayoutTokens.paddingLG,
+              height: DesignTokens.playlistCardSize + DesignTokens.paddingMD, // Reduzido paddingLG para paddingMD
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: LayoutTokens.paddingMD),
+                padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
                 itemCount: featuredPlayHits.length,
                 itemBuilder: (context, index) {
                   final playHit = featuredPlayHits[index];
                   return GestureDetector(
                     onTap: () => _navigateToPlaylist(context, playHit.id.toString(), playHit.name),
                     child: Container(
-                      width: LayoutTokens.playlistCardSize,
-                      margin: const EdgeInsets.only(right: LayoutTokens.cardMargin),
+                      width: DesignTokens.playlistCardSize,
+                      margin: const EdgeInsets.only(right: DesignTokens.cardMargin),
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(LayoutTokens.radiusLG),
+                        borderRadius: BorderRadius.circular(DesignTokens.radiusLG),
                         border: Border.all(
                           color: Colors.white.withOpacity(0.3),
                           width: 1,
@@ -79,8 +79,8 @@ class FeaturedPlaylistsSection extends StatelessWidget {
                           child: Container(
                             decoration: BoxDecoration(
                               borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(LayoutTokens.radiusLG),
-                                topRight: Radius.circular(LayoutTokens.radiusLG),
+                                topLeft: Radius.circular(DesignTokens.radiusLG),
+                                topRight: Radius.circular(DesignTokens.radiusLG),
                               ),
                               image: DecorationImage(
                                 image: NetworkImage(playHit.cover),
@@ -90,17 +90,17 @@ class FeaturedPlaylistsSection extends StatelessWidget {
                             child: Container(
                               decoration: BoxDecoration(
                                 borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(LayoutTokens.radiusLG),
-                                  topRight: Radius.circular(LayoutTokens.radiusLG),
+                                  topLeft: Radius.circular(DesignTokens.radiusLG),
+                                  topRight: Radius.circular(DesignTokens.radiusLG),
                                 ),
                                 color: Colors.black.withOpacity(0.2),
                               ),
                               child: Center(
                                 child: Container(
-                                  padding: const EdgeInsets.all(LayoutTokens.paddingSM),
+                                  padding: const EdgeInsets.all(DesignTokens.paddingSM),
                                   decoration: BoxDecoration(
                                     color: AppColors.primaryRed,
-                                    borderRadius: BorderRadius.circular(LayoutTokens.radiusCircular),
+                                    borderRadius: BorderRadius.circular(DesignTokens.radiusCircular),
                                   ),
                                   child: const Icon(
                                     Icons.play_arrow,
@@ -116,7 +116,7 @@ class FeaturedPlaylistsSection extends StatelessWidget {
                         Expanded(
                           flex: 1,
                           child: Padding(
-                            padding: const EdgeInsets.all(LayoutTokens.paddingSM),
+                            padding: const EdgeInsets.all(DesignTokens.paddingSM),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

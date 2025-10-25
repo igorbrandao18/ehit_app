@@ -1,96 +1,167 @@
 // shared/design/layout_tokens.dart
 import 'package:flutter/material.dart';
+import 'design_tokens.dart';
 
+/// Layout-specific tokens for consistent spacing and sizing
+/// This class provides layout-specific constants that complement DesignTokens
 class LayoutTokens {
-  // Spacing System
-  static const double paddingXS = 4.0;
-  static const double paddingSM = 8.0;
-  static const double paddingMD = 16.0;
-  static const double paddingLG = 24.0;
-  static const double paddingXL = 32.0;
-
-  // Grid System
-  static const double cardPadding = 8.0;
-  static const double cardMargin = 4.0;
-  static const double sectionSpacing = 24.0;
-  static const double sectionPadding = 16.0;
-
-  // Border Radius
-  static const double radiusSM = 4.0;
-  static const double radiusMD = 8.0;
-  static const double radiusLG = 12.0;
-  static const double radiusXL = 16.0;
-  static const double radiusCircular = 1000.0;
-
-  // Component Dimensions
-  static const double miniPlayerHeight = 60.0;
-  static const double bannerCardWidth = 80.0;
-  static const double bannerCardHeight = 60.0;
-  static const double featuredCardHeight = 120.0;
-  static const double playlistCardSize = 160.0;
-  static const double gridCardSize = 80.0;
-
-  // Responsive Utilities
-  static double responsiveWidth(BuildContext context, double percentage) {
-    return MediaQuery.of(context).size.width * percentage;
-  }
-
-  static double responsiveHeight(BuildContext context, double percentage) {
-    return MediaQuery.of(context).size.height * percentage;
-  }
-
+  // ============================================================================
+  // SECTION SPACING
+  // ============================================================================
+  
+  static const double sectionSpacing = DesignTokens.spaceLG;
+  static const double sectionPadding = DesignTokens.spaceMD;
+  static const double sectionMargin = DesignTokens.spaceSM;
+  
+  // ============================================================================
+  // CARD LAYOUT
+  // ============================================================================
+  
+  static const double cardSpacing = DesignTokens.cardSpacing;
+  static const double cardPadding = DesignTokens.cardPadding;
+  static const double cardMargin = DesignTokens.cardMargin;
+  
+  // ============================================================================
+  // GRID LAYOUT
+  // ============================================================================
+  
+  static const double gridSpacing = DesignTokens.spaceMD;
+  static const double gridPadding = DesignTokens.spaceLG;
+  
+  // ============================================================================
+  // LIST LAYOUT
+  // ============================================================================
+  
+  static const double listItemSpacing = DesignTokens.spaceSM;
+  static const double listPadding = DesignTokens.spaceMD;
+  
+  // ============================================================================
+  // HEADER LAYOUT
+  // ============================================================================
+  
+  static const double headerHeight = 56.0;
+  static const double headerPadding = DesignTokens.spaceMD;
+  
+  // ============================================================================
+  // BOTTOM NAVIGATION
+  // ============================================================================
+  
+  static const double bottomNavHeight = kBottomNavigationBarHeight;
+  static const double bottomNavPadding = DesignTokens.spaceSM;
+  
+  // ============================================================================
+  // PADDING SYSTEM (Legacy compatibility)
+  // ============================================================================
+  
+  static const double paddingXS = DesignTokens.spaceXS;
+  static const double paddingSM = DesignTokens.spaceSM;
+  static const double paddingMD = DesignTokens.spaceMD;
+  static const double paddingLG = DesignTokens.spaceLG;
+  static const double paddingXL = DesignTokens.spaceXL;
+  
+  // ============================================================================
+  // BORDER RADIUS SYSTEM (Legacy compatibility)
+  // ============================================================================
+  
+  static const double radiusXS = DesignTokens.radiusSM;
+  static const double radiusSM = DesignTokens.radiusSM;
+  static const double radiusMD = DesignTokens.radiusMD;
+  static const double radiusLG = DesignTokens.radiusLG;
+  static const double radiusXL = DesignTokens.radiusLG;
+  static const double radiusCircular = DesignTokens.radiusCircular;
+  
+  // ============================================================================
+  // CARD DIMENSIONS (Legacy compatibility)
+  // ============================================================================
+  
+  static const double featuredCardHeight = DesignTokens.musicCardHeightLarge;
+  static const double bannerCardHeight = DesignTokens.musicCardHeight;
+  static const double bannerCardWidth = DesignTokens.musicCardWidth;
+  static const double playlistCardSize = DesignTokens.playlistCardSize;
+  
+  // ============================================================================
+  // RESPONSIVE LAYOUT UTILITIES
+  // ============================================================================
+  
+  /// Get safe area padding for the current context
   static EdgeInsets getSafeAreaPadding(BuildContext context) {
     return MediaQuery.of(context).padding;
   }
-
-  static double getAvailableHeight(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    return mediaQuery.size.height -
-           mediaQuery.padding.top -
-           mediaQuery.padding.bottom -
-           kBottomNavigationBarHeight;
+  
+  /// Get responsive padding based on screen size
+  static EdgeInsets getResponsivePadding(BuildContext context) {
+    return DesignTokens.getResponsivePadding(context);
   }
-
-  static double getAvailableWidth(BuildContext context) {
-    return MediaQuery.of(context).size.width;
+  
+  /// Get responsive margin based on screen size
+  static EdgeInsets getResponsiveMargin(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth > 768) {
+      return const EdgeInsets.all(DesignTokens.spaceXL);
+    } else if (screenWidth > 480) {
+      return const EdgeInsets.all(DesignTokens.spaceLG);
+    } else {
+      return const EdgeInsets.all(DesignTokens.spaceMD);
+    }
   }
-
+  
+  /// Get responsive spacing between sections
+  static double getResponsiveSpacing(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    if (screenWidth > 768) {
+      return DesignTokens.spaceXL;
+    } else if (screenWidth > 480) {
+      return DesignTokens.spaceLG;
+    } else {
+      return DesignTokens.spaceMD;
+    }
+  }
+  
+  // ============================================================================
+  // LAYOUT CONSTANTS
+  // ============================================================================
+  
+  /// Standard content width for tablets
+  static const double maxContentWidth = 1200.0;
+  
+  /// Standard content width for mobile
+  static const double mobileContentWidth = 360.0;
+  
+  /// Standard sidebar width
+  static const double sidebarWidth = 280.0;
+  
+  /// Standard drawer width
+  static const double drawerWidth = 300.0;
+  
+  // ============================================================================
+  // ANIMATION DURATIONS
+  // ============================================================================
+  
+  static const Duration shortAnimation = Duration(milliseconds: 200);
+  static const Duration mediumAnimation = Duration(milliseconds: 300);
+  static const Duration longAnimation = Duration(milliseconds: 500);
+  
+  // ============================================================================
+  // BREAKPOINTS
+  // ============================================================================
+  
+  static const double mobileBreakpoint = 480.0;
+  static const double tabletBreakpoint = 768.0;
+  static const double desktopBreakpoint = 1024.0;
+  
+  /// Check if current screen is mobile
+  static bool isMobile(BuildContext context) {
+    return MediaQuery.of(context).size.width < mobileBreakpoint;
+  }
+  
+  /// Check if current screen is tablet
   static bool isTablet(BuildContext context) {
-    return MediaQuery.of(context).size.width > 768;
+    final width = MediaQuery.of(context).size.width;
+    return width >= mobileBreakpoint && width < desktopBreakpoint;
   }
-
-  static bool isSmallScreen(BuildContext context) {
-    return MediaQuery.of(context).size.width < 360;
-  }
-
-  static int getResponsiveColumns(BuildContext context) {
-    if (isTablet(context)) {
-      return 4;
-    }
-    if (isSmallScreen(context)) {
-      return 2;
-    }
-    return 3;
-  }
-
-  static double getResponsiveCardSize(BuildContext context) {
-    final width = getAvailableWidth(context);
-    if (isSmallScreen(context)) {
-      return width * 0.45;
-    }
-    if (isTablet(context)) {
-      return width * 0.22;
-    }
-    return width * 0.3;
-  }
-
-  static double getGridCardSize(BuildContext context) {
-    final width = getAvailableWidth(context);
-    return (width - (paddingMD * 2) - (cardMargin * 3)) / 4; // 4 cards per row
-  }
-
-  static double getPlaylistCardSize(BuildContext context) {
-    final width = getAvailableWidth(context);
-    return (width - (paddingMD * 2) - (cardMargin * 2)) / 3; // 3 cards per row
+  
+  /// Check if current screen is desktop
+  static bool isDesktop(BuildContext context) {
+    return MediaQuery.of(context).size.width >= desktopBreakpoint;
   }
 }

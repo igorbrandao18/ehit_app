@@ -23,11 +23,11 @@ class AppBorders {
   // ============================================================================
   
   static const BorderRadius borderRadiusNone = BorderRadius.zero;
-  static const BorderRadius borderRadiusXS = BorderRadius.all(Radius.circular(DesignTokens.radiusXS));
+  static const BorderRadius borderRadiusXS = BorderRadius.all(Radius.circular(DesignTokens.radiusSM));
   static const BorderRadius borderRadiusSM = BorderRadius.all(Radius.circular(DesignTokens.radiusSM));
   static const BorderRadius borderRadiusMD = BorderRadius.all(Radius.circular(DesignTokens.radiusMD));
   static const BorderRadius borderRadiusLG = BorderRadius.all(Radius.circular(DesignTokens.radiusLG));
-  static const BorderRadius borderRadiusXL = BorderRadius.all(Radius.circular(DesignTokens.radiusXL));
+  static const BorderRadius borderRadiusXL = BorderRadius.all(Radius.circular(DesignTokens.radiusLG));
   static const BorderRadius borderRadiusCircular = BorderRadius.all(Radius.circular(DesignTokens.radiusCircular));
 
   // ============================================================================
