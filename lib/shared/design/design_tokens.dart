@@ -213,9 +213,57 @@ class DesignTokens {
   }
   
   // ============================================================================
-  // ANIMATION SYSTEM
+  // COMPONENT-SPECIFIC DIMENSIONS (Based on rules.mdc)
   // ============================================================================
-  static const double scaleAnimationValue = 0.95;
+  
+  // Song List Item dimensions
+  static const double songItemThumbnailMobile = 50.0; // Aumentado de 40px para 50px
+  static const double songItemThumbnailTablet = 60.0; // Aumentado de 50px para 60px
+  static const double songItemThumbnailDesktop = 70.0; // Aumentado de 60px para 70px
+  
+  // PlayHITS section dimensions
+  static const double playhitsCardHeight = 160.0;
+  static const double playhitsCardWidth = 120.0;
+  
+  // Responsive multipliers
+  static const double mobileSpacingMultiplier = 0.8;
+  static const double mobileHorizontalPaddingMultiplier = 0.5;
+  static const double mobileFontSizeMultiplier = 0.9;
+  static const double mobileIconSizeMultiplier = 0.7;
+  static const double mobilePaddingMultiplier = 0.4;
+  static const double mobileSpacingSmallMultiplier = 0.3;
+  static const double mobileSpacingTinyMultiplier = 0.2;
+  
+  // Shadow blur radius
+  static const double shadowBlurMobile = 4.0;
+  static const double shadowBlurTablet = 6.0;
+  static const double shadowBlurDesktop = 8.0;
+  
+  // Loading indicator stroke width
+  static const double loadingStrokeMobile = 1.5;
+  static const double loadingStrokeDefault = 2.0;
+  
+  // Border width
+  static const double borderWidthThin = 0.5;
+  static const double borderWidthNormal = 1.0;
+  
+  // Opacity values
+  static const double opacityOverlayMedium = 0.2;
+  
+  // Line height values
+  static const double lineHeightTight = 1.1;
+  static const double lineHeightNormal = 1.2;
+  
+  // Font size adjustments
+  static const double fontSizeAdjustmentSmall = 2.0;
+  static const double fontSizeAdjustmentMedium = 3.0;
+  static const double fontSizeAdjustmentLarge = 4.0;
+  
+  // Screen height percentage
+  static const double songsListHeightPercentage = 0.4;
+  
+  // Duration values
+  static const int snackbarDurationSeconds = 2;
   
   // ============================================================================
   // GRADIENT SYSTEM

@@ -31,7 +31,7 @@ class SongsListSection extends StatelessWidget {
       children: [
         _buildSectionHeader(context),
         SizedBox(
-          height: MediaQuery.of(context).size.height * 0.4, // 40% da altura da tela
+          height: MediaQuery.of(context).size.height * DesignTokens.songsListHeightPercentage,
           child: _buildSongsList(context),
         ),
       ],

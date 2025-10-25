@@ -25,9 +25,9 @@ class SongListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final spacing = ResponsiveUtils.getResponsiveSpacing(context);
     final thumbnailSize = ResponsiveUtils.getResponsiveImageSize(context, 
-      mobile: 40.0,    // Reduzido de 50px para 40px
-      tablet: 50.0,    // Reduzido de 60px para 50px  
-      desktop: 60.0,   // Reduzido de 70px para 60px
+      mobile: DesignTokens.songItemThumbnailMobile,
+      tablet: DesignTokens.songItemThumbnailTablet,
+      desktop: DesignTokens.songItemThumbnailDesktop,
     );
     final isMobile = ResponsiveUtils.getDeviceType(context) == DeviceType.mobile;
     
@@ -35,13 +35,13 @@ class SongListItem extends StatelessWidget {
       onTap: onTap,
       child: Padding(
         padding: EdgeInsets.symmetric(
-          vertical: isMobile ? spacing * 0.8 : spacing,
-          horizontal: isMobile ? spacing * 0.5 : spacing,
+          vertical: isMobile ? spacing * DesignTokens.mobileSpacingMultiplier : spacing,
+          horizontal: isMobile ? spacing * DesignTokens.mobileHorizontalPaddingMultiplier : spacing,
         ),
         child: Row(
           children: [
             _buildAlbumArt(context, thumbnailSize),
-            SizedBox(width: isMobile ? spacing * 0.8 : spacing),
+            SizedBox(width: isMobile ? spacing * DesignTokens.mobileSpacingMultiplier * 1.5 : spacing * 1.5),
             Expanded(
               child: _buildSongInfo(context),
             ),
@@ -64,7 +64,7 @@ class SongListItem extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(DesignTokens.cardOverlayOpacity),
-            blurRadius: isMobile ? 4 : (isTablet ? 6 : 8),
+            blurRadius: isMobile ? DesignTokens.shadowBlurMobile : (isTablet ? DesignTokens.shadowBlurTablet : DesignTokens.shadowBlurDesktop),
             offset: const Offset(0, DesignTokens.cardShadowOffset),
           ),
         ],
@@ -83,7 +83,7 @@ class SongListItem extends StatelessWidget {
               child: Center(
                 child: CircularProgressIndicator(
                   valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-                  strokeWidth: isMobile ? 1.5 : 2,
+                  strokeWidth: isMobile ? DesignTokens.loadingStrokeMobile : DesignTokens.loadingStrokeDefault,
                 ),
               ),
             );
@@ -121,23 +121,23 @@ class SongListItem extends StatelessWidget {
           song.title,
           style: TextStyle(
             color: Colors.white,
-            fontSize: isMobile ? fontSize * 0.9 : fontSize,
+            fontSize: isMobile ? fontSize * DesignTokens.mobileFontSizeMultiplier : fontSize,
             fontWeight: FontWeight.w600,
-            height: 1.2,
+            height: DesignTokens.lineHeightNormal,
           ),
           maxLines: isMobile ? 1 : 2,
           overflow: TextOverflow.ellipsis,
         ),
-        SizedBox(height: isMobile ? spacing * 0.3 : spacing * 0.4),
+        SizedBox(height: isMobile ? spacing * DesignTokens.mobileSpacingSmallMultiplier : spacing * 0.4),
         GestureDetector(
           onTap: () => _navigateToArtist(context, song.artist),
           child: Text(
             song.artist,
             style: TextStyle(
               color: Colors.white70,
-              fontSize: isMobile ? (fontSize - 3) : (fontSize - 2),
+              fontSize: isMobile ? (fontSize - DesignTokens.fontSizeAdjustmentMedium) : (fontSize - DesignTokens.fontSizeAdjustmentSmall),
               fontWeight: FontWeight.w400,
-              height: 1.1,
+              height: DesignTokens.lineHeightTight,
             ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
