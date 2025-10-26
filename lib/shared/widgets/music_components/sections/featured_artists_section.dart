@@ -1,23 +1,24 @@
+// shared/widgets/music_components/sections/featured_artists_section.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../design/design_tokens.dart';
-import '../../../../features/music_library/presentation/controllers/music_library_controller.dart';
+import '../../../../features/music_library/presentation/controllers/artists_controller.dart';
 import '../section_title.dart';
 
-class PlayHitsPersonalizedSection extends StatelessWidget {
-  const PlayHitsPersonalizedSection({super.key});
+class FeaturedArtistsSection extends StatelessWidget {
+  const FeaturedArtistsSection({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MusicLibraryController>(
+    return Consumer<ArtistsController>(
       builder: (context, controller, child) {
         if (controller.isLoading) {
-          return _buildLoadingState();
+          return _buildLoadingState(context);
         }
 
-        if (controller.playlists.isEmpty) {
+        if (controller.artists.isEmpty) {
           return _buildEmptyState(context);
         }
 
@@ -26,7 +27,7 @@ class PlayHitsPersonalizedSection extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingState() {
+  Widget _buildLoadingState(BuildContext context) {
     return Container(
       height: DesignTokens.playhitsCardWidth + DesignTokens.spaceXL,
       padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
@@ -42,26 +43,26 @@ class PlayHitsPersonalizedSection extends StatelessWidget {
     return Container(
       height: DesignTokens.playhitsCardWidth + DesignTokens.spaceXL,
       padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
-        child: Center(
-          child: Text(
-            AppLocalizations.of(context)!.noPlaylistsFound,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 16,
-            ),
+      child: Center(
+        child: Text(
+          AppLocalizations.of(context)!.noArtistsFound,
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 16,
           ),
         ),
+      ),
     );
   }
 
-  Widget _buildContent(BuildContext context, MusicLibraryController controller) {
-    final playHits = controller.playlists.take(10).toList();
+  Widget _buildContent(BuildContext context, ArtistsController controller) {
+    final artists = controller.artists.take(10).toList();
     
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Título da seção
-        SectionTitle(title: AppLocalizations.of(context)!.playhits),
+        SectionTitle(title: AppLocalizations.of(context)!.featuredArtists),
         
         const SizedBox(height: DesignTokens.spaceMD),
         
@@ -71,10 +72,10 @@ class PlayHitsPersonalizedSection extends StatelessWidget {
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
-            itemCount: playHits.length,
+            itemCount: artists.length,
             itemBuilder: (context, index) {
-              final playHit = playHits[index];
-              return _buildPlaylistCard(context, playHit);
+              final artist = artists[index];
+              return _buildArtistCard(context, artist);
             },
           ),
         ),
@@ -82,25 +83,25 @@ class PlayHitsPersonalizedSection extends StatelessWidget {
     );
   }
 
-  Widget _buildPlaylistCard(BuildContext context, dynamic playHit) {
-    final coverUrl = playHit.cover?.isNotEmpty == true ? playHit.cover : 'https://via.placeholder.com/300';
+  Widget _buildArtistCard(BuildContext context, dynamic artist) {
+    final imageUrl = artist.imageUrl?.isNotEmpty == true ? artist.imageUrl : 'https://via.placeholder.com/300';
     
     return Container(
       width: DesignTokens.playhitsCardWidth,
       margin: const EdgeInsets.only(right: DesignTokens.spaceMD),
       child: GestureDetector(
-        onTap: () => _navigateToPlaylist(context, playHit.id.toString(), playHit.name),
+        onTap: () => _navigateToArtist(context, artist.id.toString(), artist.name),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Imagem da playlist
+            // Imagem do artista
             Container(
               height: DesignTokens.playhitsCardWidth, // Quadrado perfeito
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
                 color: Colors.grey[800],
                 image: DecorationImage(
-                  image: NetworkImage(coverUrl),
+                  image: NetworkImage(imageUrl),
                   fit: BoxFit.cover,
                   onError: (exception, stackTrace) {
                     // Silenciar erro de imagem
@@ -114,11 +115,12 @@ class PlayHitsPersonalizedSection extends StatelessWidget {
     );
   }
 
-  void _navigateToPlaylist(BuildContext context, String playlistId, String playlistName) {
+  void _navigateToArtist(BuildContext context, String artistId, String artistName) {
     context.pushNamed(
-      'playlist-detail',
-      pathParameters: {'playlistId': playlistId},
-      extra: playlistName,
+      'artist-detail',
+      pathParameters: {'artistId': artistId},
+      extra: artistName,
     );
   }
 }
+

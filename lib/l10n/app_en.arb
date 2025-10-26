@@ -1,0 +1,34 @@
+{
+  "@@locale": "en",
+  
+  "playhits": "PlayHITS",
+  "@playhits": {
+    "description": "Playlists section title"
+  },
+  
+  "featuredArtists": "Featured Artists",
+  "@featuredArtists": {
+    "description": "Artists section title"
+  },
+  
+  "noPlaylistsFound": "No playlists found",
+  "@noPlaylistsFound": {
+    "description": "Message when there are no playlists"
+  },
+  
+  "noArtistsFound": "No artists found",
+  "@noArtistsFound": {
+    "description": "Message when there are no artists"
+  },
+  
+  "appTitle": "ÊHIT",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  
+  "music": "Music",
+  "@music": {
+    "description": "Application subtitle"
+  }
+}
+
