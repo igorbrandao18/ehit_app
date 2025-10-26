@@ -6,7 +6,7 @@ import '../../../../shared/widgets/layout/gradient_scaffold.dart';
 import '../../../../shared/widgets/layout/page_content.dart';
 import '../../../../shared/widgets/layout/section_header.dart';
 import '../../../../shared/widgets/layout/loading_section.dart';
-import '../../../../shared/widgets/music_components/artist_card.dart';
+import '../../../../shared/widgets/music_components/cards/artist_card.dart';
 import '../../../../shared/design/design_tokens.dart';
 import '../../../../shared/design/app_colors.dart';
 import '../controllers/music_library_controller.dart';

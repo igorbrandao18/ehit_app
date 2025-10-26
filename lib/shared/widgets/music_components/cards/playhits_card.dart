@@ -1,9 +1,9 @@
 // shared/widgets/playhits_card.dart
 import 'package:flutter/material.dart';
-import '../design/design_tokens.dart';
-import '../design/app_colors.dart';
-import '../utils/image_utils.dart';
-import '../design/app_text_styles.dart';
+import '../../../design/design_tokens.dart';
+import '../../../design/app_colors.dart';
+import '../../../utils/image_utils.dart';
+import '../../../design/app_text_styles.dart';
 
 class PlayHitsCard extends StatefulWidget {
   final String title;

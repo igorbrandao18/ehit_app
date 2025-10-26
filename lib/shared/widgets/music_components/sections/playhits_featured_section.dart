@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../design/design_tokens.dart';
-import '../../design/app_colors.dart';
-import '../../../features/music_library/presentation/controllers/music_library_controller.dart';
+import '../../../design/design_tokens.dart';
+import '../../../design/app_colors.dart';
+import '../../../../features/music_library/presentation/controllers/music_library_controller.dart';
 
 class PlayHitsFeaturedSection extends StatelessWidget {
   const PlayHitsFeaturedSection({super.key});

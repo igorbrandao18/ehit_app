@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
 import '../../../../shared/widgets/layout/app_header.dart';
-import '../../../../shared/widgets/music_components/banner_section.dart';
-import '../../../../shared/widgets/music_components/playhits_personalized_section.dart';
-import '../../../../shared/widgets/music_components/playhits_featured_section.dart';
-import '../../../../shared/design/design_tokens.dart';
-import '../../../../shared/design/app_colors.dart';
+import '../../../../shared/widgets/music_components/sections/banner_section.dart';
+import '../../../../shared/widgets/music_components/sections/playhits_personalized_section.dart';
+import '../../../../shared/widgets/music_components/sections/playhits_featured_section.dart';
 import '../../../../shared/design/layout_tokens.dart';
 import '../controllers/music_library_controller.dart';
 

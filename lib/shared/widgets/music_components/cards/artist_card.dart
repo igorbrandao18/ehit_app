@@ -1,10 +1,10 @@
 // shared/widgets/music_components/artist_card.dart
 import 'package:flutter/material.dart';
-import '../../../features/music_library/domain/entities/artist.dart';
-import '../../design/app_colors.dart';
-import '../../design/app_text_styles.dart';
-import '../../design/design_tokens.dart';
-import '../../utils/responsive_utils.dart';
+import '../../../../features/music_library/domain/entities/artist.dart';
+import '../../../design/app_colors.dart';
+import '../../../design/app_text_styles.dart';
+import '../../../design/design_tokens.dart';
+import '../../../utils/responsive_utils.dart';
 
 /// Card circular para exibir artistas
 class ArtistCard extends StatelessWidget {

@@ -1,6 +1,6 @@
 // shared/widgets/music_components/promotional_banner.dart
 import 'package:flutter/material.dart';
-import '../../design/layout_tokens.dart';
+import '../../../design/layout_tokens.dart';
 
 class PromotionalBanner extends StatelessWidget {
   const PromotionalBanner({super.key});

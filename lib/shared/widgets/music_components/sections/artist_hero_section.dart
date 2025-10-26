@@ -1,9 +1,8 @@
 // shared/widgets/music_components/artist_hero_section.dart
 
 import 'package:flutter/material.dart';
-import '../../../features/music_library/domain/entities/artist.dart';
-import '../../design/design_tokens.dart';
-import '../../design/app_colors.dart';
+import '../../../../features/music_library/domain/entities/artist.dart';
+import '../../../design/design_tokens.dart';
 
 /// Componente hero section para página de detalhes do artista
 class ArtistHeroSection extends StatelessWidget {

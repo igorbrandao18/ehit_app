@@ -1,10 +1,10 @@
 // shared/widgets/music_components/songs_list_section.dart
 
 import 'package:flutter/material.dart';
-import '../../../features/music_library/domain/entities/song.dart';
-import '../../design/design_tokens.dart';
-import '../../design/app_colors.dart';
-import '../../utils/responsive_utils.dart';
+import '../../../../features/music_library/domain/entities/song.dart';
+import '../../../design/design_tokens.dart';
+import '../../../design/app_colors.dart';
+import '../../../utils/responsive_utils.dart';
 import 'song_list_item.dart';
 
 /// Componente para exibir lista de músicas do artista

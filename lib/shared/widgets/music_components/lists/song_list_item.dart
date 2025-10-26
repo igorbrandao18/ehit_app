@@ -3,10 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../../features/music_library/domain/entities/song.dart';
-import '../../../features/music_player/presentation/controllers/music_player_controller.dart';
-import '../../design/design_tokens.dart';
-import '../../utils/responsive_utils.dart';
+import '../../../../features/music_library/domain/entities/song.dart';
+import '../../../../features/music_player/presentation/controllers/music_player_controller.dart';
+import '../../../design/design_tokens.dart';
+import '../../../utils/responsive_utils.dart';
 
 /// Componente para item individual da lista de músicas
 class SongListItem extends StatelessWidget {

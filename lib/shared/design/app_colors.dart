@@ -10,10 +10,10 @@ class AppColors {
   
   static const Color primaryRed = Color(0xFFEF2731); // Main brand color
   static const Color primaryDark = Color(0xFFEF2731); // Same color
-  static const Color backgroundDark = Color(0xFFEF2731); // Main background color
-  static const Color backgroundCard = Color(0xFF2A0000); // Dark red card background
-  static const Color backgroundLight = Color(0xFF1A1A1A); // Light background
-  static const Color backgroundElevated = Color(0xFF2A2A2A); // Elevated background
+  static const Color backgroundDark = Color(0xFF000000); // Main background color (preto)
+  static const Color backgroundCard = Color(0xFF1A1A1A); // Dark card background
+  static const Color backgroundLight = Color(0xFF2A2A2A); // Light background
+  static const Color backgroundElevated = Color(0xFF333333); // Elevated background
   
   // ============================================================================
   // TEXT COLORS
@@ -58,23 +58,23 @@ class AppColors {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFFEF2731), // Main brand color top-left
-      Color(0xFFE0242F), // Slightly darker red
-      Color(0xFFD11F2D), // A bit darker
-      Color(0xFFC21C2B), // Darker red
-      Color(0xFFB31929), // Darkest red
+      Color(0xFF000000), // Preto puro top-left
+      Color(0xFF0A0A0A), // Quase preto
+      Color(0xFF141414), // Preto mais claro
+      Color(0xFF1A1A1A), // Cinza escuro
+      Color(0xFF1F1F1F), // Cinza mais claro
     ],
     stops: [0.0, 0.25, 0.5, 0.75, 1.0],
   );
 
-  static const Color solidBackground = Color(0xFFEF2731); // Solid background color
+  static const Color solidBackground = Color(0xFF000000); // Solid background color (preto)
 
   static const LinearGradient cardGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFF2A0000), // Dark red card
-      Color(0xFF1A0000), // Very dark red
+      Color(0xFF1A1A1A), // Dark gray card
+      Color(0xFF0F0F0F), // Very dark gray
     ],
   );
   

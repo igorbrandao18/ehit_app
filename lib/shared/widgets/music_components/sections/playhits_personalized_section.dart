@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../design/design_tokens.dart';
-import '../../../features/music_library/presentation/controllers/music_library_controller.dart';
+import '../../../design/design_tokens.dart';
+import '../../../../features/music_library/presentation/controllers/music_library_controller.dart';
 
 class PlayHitsPersonalizedSection extends StatelessWidget {
   const PlayHitsPersonalizedSection({super.key});

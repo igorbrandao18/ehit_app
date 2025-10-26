@@ -1,8 +1,8 @@
 // shared/widgets/album_card.dart
 import 'package:flutter/material.dart';
-import '../design/app_colors.dart';
-import '../design/app_text_styles.dart';
-import '../utils/responsive_utils.dart';
+import '../../../design/app_colors.dart';
+import '../../../design/app_text_styles.dart';
+import '../../../utils/responsive_utils.dart';
 
 class AlbumCard extends StatelessWidget {
   final String title;

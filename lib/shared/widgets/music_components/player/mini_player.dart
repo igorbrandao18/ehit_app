@@ -3,9 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/audio/audio_player_service.dart';
-import '../../design/app_colors.dart';
-import '../../design/design_tokens.dart';
+import '../../../../core/audio/audio_player_service.dart';
+import '../../../design/app_colors.dart';
+import '../../../design/design_tokens.dart';
 
 /// Mini player que aparece fixo no bottom quando não está na tela do player
 class MiniPlayer extends StatelessWidget {

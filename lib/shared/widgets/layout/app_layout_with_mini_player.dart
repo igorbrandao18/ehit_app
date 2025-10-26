@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../music_components/mini_player.dart';
+import '../music_components/player/mini_player.dart';
 
 /// Layout principal que inclui o mini player quando necessário
 class AppLayoutWithMiniPlayer extends StatelessWidget {

@@ -3,11 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../../features/music_library/domain/entities/artist.dart';
-import '../../../features/music_library/presentation/controllers/artists_controller.dart';
-import '../../design/design_tokens.dart';
-import '../../utils/responsive_utils.dart';
-import '../layout/section_header.dart';
+import '../../../../features/music_library/domain/entities/artist.dart';
+import '../../../../features/music_library/presentation/controllers/artists_controller.dart';
+import '../../../design/design_tokens.dart';
+import '../../../utils/responsive_utils.dart';
+import '../../layout/section_header.dart';
 import 'artist_card.dart';
 
 /// Seção do catálogo de artistas

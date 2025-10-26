@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
 import '../../../../shared/design/app_colors.dart';
 import '../../../../shared/design/design_tokens.dart';
-import '../../../../shared/widgets/music_components/songs_list_section.dart';
+import '../../../../shared/widgets/music_components/lists/songs_list_section.dart';
 import '../../../../core/audio/audio_player_service.dart';
 import '../controllers/music_library_controller.dart';
 import '../../domain/entities/playlist.dart';

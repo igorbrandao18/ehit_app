@@ -2,14 +2,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_constants.dart';
-import '../../design/design_tokens.dart';
-import '../../design/app_colors.dart';
-import '../layout/section_header.dart';
-import '../layout/loading_section.dart';
-import '../playhits_card.dart';
-import '../../../features/music_library/presentation/controllers/music_library_controller.dart';
-import '../../../core/routing/app_routes.dart';
+import '../../../../core/constants/app_constants.dart';
+import '../../../design/design_tokens.dart';
+import '../../../design/app_colors.dart';
+import '../../layout/section_header.dart';
+import '../../layout/loading_section.dart';
+import '../cards/playhits_card.dart';
+import '../../../../features/music_library/presentation/controllers/music_library_controller.dart';
+import '../../../../core/routing/app_routes.dart';
 
 /// Seção PlayHITS da semana componentizada
 class PlayHitsSection extends StatelessWidget {

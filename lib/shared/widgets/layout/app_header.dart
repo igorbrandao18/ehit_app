@@ -23,58 +23,34 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     final safeAreaTop = DesignTokens.getSafeAreaPadding(context).top;
     
     return PreferredSize(
-      preferredSize: Size.fromHeight(60 + safeAreaTop),
+      preferredSize: Size.fromHeight(80 + safeAreaTop),
       child: Container(
-        padding: EdgeInsets.only(top: safeAreaTop),
+        padding: EdgeInsets.only(
+          top: safeAreaTop + DesignTokens.spaceLG,
+          bottom: DesignTokens.spaceMD,
+        ),
         child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
+          padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
           child: Row(
             children: [
-              // Título alinhado à esquerda
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        title,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      if (subtitle != null) ...[
-                        Text(
-                          ' $subtitle',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w300,
-                            color: Colors.white.withOpacity(0.8),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-              ),
-              // Widget do lado direito (logo ou outro widget)
-              if (rightWidget != null)
-                rightWidget!
-              else if (showLogo)
+              // Logo do lado esquerdo
+              if (showLogo)
                 GestureDetector(
                   onTap: onLogoTap,
                   child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      image: const DecorationImage(
-                        image: AssetImage('icon.png'),
-                        fit: BoxFit.cover,
-                      ),
+                    height: 100,
+                    child: Image.asset(
+                      'assets/logo-header.png',
+                      fit: BoxFit.contain,
                     ),
+                  ),
+                ),
+              // Widget customizado se fornecido
+              if (rightWidget != null)
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: rightWidget!,
                   ),
                 ),
             ],
@@ -85,5 +61,5 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(60);
+  Size get preferredSize => const Size.fromHeight(80);
 }

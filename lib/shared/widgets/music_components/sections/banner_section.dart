@@ -1,8 +1,7 @@
 // shared/widgets/music_components/banner_section.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../design/design_tokens.dart';
-import '../../design/app_colors.dart';
+import '../../../design/design_tokens.dart';
 
 class BannerSection extends StatefulWidget {
   const BannerSection({super.key});
@@ -68,6 +67,7 @@ class _BannerSectionState extends State<BannerSection>
     return Container(
       height: 200,
       margin: const EdgeInsets.only(
+        top: DesignTokens.spaceMD,
         bottom: DesignTokens.spaceMD,
       ),
       child: Stack(

@@ -1,7 +1,7 @@
 // shared/widgets/music_components/featured_content_section.dart
 import 'package:flutter/material.dart';
-import '../../design/layout_tokens.dart';
-import '../../design/app_colors.dart';
+import '../../../design/layout_tokens.dart';
+import '../../../design/app_colors.dart';
 
 class FeaturedContentSection extends StatelessWidget {
   const FeaturedContentSection({super.key});
