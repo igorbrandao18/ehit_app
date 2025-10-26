@@ -1,20 +1,15 @@
-// shared/widgets/music_components/songs_list_section.dart
-
 import 'package:flutter/material.dart';
 import '../../../../features/music_library/domain/entities/song.dart';
 import '../../../design/design_tokens.dart';
 import '../../../design/app_colors.dart';
 import '../../../utils/responsive_utils.dart';
 import 'song_list_item.dart';
-
-/// Componente para exibir lista de músicas do artista
 class SongsListSection extends StatelessWidget {
   final List<Song> songs;
   final String artistName;
   final Function(Song) onSongTap;
   final VoidCallback onShuffleTap;
   final VoidCallback onRepeatTap;
-
   const SongsListSection({
     super.key,
     required this.songs,
@@ -23,7 +18,6 @@ class SongsListSection extends StatelessWidget {
     required this.onShuffleTap,
     required this.onRepeatTap,
   });
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -37,7 +31,6 @@ class SongsListSection extends StatelessWidget {
       ],
     );
   }
-
   Widget _buildSectionHeader(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -65,7 +58,6 @@ class SongsListSection extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildActionButton(BuildContext context, {
     required IconData icon,
     required VoidCallback onTap,
@@ -79,7 +71,6 @@ class SongsListSection extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildSongsList(BuildContext context) {
     if (songs.isEmpty) {
       return Center(
@@ -92,7 +83,6 @@ class SongsListSection extends StatelessWidget {
         ),
       );
     }
-
     return ListView.builder(
       padding: EdgeInsets.only(
         top: ResponsiveUtils.getResponsiveSpacing(context, mobile: 16, tablet: 20, desktop: 24),

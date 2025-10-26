@@ -1,11 +1,7 @@
-// features/music_library/data/models/playlist_model.dart
-
 import 'package:json_annotation/json_annotation.dart';
 import '../../domain/entities/playlist.dart';
 import 'song_model.dart';
-
 part 'playlist_model.g.dart';
-
 @JsonSerializable(explicitToJson: true)
 class PlaylistModel {
   final int id;
@@ -21,7 +17,6 @@ class PlaylistModel {
   final String updatedAt;
   @JsonKey(name: 'is_active')
   final bool isActive;
-
   const PlaylistModel({
     required this.id,
     required this.name,
@@ -32,10 +27,8 @@ class PlaylistModel {
     required this.updatedAt,
     required this.isActive,
   });
-
   factory PlaylistModel.fromJson(Map<String, dynamic> json) => _$PlaylistModelFromJson(json);
   Map<String, dynamic> toJson() => _$PlaylistModelToJson(this);
-
   Playlist toEntity() {
     return Playlist(
       id: id,
@@ -48,7 +41,6 @@ class PlaylistModel {
       isActive: isActive,
     );
   }
-
   factory PlaylistModel.fromEntity(Playlist entity) {
     return PlaylistModel(
       id: entity.id,

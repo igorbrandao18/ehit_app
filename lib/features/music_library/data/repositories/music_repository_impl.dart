@@ -1,18 +1,12 @@
-// features/music_library/data/repositories/music_repository_impl.dart
-
 import '../../domain/entities/playlist.dart';
 import '../../domain/entities/song.dart';
 import '../../domain/repositories/playlist_repository.dart' as playlist_repo;
 import '../../domain/repositories/music_repository.dart';
 import '../datasources/music_remote_datasource.dart';
 import '../../../../core/utils/result.dart';
-
-/// Implementação do repositório de playlists
 class PlaylistRepositoryImpl implements playlist_repo.PlaylistRepository {
   final MusicRemoteDataSource _remoteDataSource;
-
   const PlaylistRepositoryImpl(this._remoteDataSource);
-
   @override
   Future<Result<List<Playlist>>> getPlaylists() async {
     try {
@@ -25,24 +19,18 @@ class PlaylistRepositoryImpl implements playlist_repo.PlaylistRepository {
     }
   }
 }
-
-/// Implementação do repositório de música
 class MusicRepositoryImpl implements MusicRepository {
   final MusicRemoteDataSource _remoteDataSource;
-
   const MusicRepositoryImpl(this._remoteDataSource);
-
   @override
   Future<Result<List<Song>>> getSongs() async {
     try {
       final playlistModels = await _remoteDataSource.getPlaylists();
       final allSongs = <Song>[];
-      
       for (final playlistModel in playlistModels) {
         final songs = playlistModel.musicsData.map((songModel) => songModel.toEntity()).toList();
         allSongs.addAll(songs);
       }
-      
       return Success(allSongs);
     } catch (e) {
       return Error<List<Song>>(
@@ -50,7 +38,6 @@ class MusicRepositoryImpl implements MusicRepository {
       );
     }
   }
-
   @override
   Future<Result<Song>> getSongById(String id) async {
     try {
@@ -72,7 +59,6 @@ class MusicRepositoryImpl implements MusicRepository {
       );
     }
   }
-
   @override
   Future<Result<List<Song>>> getSongsByArtist(String artistId) async {
     try {
@@ -90,7 +76,6 @@ class MusicRepositoryImpl implements MusicRepository {
       );
     }
   }
-
   @override
   Future<Result<List<Song>>> getSongsByAlbum(String albumId) async {
     try {
@@ -108,7 +93,6 @@ class MusicRepositoryImpl implements MusicRepository {
       );
     }
   }
-
   @override
   Future<Result<List<Song>>> getSongsByGenre(String genre) async {
     try {
@@ -126,7 +110,6 @@ class MusicRepositoryImpl implements MusicRepository {
       );
     }
   }
-
   @override
   Future<Result<List<Song>>> searchSongs(String query) async {
     try {
@@ -148,14 +131,12 @@ class MusicRepositoryImpl implements MusicRepository {
       );
     }
   }
-
   @override
   Future<Result<List<Song>>> getPopularSongs() async {
     try {
       final songsResult = await getSongs();
       return songsResult.when(
         success: (songs) {
-          // Ordena por playCount e retorna as mais populares
           final sortedSongs = List<Song>.from(songs);
           sortedSongs.sort((a, b) => b.playCount.compareTo(a.playCount));
           return Success(sortedSongs.take(20).toList());
@@ -168,14 +149,12 @@ class MusicRepositoryImpl implements MusicRepository {
       );
     }
   }
-
   @override
   Future<Result<List<Song>>> getRecentSongs() async {
     try {
       final songsResult = await getSongs();
       return songsResult.when(
         success: (songs) {
-          // Ordena por releaseDate e retorna as mais recentes
           final sortedSongs = List<Song>.from(songs);
           sortedSongs.sort((a, b) => b.releaseDate.compareTo(a.releaseDate));
           return Success(sortedSongs.take(20).toList());
@@ -188,28 +167,20 @@ class MusicRepositoryImpl implements MusicRepository {
       );
     }
   }
-
   @override
   Future<Result<void>> addToFavorites(String songId) async {
-    // TODO: Implementar quando houver sistema de favoritos
     return const Error<void>(message: 'Funcionalidade não implementada');
   }
-
   @override
   Future<Result<void>> removeFromFavorites(String songId) async {
-    // TODO: Implementar quando houver sistema de favoritos
     return const Error<void>(message: 'Funcionalidade não implementada');
   }
-
   @override
   Future<Result<bool>> isFavorite(String songId) async {
-    // TODO: Implementar quando houver sistema de favoritos
     return const Error<bool>(message: 'Funcionalidade não implementada');
   }
-
   @override
   Future<Result<List<Song>>> getFavoriteSongs() async {
-    // TODO: Implementar quando houver sistema de favoritos
     return const Error<List<Song>>(message: 'Funcionalidade não implementada');
   }
 }

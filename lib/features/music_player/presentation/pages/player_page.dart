@@ -1,4 +1,3 @@
-// features/music_player/presentation/pages/player_page.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -6,30 +5,24 @@ import '../../../../shared/design/app_colors.dart';
 import '../../../../shared/design/design_tokens.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
 import '../../../../core/audio/audio_player_service.dart';
-
 class PlayerPage extends StatelessWidget {
   const PlayerPage({super.key});
-
   String _formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
     return '$twoDigitMinutes:$twoDigitSeconds';
   }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<AudioPlayerService>(
       builder: (context, audioPlayer, child) {
         return GradientScaffold(
-          showMiniPlayer: false, // Não mostrar mini player na página do player
+          showMiniPlayer: false, 
           body: SafeArea(
             child: Column(
               children: [
-                  // Header com seta para voltar e título
                   _buildHeader(context),
-                  
-                  // Conteúdo principal
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.symmetric(
@@ -38,25 +31,13 @@ class PlayerPage extends StatelessWidget {
                       child: Column(
                         children: [
                           SizedBox(height: DesignTokens.playerVerticalSpacing),
-                          
-                          // Album Art
                           _buildAlbumArt(context),
-                          
                           SizedBox(height: DesignTokens.playerVerticalSpacing),
-                          
-                          // Informações da música
                           _buildSongInfo(context),
-                          
                           SizedBox(height: DesignTokens.playerVerticalSpacing),
-                          
-                          // Progress bar
                           _buildProgressBar(context, audioPlayer),
-                          
                           SizedBox(height: DesignTokens.playerVerticalSpacing * 2),
-                          
-                          // Controles do player
                           _buildPlayerControls(context, audioPlayer),
-                          
                           SizedBox(height: DesignTokens.playerVerticalSpacing * 3),
                         ],
                       ),
@@ -69,13 +50,11 @@ class PlayerPage extends StatelessWidget {
       },
     );
   }
-
   Widget _buildHeader(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final iconSize = screenWidth * DesignTokens.playerIconSizeRatio;
     final fontSize = screenWidth * DesignTokens.playerFontSizeRatio;
     final padding = DesignTokens.playerHorizontalSpacing;
-    
     return Padding(
       padding: EdgeInsets.all(padding),
       child: Row(
@@ -99,18 +78,16 @@ class PlayerPage extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(width: iconSize), // Espaço para balancear o layout
+          SizedBox(width: iconSize), 
         ],
       ),
     );
   }
-
   Widget _buildAlbumArt(BuildContext context) {
     final audioPlayer = Provider.of<AudioPlayerService>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final albumSize = screenWidth * DesignTokens.playerAlbumSizeRatio;
     final imageUrl = audioPlayer.currentSong?.imageUrl ?? '';
-    
     return Container(
       width: albumSize,
       height: albumSize,
@@ -157,13 +134,11 @@ class PlayerPage extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildSongInfo(BuildContext context) {
     final audioPlayer = Provider.of<AudioPlayerService>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final titleFontSize = screenWidth * DesignTokens.playerTitleFontSizeRatio;
     final artistFontSize = screenWidth * DesignTokens.playerFontSizeRatio;
-    
     return Column(
       children: [
         Text(
@@ -188,11 +163,9 @@ class PlayerPage extends StatelessWidget {
       ],
     );
   }
-
   Widget _buildProgressBar(BuildContext context, AudioPlayerService audioPlayer) {
     final progress = audioPlayer.progress;
     final remaining = audioPlayer.duration - audioPlayer.position;
-    
     return Column(
       children: [
         SliderTheme(
@@ -238,28 +211,18 @@ class PlayerPage extends StatelessWidget {
       ],
     );
   }
-
   Widget _buildPlayerControls(BuildContext context, AudioPlayerService audioPlayer) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        // Botão anterior
         _buildControlButton(
           context: context,
           icon: Icons.skip_previous,
           onTap: () => audioPlayer.previous(),
         ),
-        
-        // Espaçamento maior antes do botão principal
         SizedBox(width: MediaQuery.of(context).size.width * 0.05),
-        
-        // Botão play/pause principal
         _buildMainControlButton(context, audioPlayer),
-        
-        // Espaçamento maior depois do botão principal
         SizedBox(width: MediaQuery.of(context).size.width * 0.05),
-        
-        // Botão próximo
         _buildControlButton(
           context: context,
           icon: Icons.skip_next,
@@ -268,16 +231,14 @@ class PlayerPage extends StatelessWidget {
       ],
     );
   }
-
   Widget _buildControlButton({
     required BuildContext context,
     required IconData icon,
     required VoidCallback onTap,
   }) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final buttonSize = screenWidth * 0.14; // Aumentado de 0.12 para 0.14
-    final iconSize = screenWidth * 0.07; // Aumentado de 0.06 para 0.07
-    
+    final buttonSize = screenWidth * 0.14; 
+    final iconSize = screenWidth * 0.07; 
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -296,12 +257,10 @@ class PlayerPage extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildMainControlButton(BuildContext context, AudioPlayerService audioPlayer) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final buttonSize = screenWidth * 0.25; // Aumentado de 0.18 para 0.25
-    final iconSize = screenWidth * 0.12; // Aumentado de 0.09 para 0.12
-    
+    final buttonSize = screenWidth * 0.25; 
+    final iconSize = screenWidth * 0.12; 
     return GestureDetector(
       onTap: () {
         audioPlayer.togglePlayPause();

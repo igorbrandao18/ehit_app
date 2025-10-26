@@ -1,10 +1,8 @@
-// shared/widgets/music_components/music_card.dart
 import 'package:flutter/material.dart';
 import '../../../design/app_colors.dart';
 import '../../../design/app_text_styles.dart';
 import '../../../design/design_tokens.dart';
 import '../../../utils/responsive_utils.dart';
-
 class MusicCard extends StatefulWidget {
   final String title;
   final String artist;
@@ -17,7 +15,6 @@ class MusicCard extends StatefulWidget {
   final bool isCircular;
   final bool showText;
   final bool centerText;
-
   const MusicCard({
     super.key,
     required this.title,
@@ -32,16 +29,13 @@ class MusicCard extends StatefulWidget {
     this.showText = true,
     this.centerText = false,
   });
-
   @override
   State<MusicCard> createState() => _MusicCardState();
 }
-
 class _MusicCardState extends State<MusicCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-
   @override
   void initState() {
     super.initState();
@@ -57,25 +51,20 @@ class _MusicCardState extends State<MusicCard>
       curve: Curves.easeInOut,
     ));
   }
-
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
   }
-
   void _onTapDown(TapDownDetails details) {
     _animationController.forward();
   }
-
   void _onTapUp(TapUpDetails details) {
     _animationController.reverse();
   }
-
   void _onTapCancel() {
     _animationController.reverse();
   }
-
   @override
   Widget build(BuildContext context) {
     if (widget.centerText) {
@@ -84,7 +73,6 @@ class _MusicCardState extends State<MusicCard>
       return _buildNormalCard();
     }
   }
-
   Widget _buildCenteredTextCard() {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -94,7 +82,6 @@ class _MusicCardState extends State<MusicCard>
         final fontSize = ResponsiveUtils.getResponsiveFontSize(context);
         final iconSize = ResponsiveUtils.getResponsiveIconSize(context);
         final padding = ResponsiveUtils.getResponsivePadding(context);
-        
         return GestureDetector(
           onTapDown: _onTapDown,
           onTapUp: _onTapUp,
@@ -116,7 +103,6 @@ class _MusicCardState extends State<MusicCard>
                         : BorderRadius.circular(DesignTokens.cardBorderRadius),
                     child: Stack(
                       children: [
-                        // Image container
                         Positioned.fill(
                           child: Image.network(
                             widget.imageUrl,
@@ -133,8 +119,6 @@ class _MusicCardState extends State<MusicCard>
                             },
                           ),
                         ),
-                      
-                        // Dark overlay with centered text
                         if (widget.showText)
                           Positioned.fill(
                             child: Container(
@@ -190,7 +174,6 @@ class _MusicCardState extends State<MusicCard>
       },
     );
   }
-
   Widget _buildNormalCard() {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -200,7 +183,6 @@ class _MusicCardState extends State<MusicCard>
         final fontSize = ResponsiveUtils.getResponsiveFontSize(context);
         final iconSize = ResponsiveUtils.getResponsiveIconSize(context);
         final spacing = ResponsiveUtils.getResponsiveSpacing(context);
-        
         return GestureDetector(
           onTapDown: _onTapDown,
           onTapUp: _onTapUp,
@@ -219,7 +201,6 @@ class _MusicCardState extends State<MusicCard>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Image container
                       Expanded(
                         flex: 3,
                         child: ClipRRect(
@@ -276,8 +257,6 @@ class _MusicCardState extends State<MusicCard>
                           ),
                         ),
                       ),
-                      
-                      // Text content
                       if (widget.showText) ...[
                         SizedBox(height: spacing),
                         Expanded(
@@ -319,28 +298,24 @@ class _MusicCardState extends State<MusicCard>
       },
     );
   }
-
-  /// Retorna a largura responsiva do card baseada no tipo de dispositivo
   double _getResponsiveCardWidth(DeviceType deviceType) {
     switch (deviceType) {
       case DeviceType.mobile:
-        return 150.0; // Smaller width for mobile
+        return 150.0; 
       case DeviceType.tablet:
-        return 180.0; // Medium width for tablet
+        return 180.0; 
       case DeviceType.desktop:
-        return 200.0; // Larger width for desktop
+        return 200.0; 
     }
   }
-
-  /// Retorna a altura responsiva do card baseada no tipo de dispositivo
   double _getResponsiveCardHeight(DeviceType deviceType) {
     switch (deviceType) {
       case DeviceType.mobile:
-        return 200.0; // Smaller height for mobile
+        return 200.0; 
       case DeviceType.tablet:
-        return 240.0; // Medium height for tablet
+        return 240.0; 
       case DeviceType.desktop:
-        return 280.0; // Larger height for desktop
+        return 280.0; 
     }
   }
 }

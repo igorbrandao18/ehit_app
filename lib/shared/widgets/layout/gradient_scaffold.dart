@@ -1,9 +1,6 @@
-// shared/widgets/layout/gradient_scaffold.dart
 import 'package:flutter/material.dart';
 import '../../design/app_colors.dart';
 import 'app_layout_with_mini_player.dart';
-
-/// Scaffold com gradiente de fundo reutilizável
 class GradientScaffold extends StatelessWidget {
   final Widget body;
   final bool extendBodyBehindAppBar;
@@ -14,7 +11,6 @@ class GradientScaffold extends StatelessWidget {
   final Color? backgroundColor;
   final LinearGradient? gradient;
   final bool showMiniPlayer;
-
   const GradientScaffold({
     super.key,
     required this.body,
@@ -27,7 +23,6 @@ class GradientScaffold extends StatelessWidget {
     this.gradient,
     this.showMiniPlayer = true,
   });
-
   @override
   Widget build(BuildContext context) {
     final scaffoldBody = Container(
@@ -39,7 +34,6 @@ class GradientScaffold extends StatelessWidget {
       ),
       child: body,
     );
-
     return Scaffold(
       extendBodyBehindAppBar: extendBodyBehindAppBar,
       appBar: appBar,

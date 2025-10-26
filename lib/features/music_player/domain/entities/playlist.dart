@@ -1,9 +1,5 @@
-// features/music_player/domain/entities/playlist.dart
-
 import 'package:equatable/equatable.dart';
 import '../../../music_library/domain/entities/song.dart';
-
-/// Entidade que representa uma playlist
 class Playlist extends Equatable {
   final String id;
   final String name;
@@ -20,7 +16,6 @@ class Playlist extends Equatable {
   final String totalDuration;
   final int followersCount;
   final bool isFollowing;
-
   const Playlist({
     required this.id,
     required this.name,
@@ -38,8 +33,6 @@ class Playlist extends Equatable {
     required this.followersCount,
     required this.isFollowing,
   });
-
-  /// Cria uma cópia da playlist com campos modificados
   Playlist copyWith({
     String? id,
     String? name,
@@ -75,8 +68,6 @@ class Playlist extends Equatable {
       isFollowing: isFollowing ?? this.isFollowing,
     );
   }
-
-  /// Adiciona uma música à playlist
   Playlist addSong(Song song) {
     final updatedSongs = List<Song>.from(songs)..add(song);
     return copyWith(
@@ -85,8 +76,6 @@ class Playlist extends Equatable {
       updatedAt: DateTime.now(),
     );
   }
-
-  /// Remove uma música da playlist
   Playlist removeSong(String songId) {
     final updatedSongs = songs.where((song) => song.id != songId).toList();
     return copyWith(
@@ -95,19 +84,15 @@ class Playlist extends Equatable {
       updatedAt: DateTime.now(),
     );
   }
-
-  /// Reordena as músicas da playlist
   Playlist reorderSongs(int oldIndex, int newIndex) {
     final updatedSongs = List<Song>.from(songs);
     final song = updatedSongs.removeAt(oldIndex);
     updatedSongs.insert(newIndex, song);
-    
     return copyWith(
       songs: updatedSongs,
       updatedAt: DateTime.now(),
     );
   }
-
   @override
   List<Object?> get props => [
         id,
@@ -126,7 +111,6 @@ class Playlist extends Equatable {
         followersCount,
         isFollowing,
       ];
-
   @override
   String toString() {
     return 'Playlist(id: $id, name: $name, totalSongs: $totalSongs, isPublic: $isPublic)';

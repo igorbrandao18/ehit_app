@@ -1,11 +1,8 @@
-// shared/widgets/music_components/category_filter_buttons.dart
 import 'package:flutter/material.dart';
 import '../../design/layout_tokens.dart';
 import '../../design/app_colors.dart';
-
 class CategoryFilterButtons extends StatelessWidget {
   const CategoryFilterButtons({super.key});
-
   @override
   Widget build(BuildContext context) {
     final categories = [
@@ -16,7 +13,6 @@ class CategoryFilterButtons extends StatelessWidget {
       'Lançamentos',
       'Mais Tocadas',
     ];
-
     return Container(
       height: 40,
       margin: const EdgeInsets.symmetric(vertical: LayoutTokens.paddingMD),
@@ -42,9 +38,8 @@ class CategoryFilterButtons extends StatelessWidget {
                 color: Colors.white.withOpacity(0.3),
                 width: 1,
               ),
-              selected: index == 0, // Primeiro item selecionado por padrão
+              selected: index == 0, 
               onSelected: (selected) {
-                // Implementar lógica de seleção
               },
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(LayoutTokens.radiusCircular),

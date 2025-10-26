@@ -1,22 +1,17 @@
-// shared/widgets/layout/loading_section.dart
 import 'package:flutter/material.dart';
 import '../../design/app_text_styles.dart';
 import '../../design/app_colors.dart';
 import '../../design/design_tokens.dart';
-
-/// Componente reutilizável para seções de carregamento
 class LoadingSection extends StatelessWidget {
   final String message;
   final double? height;
   final EdgeInsetsGeometry? padding;
-
   const LoadingSection({
     super.key,
     required this.message,
     this.height,
     this.padding,
   });
-
   @override
   Widget build(BuildContext context) {
     return Container(

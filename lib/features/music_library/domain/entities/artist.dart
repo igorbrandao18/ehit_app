@@ -1,6 +1,3 @@
-// features/music_library/domain/entities/artist.dart
-
-/// Entidade que representa um artista musical
 class Artist {
   final int id;
   final String name;
@@ -10,7 +7,6 @@ class Artist {
   final bool isActive;
   final DateTime createdAt;
   final DateTime updatedAt;
-
   const Artist({
     required this.id,
     required this.name,
@@ -21,8 +17,6 @@ class Artist {
     required this.createdAt,
     required this.updatedAt,
   });
-
-  /// Cria uma cópia do artista com campos modificados
   Artist copyWith({
     int? id,
     String? name,
@@ -44,16 +38,13 @@ class Artist {
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
-
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     return other is Artist && other.id == id;
   }
-
   @override
   int get hashCode => id.hashCode;
-
   @override
   String toString() {
     return 'Artist(id: $id, name: $name, genre: $genre, albumsCount: $albumsCount)';

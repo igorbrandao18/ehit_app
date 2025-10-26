@@ -1,13 +1,8 @@
-// features/music_player/data/models/playlist_model.dart
-
 import 'package:json_annotation/json_annotation.dart';
 import '../../domain/entities/playlist.dart';
 import '../../../music_library/domain/entities/song.dart';
 import '../../../music_library/data/models/song_model.dart';
-
 part 'playlist_model.g.dart';
-
-/// Modelo de dados para Playlist
 @JsonSerializable()
 class PlaylistModel {
   final String id;
@@ -28,7 +23,6 @@ class PlaylistModel {
   final String totalDuration;
   final int followersCount;
   final bool isFollowing;
-
   const PlaylistModel({
     required this.id,
     required this.name,
@@ -46,27 +40,17 @@ class PlaylistModel {
     required this.followersCount,
     required this.isFollowing,
   });
-
-  // JSON conversion helpers
   static DateTime _dateTimeFromJson(String dateString) => DateTime.parse(dateString);
   static String _dateTimeToJson(DateTime dateTime) => dateTime.toIso8601String();
-  
   static List<Song> _songsFromJson(List<dynamic> jsonList) {
     return jsonList.map((json) => SongModel.fromJson(json as Map<String, dynamic>)).toList();
   }
-  
   static List<Map<String, dynamic>> _songsToJson(List<Song> songs) {
     return songs.map((song) => (song as SongModel).toJson()).toList();
   }
-
-  /// Cria PlaylistModel a partir de JSON
   factory PlaylistModel.fromJson(Map<String, dynamic> json) => 
       _$PlaylistModelFromJson(json);
-
-  /// Converte PlaylistModel para JSON
   Map<String, dynamic> toJson() => _$PlaylistModelToJson(this);
-
-  /// Cria PlaylistModel a partir de entidade Playlist
   factory PlaylistModel.fromEntity(Playlist playlist) {
     return PlaylistModel(
       id: playlist.id,
@@ -86,8 +70,6 @@ class PlaylistModel {
       isFollowing: playlist.isFollowing,
     );
   }
-
-  /// Converte PlaylistModel para entidade Playlist
   Playlist toEntity() {
     return Playlist(
       id: id,
@@ -107,8 +89,6 @@ class PlaylistModel {
       isFollowing: isFollowing,
     );
   }
-
-  /// Cria PlaylistModel a partir de Map
   factory PlaylistModel.fromMap(Map<String, dynamic> map) {
     return PlaylistModel(
       id: map['id'] as String,
@@ -130,8 +110,6 @@ class PlaylistModel {
       isFollowing: map['isFollowing'] as bool,
     );
   }
-
-  /// Converte PlaylistModel para Map
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -151,8 +129,6 @@ class PlaylistModel {
       'isFollowing': isFollowing,
     };
   }
-
-  /// Cria uma cópia do PlaylistModel com campos modificados
   PlaylistModel copyWith({
     String? id,
     String? name,
@@ -188,7 +164,6 @@ class PlaylistModel {
       isFollowing: isFollowing ?? this.isFollowing,
     );
   }
-
   @override
   String toString() {
     return 'PlaylistModel(id: $id, name: $name, totalSongs: $totalSongs, isPublic: $isPublic)';

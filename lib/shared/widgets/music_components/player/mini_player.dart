@@ -1,25 +1,18 @@
-// shared/widgets/music_components/mini_player.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/audio/audio_player_service.dart';
 import '../../../design/app_colors.dart';
 import '../../../design/design_tokens.dart';
-
-/// Mini player que aparece fixo no bottom quando não está na tela do player
 class MiniPlayer extends StatelessWidget {
   const MiniPlayer({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Consumer<AudioPlayerService>(
       builder: (context, audioPlayer, child) {
-        // Só mostra se há uma música atual (tocando ou pausada)
         if (audioPlayer.currentSong == null) {
           return const SizedBox.shrink();
         }
-
         return Container(
           height: 90,
           decoration: BoxDecoration(
@@ -36,7 +29,6 @@ class MiniPlayer extends StatelessWidget {
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                // Navegar para o player
                 context.push('/player');
               },
               child: Padding(
@@ -46,16 +38,11 @@ class MiniPlayer extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    // Album art
                     _buildAlbumArt(audioPlayer),
                     const SizedBox(width: DesignTokens.spaceMD),
-                    
-                    // Song info
                     Expanded(
                       child: _buildSongInfo(audioPlayer),
                     ),
-                    
-                    // Controls
                     _buildControls(audioPlayer),
                   ],
                 ),
@@ -66,7 +53,6 @@ class MiniPlayer extends StatelessWidget {
       },
     );
   }
-
   Widget _buildAlbumArt(AudioPlayerService audioPlayer) {
     return Container(
       width: 60,
@@ -114,12 +100,10 @@ class MiniPlayer extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildSongInfo(AudioPlayerService audioPlayer) {
     if (audioPlayer.currentSong == null) {
       return const SizedBox.shrink();
     }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -157,19 +141,16 @@ class MiniPlayer extends StatelessWidget {
       ],
     );
   }
-  
   String _formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     final minutes = twoDigits(duration.inMinutes.remainder(60));
     final seconds = twoDigits(duration.inSeconds.remainder(60));
     return '$minutes:$seconds';
   }
-
   Widget _buildControls(AudioPlayerService audioPlayer) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Play/Pause button
         GestureDetector(
           onTap: () {
             audioPlayer.togglePlayPause();
@@ -188,10 +169,7 @@ class MiniPlayer extends StatelessWidget {
             ),
           ),
         ),
-        
         const SizedBox(width: DesignTokens.spaceSM),
-        
-        // Next button
         GestureDetector(
           onTap: () {
             audioPlayer.next();

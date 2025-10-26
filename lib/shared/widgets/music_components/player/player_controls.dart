@@ -1,4 +1,3 @@
-// shared/widgets/music_components/player_controls.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../design/app_colors.dart';
@@ -6,39 +5,32 @@ import '../../../design/app_borders.dart';
 import '../../../design/app_shadows.dart';
 import '../../../design/app_animations.dart';
 import '../../../../features/music_player/presentation/controllers/music_player_controller.dart';
-
 class PlayerControls extends StatefulWidget {
   final double? size;
   final bool showLabels;
-
   const PlayerControls({
     super.key,
     this.size = 56,
     this.showLabels = false,
   });
-
   @override
   State<PlayerControls> createState() => _PlayerControlsState();
 }
-
 class _PlayerControlsState extends State<PlayerControls>
     with TickerProviderStateMixin {
   late AnimationController _playAnimationController;
   late Animation<double> _playScaleAnimation;
-
   @override
   void initState() {
     super.initState();
     _playAnimationController = AppAnimations.createPlayerController(this);
     _playScaleAnimation = AppAnimations.createPlayerAnimation(_playAnimationController);
   }
-
   @override
   void dispose() {
     _playAnimationController.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return Consumer<MusicPlayerController>(
@@ -46,26 +38,17 @@ class _PlayerControlsState extends State<PlayerControls>
         return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Previous button
             _buildControlButton(
               icon: Icons.skip_previous,
               onTap: () {
-                // Previous track logic
               },
             ),
-            
             const SizedBox(width: 24),
-            
-            // Play/Pause button
             _buildPlayButton(playerController),
-            
             const SizedBox(width: 24),
-            
-            // Next button
             _buildControlButton(
               icon: Icons.skip_next,
               onTap: () {
-                // Next track logic
               },
             ),
           ],
@@ -73,7 +56,6 @@ class _PlayerControlsState extends State<PlayerControls>
       },
     );
   }
-
   Widget _buildControlButton({
     required IconData icon,
     required VoidCallback onTap,
@@ -96,7 +78,6 @@ class _PlayerControlsState extends State<PlayerControls>
       ),
     );
   }
-
   Widget _buildPlayButton(MusicPlayerController playerController) {
     return GestureDetector(
       onTap: () {
@@ -130,4 +111,3 @@ class _PlayerControlsState extends State<PlayerControls>
     );
   }
 }
-

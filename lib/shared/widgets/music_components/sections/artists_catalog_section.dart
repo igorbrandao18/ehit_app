@@ -1,5 +1,3 @@
-// shared/widgets/music_components/artists_catalog_section.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -9,11 +7,8 @@ import '../../../design/design_tokens.dart';
 import '../../../utils/responsive_utils.dart';
 import '../../layout/section_header.dart';
 import 'artist_card.dart';
-
-/// Seção do catálogo de artistas
 class ArtistsCatalogSection extends StatelessWidget {
   const ArtistsCatalogSection({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Consumer<ArtistsController>(
@@ -21,20 +16,16 @@ class ArtistsCatalogSection extends StatelessWidget {
         if (controller.isLoading) {
           return _buildLoadingState();
         }
-
         if (controller.errorMessage != null) {
           return _buildErrorState(controller.errorMessage!);
         }
-
         if (controller.artists.isEmpty) {
           return _buildEmptyState();
         }
-
         return _buildArtistsList(context, controller.artists);
       },
     );
   }
-
   Widget _buildLoadingState() {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -42,14 +33,13 @@ class ArtistsCatalogSection extends StatelessWidget {
         final padding = ResponsiveUtils.getResponsivePadding(context);
         final spacing = ResponsiveUtils.getResponsiveSpacing(context);
         final fontSize = ResponsiveUtils.getResponsiveFontSize(context);
-        
         return Container(
           height: height,
           padding: EdgeInsets.only(
             left: padding.left,
             right: padding.right,
             bottom: padding.bottom,
-            top: padding.top / 2, // Reduzido o padding superior pela metade
+            top: padding.top / 2, 
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -87,7 +77,6 @@ class ArtistsCatalogSection extends StatelessWidget {
       },
     );
   }
-
   Widget _buildErrorState(String errorMessage) {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -96,14 +85,13 @@ class ArtistsCatalogSection extends StatelessWidget {
         final spacing = ResponsiveUtils.getResponsiveSpacing(context);
         final fontSize = ResponsiveUtils.getResponsiveFontSize(context);
         final iconSize = ResponsiveUtils.getResponsiveIconSize(context);
-        
         return Container(
           height: height,
           padding: EdgeInsets.only(
             left: padding.left,
             right: padding.right,
             bottom: padding.bottom,
-            top: padding.top / 2, // Reduzido o padding superior pela metade
+            top: padding.top / 2, 
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,7 +102,7 @@ class ArtistsCatalogSection extends StatelessWidget {
                   left: padding.left,
                   right: padding.right,
                   top: padding.top / 2,
-                  bottom: padding.bottom, // Mesmo espaçamento do PlayHITS
+                  bottom: padding.bottom, 
                 ),
               ),
               Expanded(
@@ -154,7 +142,6 @@ class ArtistsCatalogSection extends StatelessWidget {
       },
     );
   }
-
   Widget _buildEmptyState() {
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -163,14 +150,13 @@ class ArtistsCatalogSection extends StatelessWidget {
         final spacing = ResponsiveUtils.getResponsiveSpacing(context);
         final fontSize = ResponsiveUtils.getResponsiveFontSize(context);
         final iconSize = ResponsiveUtils.getResponsiveIconSize(context);
-        
         return Container(
           height: height,
           padding: EdgeInsets.only(
             left: padding.left,
             right: padding.right,
             bottom: padding.bottom,
-            top: padding.top / 2, // Reduzido o padding superior pela metade
+            top: padding.top / 2, 
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -181,7 +167,7 @@ class ArtistsCatalogSection extends StatelessWidget {
                   left: padding.left,
                   right: padding.right,
                   top: padding.top / 2,
-                  bottom: padding.bottom, // Mesmo espaçamento do PlayHITS
+                  bottom: padding.bottom, 
                 ),
               ),
               Expanded(
@@ -212,14 +198,12 @@ class ArtistsCatalogSection extends StatelessWidget {
       },
     );
   }
-
   Widget _buildArtistsList(BuildContext context, List<Artist> artists) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = _getResponsiveHeight(context);
         final padding = ResponsiveUtils.getResponsivePadding(context);
         final spacing = ResponsiveUtils.getResponsiveSpacing(context);
-        
         return Container(
           height: height,
           child: Column(
@@ -231,7 +215,7 @@ class ArtistsCatalogSection extends StatelessWidget {
                   left: padding.left,
                   right: padding.right,
                   top: padding.top / 2,
-                  bottom: padding.bottom, // Mesmo espaçamento do PlayHITS
+                  bottom: padding.bottom, 
                 ),
               ),
               Expanded(
@@ -262,43 +246,34 @@ class ArtistsCatalogSection extends StatelessWidget {
       },
     );
   }
-
   void _onArtistTap(BuildContext context, Artist artist) {
     debugPrint('🎤 Artista selecionado: ${artist.name}');
-    
-    // Navegar para a página de detalhes do artista
     context.pushNamed(
       'artist-detail',
       pathParameters: {'artistId': artist.id.toString()},
       extra: artist.name,
     );
   }
-
-  /// Retorna a altura responsiva baseada no tipo de dispositivo
   double _getResponsiveHeight(BuildContext context) {
     final deviceType = ResponsiveUtils.getDeviceType(context);
-    
     switch (deviceType) {
       case DeviceType.mobile:
-        return 180.0; // Increased height for mobile to prevent overflow
+        return 180.0; 
       case DeviceType.tablet:
-        return 200.0; // Increased height for tablet
+        return 200.0; 
       case DeviceType.desktop:
-        return 220.0; // Increased height for desktop
+        return 220.0; 
     }
   }
-
-  /// Retorna o tamanho responsivo do card baseado no tipo de dispositivo
   double _getResponsiveCardSize(BuildContext context) {
     final deviceType = ResponsiveUtils.getDeviceType(context);
-    
     switch (deviceType) {
       case DeviceType.mobile:
-        return 100.0; // Smaller cards for mobile
+        return 100.0; 
       case DeviceType.tablet:
-        return 120.0; // Medium cards for tablet
+        return 120.0; 
       case DeviceType.desktop:
-        return 140.0; // Larger cards for desktop
+        return 140.0; 
     }
   }
 }

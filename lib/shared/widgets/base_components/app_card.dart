@@ -1,10 +1,8 @@
-// shared/widgets/base_components/app_card.dart
 import 'package:flutter/material.dart';
 import '../../design/app_colors.dart';
 import '../../design/design_tokens.dart';
 import '../../design/app_shadows.dart';
 import '../../design/app_borders.dart';
-
 class AppCard extends StatefulWidget {
   final Widget child;
   final VoidCallback? onTap;
@@ -13,7 +11,6 @@ class AppCard extends StatefulWidget {
   final double? elevation;
   final Color? backgroundColor;
   final BorderRadius? borderRadius;
-
   const AppCard({
     super.key,
     required this.child,
@@ -24,16 +21,13 @@ class AppCard extends StatefulWidget {
     this.backgroundColor,
     this.borderRadius,
   });
-
   @override
   State<AppCard> createState() => _AppCardState();
 }
-
 class _AppCardState extends State<AppCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-
   @override
   void initState() {
     super.initState();
@@ -49,27 +43,22 @@ class _AppCardState extends State<AppCard>
       curve: Curves.easeInOut,
     ));
   }
-
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
   }
-
   void _onTapDown(TapDownDetails details) {
     if (widget.onTap != null) {
       _animationController.forward();
     }
   }
-
   void _onTapUp(TapUpDetails details) {
     _animationController.reverse();
   }
-
   void _onTapCancel() {
     _animationController.reverse();
   }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(

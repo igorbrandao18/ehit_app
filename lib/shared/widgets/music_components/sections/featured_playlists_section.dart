@@ -1,14 +1,11 @@
-// shared/widgets/music_components/featured_playlists_section.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../../design/layout_tokens.dart';
 import '../../../design/app_colors.dart';
 import '../../../../features/music_library/presentation/controllers/music_library_controller.dart';
-
 class FeaturedPlaylistsSection extends StatelessWidget {
   const FeaturedPlaylistsSection({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Consumer<MusicLibraryController>(
@@ -20,19 +17,14 @@ class FeaturedPlaylistsSection extends StatelessWidget {
             ),
           );
         }
-
         if (controller.playlists.isEmpty) {
           return const SizedBox.shrink();
         }
-
-        // Usar playlists como PlayHITS em destaque (pegar mais 3 após os 6 primeiros)
         final featuredPlayHits = controller.playlists.skip(6).take(3).toList();
-        
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            // Título da seção
             Padding(
               padding: const EdgeInsets.only(left: LayoutTokens.paddingMD),
               child: Align(
@@ -48,8 +40,6 @@ class FeaturedPlaylistsSection extends StatelessWidget {
               ),
             ),
             const SizedBox(height: LayoutTokens.paddingMD),
-            
-            // Lista horizontal de PlayHITS
             SizedBox(
               height: LayoutTokens.playlistCardSize + LayoutTokens.paddingLG,
               child: ListView.builder(
@@ -73,7 +63,6 @@ class FeaturedPlaylistsSection extends StatelessWidget {
                       ),
                     child: Column(
                       children: [
-                        // Imagem da playlist
                         Expanded(
                           flex: 3,
                           child: Container(
@@ -112,7 +101,6 @@ class FeaturedPlaylistsSection extends StatelessWidget {
                             ),
                           ),
                         ),
-                        // Texto da playlist
                         Expanded(
                           flex: 1,
                           child: Padding(
@@ -156,9 +144,7 @@ class FeaturedPlaylistsSection extends StatelessWidget {
       },
     );
   }
-
   void _navigateToPlaylist(BuildContext context, String playlistId, String playlistName) {
-    // Navegar para a página de detalhes da playlist
     context.pushNamed(
       'playlist-detail',
       pathParameters: {'playlistId': playlistId},

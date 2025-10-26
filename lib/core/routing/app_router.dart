@@ -1,8 +1,6 @@
-// core/routing/app_router.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-
 import '../../features/music_library/presentation/pages/home_page.dart';
 import '../../features/music_library/presentation/pages/category_detail_page.dart';
 import '../../features/music_library/presentation/pages/artist_detail_page.dart';
@@ -13,64 +11,48 @@ import '../../shared/design/app_theme.dart';
 import '../../shared/design/app_colors.dart';
 import '../../shared/widgets/layout/gradient_scaffold.dart';
 import 'app_routes.dart';
-
-/// Configuração principal do roteamento da aplicação
 class AppRouter {
   static final GoRouter _router = GoRouter(
     initialLocation: AppRoutes.home,
     debugLogDiagnostics: true,
     routes: [
-      // Home route
       GoRoute(
         path: AppRoutes.home,
         name: 'home',
         builder: (context, state) => const HomePage(),
       ),
-      
-      // Search route
       GoRoute(
         path: AppRoutes.search,
         name: 'search',
         builder: (context, state) => const SearchPage(),
       ),
-      
-      // Library route
       GoRoute(
         path: AppRoutes.library,
         name: 'library',
         builder: (context, state) => const LibraryPage(),
       ),
-      
-      // Radios route
       GoRoute(
         path: AppRoutes.radios,
         name: 'radios',
         builder: (context, state) => const RadiosPage(),
       ),
-      
-      // More route
       GoRoute(
         path: AppRoutes.more,
         name: 'more',
         builder: (context, state) => const MorePage(),
       ),
-
-      // Category detail route (full screen)
       GoRoute(
         path: AppRoutes.categoryDetailPath(':categoryTitle'),
         name: 'category-detail',
         builder: (context, state) {
           final categoryTitle = state.pathParameters['categoryTitle']!;
           final categoryArtists = state.extra as String? ?? '';
-          
           return CategoryDetailPage(
             categoryTitle: categoryTitle,
             categoryArtists: categoryArtists,
           );
         },
       ),
-
-      // Artist detail route
       GoRoute(
         path: '/artist/:artistId',
         name: 'artist-detail',
@@ -79,8 +61,6 @@ class AppRouter {
           return ArtistDetailPage(artistId: artistId);
         },
       ),
-
-      // Album detail route
       GoRoute(
         path: AppRoutes.albumDetailPath(':albumId'),
         name: 'album-detail',
@@ -89,8 +69,6 @@ class AppRouter {
           return AlbumDetailPage(albumId: albumId);
         },
       ),
-
-      // Playlist detail route
       GoRoute(
         path: AppRoutes.playlistDetailPath(':playlistId'),
         name: 'playlist-detail',
@@ -99,15 +77,11 @@ class AppRouter {
           return PlaylistDetailPage(playlistId: playlistId);
         },
       ),
-
-      // Player route (full screen)
       GoRoute(
         path: AppRoutes.player,
         name: 'player',
         builder: (context, state) => const PlayerPage(),
       ),
-
-      // Queue route
       GoRoute(
         path: AppRoutes.queue,
         name: 'queue',
@@ -144,15 +118,10 @@ class AppRouter {
       ),
     ),
   );
-
   static GoRouter get router => _router;
 }
-
-
-// Placeholder pages - to be implemented
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
@@ -167,10 +136,8 @@ class SearchPage extends StatelessWidget {
     );
   }
 }
-
 class LibraryPage extends StatelessWidget {
   const LibraryPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
@@ -185,10 +152,8 @@ class LibraryPage extends StatelessWidget {
     );
   }
 }
-
 class RadiosPage extends StatelessWidget {
   const RadiosPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
@@ -203,10 +168,8 @@ class RadiosPage extends StatelessWidget {
     );
   }
 }
-
 class MorePage extends StatelessWidget {
   const MorePage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
@@ -221,13 +184,9 @@ class MorePage extends StatelessWidget {
     );
   }
 }
-
-
 class AlbumDetailPage extends StatelessWidget {
   final String albumId;
-
   const AlbumDetailPage({super.key, required this.albumId});
-
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
@@ -242,10 +201,8 @@ class AlbumDetailPage extends StatelessWidget {
     );
   }
 }
-
 class QueuePage extends StatelessWidget {
   const QueuePage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(

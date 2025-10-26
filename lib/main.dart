@@ -1,4 +1,3 @@
-// main.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
@@ -13,19 +12,13 @@ import 'features/music_library/presentation/controllers/music_library_controller
 import 'features/music_library/presentation/controllers/artists_controller.dart';
 import 'features/authentication/presentation/controllers/auth_controller.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize dependency injection
   await di.init();
-  
   runApp(const EhitApp());
 }
-
 class EhitApp extends StatelessWidget {
   const EhitApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(

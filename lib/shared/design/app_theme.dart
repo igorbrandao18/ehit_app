@@ -1,20 +1,14 @@
-// shared/design/app_theme.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
 import 'design_tokens.dart';
-
-/// Tema consolidado do app ÊHIT
-/// Elimina duplicações entre app_theme.dart, app_colors.dart, app_text_styles.dart, etc.
 class AppTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
       scaffoldBackgroundColor: Colors.transparent,
-      
-      // Color Scheme
       colorScheme: const ColorScheme.dark(
         primary: AppColors.primaryRed,
         secondary: AppColors.accentYellow,
@@ -27,8 +21,6 @@ class AppTheme {
         onBackground: AppColors.textPrimary,
         onError: AppColors.textPrimary,
       ),
-      
-      // App Bar Theme
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         foregroundColor: AppColors.textPrimary,
@@ -37,8 +29,6 @@ class AppTheme {
         titleTextStyle: AppTextStyles.h3,
         systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
-      
-      // Card Theme
       cardTheme: CardTheme(
         color: AppColors.backgroundCard,
         elevation: DesignTokens.elevationMD,
@@ -46,8 +36,6 @@ class AppTheme {
           borderRadius: BorderRadius.circular(DesignTokens.cardBorderRadius),
         ),
       ),
-      
-      // Elevated Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryRed,
@@ -62,23 +50,17 @@ class AppTheme {
           ),
         ),
       ),
-      
-      // Text Button Theme
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.primaryRed,
           textStyle: AppTextStyles.buttonText,
         ),
       ),
-      
-      // Icon Button Theme
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
           foregroundColor: AppColors.textPrimary,
         ),
       ),
-      
-      // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: AppColors.backgroundCard,
@@ -97,16 +79,12 @@ class AppTheme {
           color: AppColors.textSecondary,
         ),
       ),
-      
-      // Bottom Navigation Bar Theme
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         backgroundColor: AppColors.backgroundCard,
         selectedItemColor: AppColors.primaryRed,
         unselectedItemColor: AppColors.textTertiary,
         type: BottomNavigationBarType.fixed,
       ),
-      
-      // List Tile Theme
       listTileTheme: const ListTileThemeData(
         textColor: AppColors.textPrimary,
         iconColor: AppColors.textSecondary,
@@ -115,14 +93,10 @@ class AppTheme {
           vertical: DesignTokens.spaceSM,
         ),
       ),
-      
-      // Divider Theme
       dividerTheme: const DividerThemeData(
         color: AppColors.textTertiary,
         thickness: DesignTokens.listDividerHeight,
       ),
-      
-      // Chip Theme
       chipTheme: ChipThemeData(
         backgroundColor: AppColors.backgroundCard,
         labelStyle: AppTextStyles.bodySmall.copyWith(
@@ -136,8 +110,6 @@ class AppTheme {
           vertical: DesignTokens.spaceXS,
         ),
       ),
-      
-      // Snackbar Theme
       snackBarTheme: SnackBarThemeData(
         backgroundColor: AppColors.backgroundCard,
         contentTextStyle: AppTextStyles.bodyMedium.copyWith(
@@ -148,14 +120,10 @@ class AppTheme {
         ),
         behavior: SnackBarBehavior.floating,
       ),
-      
-      // Progress Indicator Theme
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: AppColors.primaryRed,
         linearTrackColor: AppColors.backgroundCard,
       ),
-      
-      // Switch Theme
       switchTheme: SwitchThemeData(
         thumbColor: MaterialStateProperty.resolveWith((states) {
           if (states.contains(MaterialState.selected)) {
@@ -170,16 +138,12 @@ class AppTheme {
           return AppColors.backgroundCard;
         }),
       ),
-      
-      // Slider Theme
       sliderTheme: const SliderThemeData(
         activeTrackColor: AppColors.primaryRed,
         inactiveTrackColor: AppColors.backgroundCard,
         thumbColor: AppColors.primaryRed,
         overlayColor: AppColors.primaryRed,
       ),
-      
-      // Dialog Theme
       dialogTheme: DialogTheme(
         backgroundColor: AppColors.backgroundCard,
         titleTextStyle: AppTextStyles.h3.copyWith(
@@ -192,8 +156,6 @@ class AppTheme {
           borderRadius: BorderRadius.circular(DesignTokens.modalRadius),
         ),
       ),
-      
-      // Bottom Sheet Theme
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: AppColors.backgroundCard,
         shape: RoundedRectangleBorder(
@@ -202,8 +164,6 @@ class AppTheme {
           ),
         ),
       ),
-      
-      // Tooltip Theme
       tooltipTheme: TooltipThemeData(
         decoration: BoxDecoration(
           color: AppColors.backgroundCard,
@@ -216,14 +176,11 @@ class AppTheme {
       ),
     );
   }
-  
-  // Light theme (if needed in the future)
   static ThemeData get lightTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.light,
       scaffoldBackgroundColor: Colors.white,
-      
       colorScheme: const ColorScheme.light(
         primary: AppColors.primaryRed,
         secondary: AppColors.accentYellow,
@@ -236,9 +193,6 @@ class AppTheme {
         onBackground: Colors.black,
         onError: Colors.white,
       ),
-      
-      // Similar theme configurations for light mode...
-      // (Implement as needed)
     );
   }
 }

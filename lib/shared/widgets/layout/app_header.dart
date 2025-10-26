@@ -1,14 +1,11 @@
-// shared/widgets/layout/app_header.dart
 import 'package:flutter/material.dart';
 import '../../design/design_tokens.dart';
-
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final String? subtitle;
   final Widget? rightWidget;
   final bool showLogo;
   final VoidCallback? onLogoTap;
-
   const AppHeader({
     super.key,
     required this.title,
@@ -17,11 +14,9 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
     this.showLogo = true,
     this.onLogoTap,
   });
-
   @override
   Widget build(BuildContext context) {
     final safeAreaTop = DesignTokens.getSafeAreaPadding(context).top;
-    
     return PreferredSize(
       preferredSize: Size.fromHeight(80 + safeAreaTop),
       child: Container(
@@ -33,7 +28,6 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
           padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
           child: Row(
             children: [
-              // Logo do lado esquerdo
               if (showLogo)
                 GestureDetector(
                   onTap: onLogoTap,
@@ -45,7 +39,6 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   ),
                 ),
-              // Widget customizado se fornecido
               if (rightWidget != null)
                 Expanded(
                   child: Align(
@@ -59,7 +52,6 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       ),
     );
   }
-
   @override
   Size get preferredSize => const Size.fromHeight(80);
 }

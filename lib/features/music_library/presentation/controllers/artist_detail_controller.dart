@@ -1,45 +1,32 @@
-// features/music_library/presentation/controllers/artist_detail_controller.dart
-
 import 'package:flutter/foundation.dart';
 import '../../domain/entities/artist.dart';
 import '../../domain/entities/song.dart';
 import '../../domain/usecases/get_artists_usecase.dart';
 import '../../domain/usecases/get_songs_usecase.dart';
 import '../../../../core/utils/result.dart';
-
-/// Controller responsável por gerenciar o estado da página de detalhes do artista
 class ArtistDetailController extends ChangeNotifier {
   final GetArtistsUseCase _getArtistsUseCase;
   final GetSongsUseCase _getSongsUseCase;
-  
   bool _isLoading = true;
   String? _error;
   Artist? _artist;
   List<Song> _songs = [];
-
   ArtistDetailController({
     required GetArtistsUseCase getArtistsUseCase,
     required GetSongsUseCase getSongsUseCase,
   }) : _getArtistsUseCase = getArtistsUseCase,
        _getSongsUseCase = getSongsUseCase;
-
-  // Getters
   bool get isLoading => _isLoading;
   String? get error => _error;
   Artist? get artist => _artist;
   List<Song> get songs => _songs;
   bool get hasData => _artist != null && _songs.isNotEmpty;
-
-  /// Carrega os dados do artista
   Future<void> loadArtistData(String artistId) async {
     try {
       _isLoading = true;
       _error = null;
       notifyListeners();
-
       debugPrint('ArtistDetailController: Loading artist with ID: $artistId');
-
-      // Busca todos os artistas e encontra o específico
       final artistsResult = await _getArtistsUseCase();
       artistsResult.when(
         success: (artists) {
@@ -55,13 +42,10 @@ class ArtistDetailController extends ChangeNotifier {
           debugPrint('ArtistDetailController: Error loading artist: $message');
         },
       );
-
-      // Busca músicas do artista
       if (_artist != null) {
         final songsResult = await _getSongsUseCase();
         songsResult.when(
           success: (songs) {
-            // Filtra músicas do artista específico
             _songs = songs.where((s) => s.artist == _artist!.name).toList();
             debugPrint('ArtistDetailController: Songs loaded: ${_songs.length} songs');
           },
@@ -71,7 +55,6 @@ class ArtistDetailController extends ChangeNotifier {
           },
         );
       }
-
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -80,22 +63,15 @@ class ArtistDetailController extends ChangeNotifier {
       notifyListeners();
     }
   }
-
-  /// Reproduz uma música
   void playSong(Song song) {
     debugPrint('Reproduzindo: ${song.title} - ${song.artist}');
   }
-
-  /// Reproduz todas as músicas em ordem aleatória
   void shufflePlay() {
     debugPrint('Reproduzindo músicas em ordem aleatória');
   }
-
-  /// Reproduz todas as músicas em loop
   void repeatPlay() {
     debugPrint('Reproduzindo músicas em loop');
   }
-
   @override
   void dispose() {
     super.dispose();

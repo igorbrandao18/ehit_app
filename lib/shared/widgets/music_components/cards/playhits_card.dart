@@ -1,17 +1,14 @@
-// shared/widgets/playhits_card.dart
 import 'package:flutter/material.dart';
 import '../../../design/design_tokens.dart';
 import '../../../design/app_colors.dart';
 import '../../../utils/image_utils.dart';
 import '../../../design/app_text_styles.dart';
-
 class PlayHitsCard extends StatefulWidget {
   final String title;
   final String artist;
   final String imageUrl;
   final bool isLarge;
   final VoidCallback? onTap;
-
   const PlayHitsCard({
     super.key,
     required this.title,
@@ -20,17 +17,14 @@ class PlayHitsCard extends StatefulWidget {
     this.isLarge = false,
     this.onTap,
   });
-
   @override
   State<PlayHitsCard> createState() => _PlayHitsCardState();
 }
-
 class _PlayHitsCardState extends State<PlayHitsCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   bool _isPressed = false;
-
   @override
   void initState() {
     super.initState();
@@ -46,39 +40,33 @@ class _PlayHitsCardState extends State<PlayHitsCard>
       curve: Curves.easeInOut,
     ));
   }
-
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
   }
-
   void _onTapDown() {
     setState(() {
       _isPressed = true;
     });
     _animationController.forward();
   }
-
   void _onTapUp() {
     setState(() {
       _isPressed = false;
     });
     _animationController.reverse();
   }
-
   void _onTapCancel() {
     setState(() {
       _isPressed = false;
     });
     _animationController.reverse();
   }
-
   @override
   Widget build(BuildContext context) {
     final cardWidth = DesignTokens.musicCardWidth;
     final cardHeight = widget.isLarge ? DesignTokens.musicCardHeightLarge : DesignTokens.musicCardHeight;
-    
     return GestureDetector(
       onTap: widget.onTap,
       onTapDown: (_) => _onTapDown(),
@@ -106,7 +94,6 @@ class _PlayHitsCardState extends State<PlayHitsCard>
                 borderRadius: BorderRadius.circular(DesignTokens.cardBorderRadius),
                 child: Stack(
                   children: [
-                    // Image
                     Positioned.fill(
                       child: ImageUtils.buildNetworkImage(
                         widget.imageUrl,
@@ -121,8 +108,6 @@ class _PlayHitsCardState extends State<PlayHitsCard>
                         ),
                       ),
                     ),
-                    
-                    // Gradient overlay with text
                     Positioned.fill(
                       child: Container(
                         decoration: BoxDecoration(

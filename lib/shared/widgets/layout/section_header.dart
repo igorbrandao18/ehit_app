@@ -1,17 +1,13 @@
-// shared/widgets/layout/section_header.dart
 import 'package:flutter/material.dart';
 import '../../design/app_text_styles.dart';
 import '../../design/app_colors.dart';
 import '../../design/design_tokens.dart';
-
-/// Componente reutilizável para cabeçalhos de seção
 class SectionHeader extends StatelessWidget {
   final String title;
   final Widget? action;
   final VoidCallback? onActionTap;
   final EdgeInsetsGeometry? padding;
   final TextStyle? titleStyle;
-
   const SectionHeader({
     super.key,
     required this.title,
@@ -20,7 +16,6 @@ class SectionHeader extends StatelessWidget {
     this.padding,
     this.titleStyle,
   });
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -31,7 +26,6 @@ class SectionHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Título da seção
           Expanded(
             child: Text(
               title,
@@ -41,8 +35,6 @@ class SectionHeader extends StatelessWidget {
               ),
             ),
           ),
-          
-          // Ação opcional (botão, ícone, etc.)
           if (action != null)
             GestureDetector(
               onTap: onActionTap,

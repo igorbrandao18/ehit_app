@@ -1,11 +1,7 @@
-// features/authentication/data/datasources/auth_local_datasource.dart
-
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/user_model.dart';
 import '../../../../core/errors/failures.dart';
-
-/// Interface para fonte de dados local de autenticação
 abstract class AuthLocalDataSource {
   Future<UserModel?> getCachedUser();
   Future<void> cacheUser(UserModel user);
@@ -33,14 +29,9 @@ abstract class AuthLocalDataSource {
   Future<bool> isPasswordResetRequested();
   Future<void> clearAllAuthData();
 }
-
-/// Implementação da fonte de dados local de autenticação
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   final SharedPreferences sharedPreferences;
-
   AuthLocalDataSourceImpl({required this.sharedPreferences});
-
-  // Cache keys
   static const String _cachedUserKey = 'cached_user';
   static const String _savedEmailKey = 'saved_email';
   static const String _savedPasswordKey = 'saved_password';
@@ -52,7 +43,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   static const String _loginAttemptsKey = 'login_attempts';
   static const String _accountLockedKey = 'account_locked';
   static const String _passwordResetRequestedKey = 'password_reset_requested';
-
   @override
   Future<UserModel?> getCachedUser() async {
     try {
@@ -65,7 +55,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       throw CacheFailure(message: 'Erro ao recuperar usuário do cache: $e');
     }
   }
-
   @override
   Future<void> cacheUser(UserModel user) async {
     try {
@@ -75,7 +64,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar usuário no cache: $e');
     }
   }
-
   @override
   Future<void> clearCachedUser() async {
     try {
@@ -84,7 +72,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       throw CacheFailure(message: 'Erro ao limpar usuário do cache: $e');
     }
   }
-
   @override
   Future<void> saveCredentials(String email, String password) async {
     try {
@@ -94,13 +81,11 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar credenciais: $e');
     }
   }
-
   @override
   Future<Map<String, String>?> getSavedCredentials() async {
     try {
       final email = sharedPreferences.getString(_savedEmailKey);
       final password = sharedPreferences.getString(_savedPasswordKey);
-      
       if (email != null && password != null) {
         return {'email': email, 'password': password};
       }
@@ -109,7 +94,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       throw CacheFailure(message: 'Erro ao recuperar credenciais: $e');
     }
   }
-
   @override
   Future<void> clearSavedCredentials() async {
     try {
@@ -119,7 +103,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       throw CacheFailure(message: 'Erro ao limpar credenciais: $e');
     }
   }
-
   @override
   Future<bool> hasSavedCredentials() async {
     try {
@@ -130,7 +113,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       return false;
     }
   }
-
   @override
   Future<void> setBiometricEnabled(bool enabled) async {
     try {
@@ -139,7 +121,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar configuração biométrica: $e');
     }
   }
-
   @override
   Future<bool> isBiometricEnabled() async {
     try {
@@ -148,7 +129,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       return false;
     }
   }
-
   @override
   Future<void> setRememberMe(bool enabled) async {
     try {
@@ -157,7 +137,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar configuração de lembrar: $e');
     }
   }
-
   @override
   Future<bool> isRememberMeEnabled() async {
     try {
@@ -166,7 +145,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       return false;
     }
   }
-
   @override
   Future<void> setUserPreferences(Map<String, dynamic> preferences) async {
     try {
@@ -176,7 +154,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar preferências: $e');
     }
   }
-
   @override
   Future<Map<String, dynamic>> getUserPreferences() async {
     try {
@@ -189,7 +166,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       return {};
     }
   }
-
   @override
   Future<void> saveLoginHistory(List<Map<String, dynamic>> history) async {
     try {
@@ -199,7 +175,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar histórico de logins: $e');
     }
   }
-
   @override
   Future<List<Map<String, dynamic>>> getLoginHistory() async {
     try {
@@ -213,7 +188,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       return [];
     }
   }
-
   @override
   Future<void> clearLoginHistory() async {
     try {
@@ -222,7 +196,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       throw CacheFailure(message: 'Erro ao limpar histórico de logins: $e');
     }
   }
-
   @override
   Future<void> setLastLoginAt(DateTime dateTime) async {
     try {
@@ -231,7 +204,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar último login: $e');
     }
   }
-
   @override
   Future<DateTime?> getLastLoginAt() async {
     try {
@@ -244,7 +216,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       return null;
     }
   }
-
   @override
   Future<void> setLoginAttempts(int attempts) async {
     try {
@@ -253,7 +224,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar tentativas de login: $e');
     }
   }
-
   @override
   Future<int> getLoginAttempts() async {
     try {
@@ -262,7 +232,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       return 0;
     }
   }
-
   @override
   Future<void> setAccountLocked(bool locked) async {
     try {
@@ -271,7 +240,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar status de bloqueio: $e');
     }
   }
-
   @override
   Future<bool> isAccountLocked() async {
     try {
@@ -280,7 +248,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       return false;
     }
   }
-
   @override
   Future<void> setPasswordResetRequested(bool requested) async {
     try {
@@ -289,7 +256,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar status de reset de senha: $e');
     }
   }
-
   @override
   Future<bool> isPasswordResetRequested() async {
     try {
@@ -298,7 +264,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
       return false;
     }
   }
-
   @override
   Future<void> clearAllAuthData() async {
     try {

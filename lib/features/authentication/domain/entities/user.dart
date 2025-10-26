@@ -1,8 +1,4 @@
-// features/authentication/domain/entities/user.dart
-
 import 'package:equatable/equatable.dart';
-
-/// Entidade que representa um usuário
 class User extends Equatable {
   final String id;
   final String email;
@@ -18,7 +14,6 @@ class User extends Equatable {
   final DateTime? lastLoginAt;
   final List<String> preferences;
   final Map<String, dynamic> metadata;
-
   const User({
     required this.id,
     required this.email,
@@ -35,8 +30,6 @@ class User extends Equatable {
     required this.preferences,
     required this.metadata,
   });
-
-  /// Cria uma cópia do usuário com campos modificados
   User copyWith({
     String? id,
     String? email,
@@ -70,34 +63,25 @@ class User extends Equatable {
       metadata: metadata ?? this.metadata,
     );
   }
-
-  /// Verifica se o usuário tem perfil completo
   bool get hasCompleteProfile {
     return displayName != null && 
            displayName!.isNotEmpty && 
            profileImageUrl != null && 
            profileImageUrl!.isNotEmpty;
   }
-
-  /// Obtém o nome de exibição (displayName ou username)
   String get displayNameOrUsername {
     return displayName?.isNotEmpty == true ? displayName! : username;
   }
-
-  /// Verifica se o usuário está online (login recente)
   bool get isOnline {
     if (lastLoginAt == null) return false;
     final now = DateTime.now();
     final difference = now.difference(lastLoginAt!);
-    return difference.inMinutes < 30; // Considerado online se login foi há menos de 30 min
+    return difference.inMinutes < 30; 
   }
-
-  /// Obtém a idade da conta em dias
   int get accountAgeInDays {
     final now = DateTime.now();
     return now.difference(createdAt).inDays;
   }
-
   @override
   List<Object?> get props => [
         id,
@@ -115,7 +99,6 @@ class User extends Equatable {
         preferences,
         metadata,
       ];
-
   @override
   String toString() {
     return 'User(id: $id, email: $email, username: $username, isActive: $isActive)';

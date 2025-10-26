@@ -1,25 +1,11 @@
-// shared/design/app_animations.dart
 import 'package:flutter/material.dart';
 import 'design_tokens.dart';
-
-/// Sistema de animações centralizado
 class AppAnimations {
-  // Private constructor to prevent instantiation
   AppAnimations._();
-
-  // ============================================================================
-  // ANIMATION DURATIONS
-  // ============================================================================
-  
   static const Duration durationFast = Duration(milliseconds: 150);
   static const Duration durationNormal = Duration(milliseconds: 300);
   static const Duration durationSlow = Duration(milliseconds: 500);
   static const Duration durationVerySlow = Duration(milliseconds: 800);
-
-  // ============================================================================
-  // ANIMATION CURVES
-  // ============================================================================
-  
   static const Curve curveEaseInOut = Curves.easeInOut;
   static const Curve curveEaseIn = Curves.easeIn;
   static const Curve curveEaseOut = Curves.easeOut;
@@ -28,37 +14,16 @@ class AppAnimations {
   static const Curve curveBounceOut = Curves.bounceOut;
   static const Curve curveElasticIn = Curves.elasticIn;
   static const Curve curveElasticOut = Curves.elasticOut;
-
-  // ============================================================================
-  // SCALE ANIMATIONS
-  // ============================================================================
-  
   static const double scalePressed = DesignTokens.scaleAnimationValue;
   static const double scaleNormal = 1.0;
   static const double scaleHover = 1.05;
-
-  // ============================================================================
-  // OPACITY ANIMATIONS
-  // ============================================================================
-  
   static const double opacityVisible = 1.0;
   static const double opacityHidden = 0.0;
   static const double opacityDisabled = 0.5;
-
-  // ============================================================================
-  // TRANSITION ANIMATIONS
-  // ============================================================================
-  
   static const Duration pageTransitionDuration = durationNormal;
   static const Duration modalTransitionDuration = durationNormal;
   static const Duration bottomSheetTransitionDuration = durationNormal;
   static const Duration snackbarTransitionDuration = durationFast;
-
-  // ============================================================================
-  // ANIMATION BUILDERS
-  // ============================================================================
-  
-  /// Scale animation for button press
   static Animation<double> createScaleAnimation(AnimationController controller) {
     return Tween<double>(
       begin: scaleNormal,
@@ -68,8 +33,6 @@ class AppAnimations {
       curve: curveEaseInOut,
     ));
   }
-
-  /// Fade animation
   static Animation<double> createFadeAnimation(AnimationController controller) {
     return Tween<double>(
       begin: opacityHidden,
@@ -79,8 +42,6 @@ class AppAnimations {
       curve: curveEaseInOut,
     ));
   }
-
-  /// Slide animation from bottom
   static Animation<Offset> createSlideUpAnimation(AnimationController controller) {
     return Tween<Offset>(
       begin: const Offset(0.0, 1.0),
@@ -90,8 +51,6 @@ class AppAnimations {
       curve: curveEaseOut,
     ));
   }
-
-  /// Slide animation from right
   static Animation<Offset> createSlideLeftAnimation(AnimationController controller) {
     return Tween<Offset>(
       begin: const Offset(1.0, 0.0),
@@ -101,12 +60,6 @@ class AppAnimations {
       curve: curveEaseOut,
     ));
   }
-
-  // ============================================================================
-  // ANIMATION UTILITIES
-  // ============================================================================
-  
-  /// Create a simple fade transition
   static Widget fadeTransition({
     required Animation<double> animation,
     required Widget child,
@@ -116,8 +69,6 @@ class AppAnimations {
       child: child,
     );
   }
-
-  /// Create a scale transition
   static Widget scaleTransition({
     required Animation<double> animation,
     required Widget child,
@@ -127,8 +78,6 @@ class AppAnimations {
       child: child,
     );
   }
-
-  /// Create a slide transition
   static Widget slideTransition({
     required Animation<Offset> animation,
     required Widget child,
@@ -138,8 +87,6 @@ class AppAnimations {
       child: child,
     );
   }
-
-  /// Create a rotation transition
   static Widget rotationTransition({
     required Animation<double> animation,
     required Widget child,
@@ -149,12 +96,6 @@ class AppAnimations {
       child: child,
     );
   }
-
-  // ============================================================================
-  // PAGE TRANSITIONS
-  // ============================================================================
-  
-  /// Create a page route with custom transition
   static PageRouteBuilder<T> createPageRoute<T>({
     required Widget page,
     Duration? duration,
@@ -176,8 +117,6 @@ class AppAnimations {
       },
     );
   }
-
-  /// Create a modal route with fade transition
   static PageRouteBuilder<T> createModalRoute<T>({
     required Widget page,
     Duration? duration,

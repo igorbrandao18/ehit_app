@@ -1,11 +1,7 @@
-// features/music_player/data/datasources/playlist_local_datasource.dart
-
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/playlist_model.dart';
 import '../../../../core/errors/failures.dart';
-
-/// Interface para fonte de dados local de playlists
 abstract class PlaylistLocalDataSource {
   Future<List<PlaylistModel>> getLastCachedPlaylists();
   Future<void> cachePlaylists(List<PlaylistModel> playlists);
@@ -25,21 +21,15 @@ abstract class PlaylistLocalDataSource {
   Future<DateTime?> getLastCacheTime();
   Future<void> updateLastCacheTime();
 }
-
-/// Implementação da fonte de dados local de playlists
 class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
   final SharedPreferences sharedPreferences;
-
   PlaylistLocalDataSourceImpl({required this.sharedPreferences});
-
-  // Cache keys
   static const String _cachedPlaylistsKey = 'cached_playlists';
   static const String _cachedUserPlaylistsKey = 'cached_user_playlists';
   static const String _cachedPublicPlaylistsKey = 'cached_public_playlists';
   static const String _cachedPopularPlaylistsKey = 'cached_popular_playlists';
   static const String _cachedFollowedPlaylistsKey = 'cached_followed_playlists';
   static const String _lastCacheTimeKey = 'playlists_last_cache_time';
-
   @override
   Future<List<PlaylistModel>> getLastCachedPlaylists() async {
     try {
@@ -54,7 +44,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       throw CacheFailure(message: 'Erro ao recuperar playlists do cache: $e');
     }
   }
-
   @override
   Future<void> cachePlaylists(List<PlaylistModel> playlists) async {
     try {
@@ -65,7 +54,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar playlists no cache: $e');
     }
   }
-
   @override
   Future<PlaylistModel?> getCachedPlaylistById(String playlistId) async {
     try {
@@ -78,7 +66,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       throw CacheFailure(message: 'Erro ao recuperar playlist do cache: $e');
     }
   }
-
   @override
   Future<void> cachePlaylist(PlaylistModel playlist) async {
     try {
@@ -88,7 +75,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar playlist no cache: $e');
     }
   }
-
   @override
   Future<void> removeCachedPlaylist(String playlistId) async {
     try {
@@ -97,7 +83,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       throw CacheFailure(message: 'Erro ao remover playlist do cache: $e');
     }
   }
-
   @override
   Future<List<PlaylistModel>> getCachedUserPlaylists() async {
     try {
@@ -112,7 +97,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       throw CacheFailure(message: 'Erro ao recuperar playlists do usuário do cache: $e');
     }
   }
-
   @override
   Future<void> cacheUserPlaylists(List<PlaylistModel> playlists) async {
     try {
@@ -122,7 +106,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar playlists do usuário no cache: $e');
     }
   }
-
   @override
   Future<List<PlaylistModel>> getCachedPublicPlaylists() async {
     try {
@@ -137,7 +120,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       throw CacheFailure(message: 'Erro ao recuperar playlists públicas do cache: $e');
     }
   }
-
   @override
   Future<void> cachePublicPlaylists(List<PlaylistModel> playlists) async {
     try {
@@ -147,7 +129,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar playlists públicas no cache: $e');
     }
   }
-
   @override
   Future<List<PlaylistModel>> getCachedPopularPlaylists() async {
     try {
@@ -162,7 +143,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       throw CacheFailure(message: 'Erro ao recuperar playlists populares do cache: $e');
     }
   }
-
   @override
   Future<void> cachePopularPlaylists(List<PlaylistModel> playlists) async {
     try {
@@ -172,7 +152,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar playlists populares no cache: $e');
     }
   }
-
   @override
   Future<List<PlaylistModel>> getCachedFollowedPlaylists() async {
     try {
@@ -187,7 +166,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       throw CacheFailure(message: 'Erro ao recuperar playlists seguidas do cache: $e');
     }
   }
-
   @override
   Future<void> cacheFollowedPlaylists(List<PlaylistModel> playlists) async {
     try {
@@ -197,7 +175,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       throw CacheFailure(message: 'Erro ao salvar playlists seguidas no cache: $e');
     }
   }
-
   @override
   Future<void> clearAllCachedPlaylists() async {
     try {
@@ -211,7 +188,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       throw CacheFailure(message: 'Erro ao limpar cache de playlists: $e');
     }
   }
-
   @override
   Future<bool> hasCachedPlaylists() async {
     try {
@@ -220,7 +196,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       return false;
     }
   }
-
   @override
   Future<DateTime?> getLastCacheTime() async {
     try {
@@ -233,7 +208,6 @@ class PlaylistLocalDataSourceImpl implements PlaylistLocalDataSource {
       return null;
     }
   }
-
   @override
   Future<void> updateLastCacheTime() async {
     try {

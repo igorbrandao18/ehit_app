@@ -1,11 +1,6 @@
-// features/authentication/data/models/user_model.dart
-
 import 'package:json_annotation/json_annotation.dart';
 import '../../domain/entities/user.dart';
-
 part 'user_model.g.dart';
-
-/// Modelo de dados para User
 @JsonSerializable()
 class UserModel {
   final String id;
@@ -25,7 +20,6 @@ class UserModel {
   final DateTime? lastLoginAt;
   final List<String> preferences;
   final Map<String, dynamic> metadata;
-
   const UserModel({
     required this.id,
     required this.email,
@@ -42,29 +36,19 @@ class UserModel {
     required this.preferences,
     required this.metadata,
   });
-
-  // JSON conversion helpers
   static DateTime _dateTimeFromJson(String dateString) => DateTime.parse(dateString);
   static String _dateTimeToJson(DateTime dateTime) => dateTime.toIso8601String();
-  
   static DateTime? _dateTimeFromJsonNullable(String? dateString) {
     if (dateString == null) return null;
     return DateTime.parse(dateString);
   }
-  
   static String? _dateTimeToJsonNullable(DateTime? dateTime) {
     if (dateTime == null) return null;
     return dateTime.toIso8601String();
   }
-
-  /// Cria UserModel a partir de JSON
   factory UserModel.fromJson(Map<String, dynamic> json) => 
       _$UserModelFromJson(json);
-
-  /// Converte UserModel para JSON
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
-
-  /// Cria UserModel a partir de entidade User
   factory UserModel.fromEntity(User user) {
     return UserModel(
       id: user.id,
@@ -83,8 +67,6 @@ class UserModel {
       metadata: user.metadata,
     );
   }
-
-  /// Converte UserModel para entidade User
   User toEntity() {
     return User(
       id: id,
@@ -103,8 +85,6 @@ class UserModel {
       metadata: metadata,
     );
   }
-
-  /// Cria UserModel a partir de Map
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       id: map['id'] as String,
@@ -127,8 +107,6 @@ class UserModel {
       metadata: (map['metadata'] as Map<String, dynamic>?) ?? {},
     );
   }
-
-  /// Converte UserModel para Map
   Map<String, dynamic> toMap() {
     return {
       'id': id,
@@ -147,8 +125,6 @@ class UserModel {
       'metadata': metadata,
     };
   }
-
-  /// Cria uma cópia do UserModel com campos modificados
   UserModel copyWith({
     String? id,
     String? email,
@@ -182,7 +158,6 @@ class UserModel {
       metadata: metadata ?? this.metadata,
     );
   }
-
   @override
   String toString() {
     return 'UserModel(id: $id, email: $email, username: $username, isActive: $isActive)';

@@ -1,4 +1,3 @@
-// shared/widgets/music_components/sections/featured_artists_section.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -6,10 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../design/design_tokens.dart';
 import '../../../../features/music_library/presentation/controllers/artists_controller.dart';
 import '../section_title.dart';
-
 class FeaturedArtistsSection extends StatelessWidget {
   const FeaturedArtistsSection({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Consumer<ArtistsController>(
@@ -17,16 +14,13 @@ class FeaturedArtistsSection extends StatelessWidget {
         if (controller.isLoading) {
           return _buildLoadingState(context);
         }
-
         if (controller.artists.isEmpty) {
           return _buildEmptyState(context);
         }
-
         return _buildContent(context, controller);
       },
     );
   }
-
   Widget _buildLoadingState(BuildContext context) {
     return Container(
       height: DesignTokens.playhitsCardWidth + DesignTokens.spaceXL,
@@ -38,7 +32,6 @@ class FeaturedArtistsSection extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildEmptyState(BuildContext context) {
     return Container(
       height: DesignTokens.playhitsCardWidth + DesignTokens.spaceXL,
@@ -54,19 +47,13 @@ class FeaturedArtistsSection extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildContent(BuildContext context, ArtistsController controller) {
     final artists = controller.artists.take(10).toList();
-    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Título da seção
         SectionTitle(title: AppLocalizations.of(context)!.featuredArtists),
-        
         const SizedBox(height: DesignTokens.spaceMD),
-        
-        // Lista horizontal de cards
         SizedBox(
           height: DesignTokens.playhitsCardWidth + DesignTokens.spaceLG,
           child: ListView.builder(
@@ -82,10 +69,8 @@ class FeaturedArtistsSection extends StatelessWidget {
       ],
     );
   }
-
   Widget _buildArtistCard(BuildContext context, dynamic artist) {
     final imageUrl = artist.imageUrl?.isNotEmpty == true ? artist.imageUrl : 'https://via.placeholder.com/300';
-    
     return Container(
       width: DesignTokens.playhitsCardWidth,
       margin: const EdgeInsets.only(right: DesignTokens.spaceMD),
@@ -94,9 +79,8 @@ class FeaturedArtistsSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Imagem do artista
             Container(
-              height: DesignTokens.playhitsCardWidth, // Quadrado perfeito
+              height: DesignTokens.playhitsCardWidth, 
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
                 color: Colors.grey[800],
@@ -104,7 +88,6 @@ class FeaturedArtistsSection extends StatelessWidget {
                   image: NetworkImage(imageUrl),
                   fit: BoxFit.cover,
                   onError: (exception, stackTrace) {
-                    // Silenciar erro de imagem
                   },
                 ),
               ),
@@ -114,7 +97,6 @@ class FeaturedArtistsSection extends StatelessWidget {
       ),
     );
   }
-
   void _navigateToArtist(BuildContext context, String artistId, String artistName) {
     context.pushNamed(
       'artist-detail',
@@ -123,4 +105,3 @@ class FeaturedArtistsSection extends StatelessWidget {
     );
   }
 }
-

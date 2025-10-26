@@ -1,4 +1,3 @@
-// features/music_library/presentation/pages/category_detail_page.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -11,18 +10,14 @@ import '../../../../shared/design/design_tokens.dart';
 import '../../../../shared/design/app_colors.dart';
 import '../controllers/music_library_controller.dart';
 import '../../domain/entities/playlist.dart';
-
-/// Página de detalhes da categoria com lista de playlists
 class CategoryDetailPage extends StatelessWidget {
   final String categoryTitle;
   final String categoryArtists;
-
   const CategoryDetailPage({
     super.key,
     required this.categoryTitle,
     required this.categoryArtists,
   });
-
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
@@ -48,27 +43,18 @@ class CategoryDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Status bar padding
             SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight),
-            
-            // Header section
             _buildHeaderSection(),
-            
-            // Playlists section
             _buildPlaylistsSection(),
-            
-            // Bottom padding
             const SizedBox(height: 100),
           ],
         ),
       ),
     );
   }
-
   Widget _buildHeaderSection() {
     return const SizedBox.shrink();
   }
-
   Widget _buildPlaylistsSection() {
     return Consumer<MusicLibraryController>(
       builder: (context, controller, child) {
@@ -83,13 +69,11 @@ class CategoryDetailPage extends StatelessWidget {
             ),
           );
         }
-
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Section header
               Consumer<MusicLibraryController>(
                 builder: (context, controller, child) {
                   return Text(
@@ -103,7 +87,6 @@ class CategoryDetailPage extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 12),
-              // Playlists list
               ...controller.playlists.asMap().entries.map((entry) {
                 final index = entry.key;
                 final playlist = entry.value;
@@ -121,11 +104,9 @@ class CategoryDetailPage extends StatelessWidget {
       },
     );
   }
-
   Widget _buildPlaylistListItem(BuildContext context, Playlist playlist, int rank) {
     return GestureDetector(
       onTap: () {
-        // Navigate to playlist detail page using GoRouter
         context.pushNamed(
           'playlist-detail',
           pathParameters: {
@@ -145,7 +126,6 @@ class CategoryDetailPage extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Rank number
             Container(
               width: 32,
               height: 32,
@@ -165,8 +145,6 @@ class CategoryDetailPage extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            
-            // Playlist image
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
@@ -192,8 +170,6 @@ class CategoryDetailPage extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            
-            // Playlist info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,4 +202,3 @@ class CategoryDetailPage extends StatelessWidget {
     );
   }
 }
-

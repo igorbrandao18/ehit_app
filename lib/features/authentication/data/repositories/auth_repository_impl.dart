@@ -1,5 +1,3 @@
-// features/authentication/data/repositories/auth_repository_impl.dart
-
 import '../../../../core/errors/failures.dart';
 import '../../../../core/utils/result.dart';
 import '../../domain/entities/user.dart';
@@ -7,27 +5,19 @@ import '../../domain/entities/auth_state.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_local_datasource.dart';
 import '../datasources/auth_remote_datasource.dart';
-
-/// Implementação do repositório de autenticação
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
   final AuthLocalDataSource localDataSource;
-
   AuthRepositoryImpl({
     required this.remoteDataSource,
     required this.localDataSource,
   });
-
   @override
   Future<Result<AuthState>> getCurrentAuthState() async {
     try {
-      // Tenta obter usuário do cache local primeiro
       final cachedUser = await localDataSource.getCachedUser();
-      
       if (cachedUser != null) {
-        // Verifica se o token ainda é válido
         final isTokenValid = await remoteDataSource.isTokenValid();
-        
         if (isTokenValid) {
           final user = cachedUser.toEntity();
           final authState = AuthState.initial.copyWith(
@@ -42,7 +32,6 @@ class AuthRepositoryImpl implements AuthRepository {
           );
           return Success(authState);
         } else {
-          // Token inválido, tenta renovar
           try {
             await remoteDataSource.refreshToken();
             final authState = AuthState.initial.copyWith(
@@ -57,19 +46,16 @@ class AuthRepositoryImpl implements AuthRepository {
             );
             return Success(authState);
           } catch (e) {
-            // Falha ao renovar token, limpa cache e retorna não autenticado
             await localDataSource.clearCachedUser();
             return Success(AuthState.initial);
           }
         }
       }
-      
       return Success(AuthState.initial);
     } catch (e) {
       return Error(message: 'Erro ao obter estado de autenticação: $e');
     }
   }
-
   @override
   Future<Result<User>> loginWithEmail({
     required String email,
@@ -82,58 +68,37 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
         rememberMe: rememberMe,
       );
-      
-      // Salva usuário no cache local
       await localDataSource.cacheUser(userModel);
-      
-      // Salva credenciais se solicitado
       if (rememberMe) {
         await localDataSource.saveCredentials(email, password);
         await localDataSource.setRememberMe(true);
       }
-      
-      // Atualiza último login
       await localDataSource.setLastLoginAt(DateTime.now());
-      
-      // Reseta tentativas de login
       await localDataSource.setLoginAttempts(0);
       await localDataSource.setAccountLocked(false);
-      
       return Success(userModel.toEntity());
     } on ServerFailure catch (e) {
-      // Incrementa tentativas de login em caso de erro
       final attempts = await localDataSource.getLoginAttempts();
       await localDataSource.setLoginAttempts(attempts + 1);
-      
       if (attempts + 1 >= 5) {
         await localDataSource.setAccountLocked(true);
       }
-      
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<User>> loginWithBiometric() async {
     try {
       final userModel = await remoteDataSource.loginWithBiometric();
-      
-      // Salva usuário no cache local
       await localDataSource.cacheUser(userModel);
-      
-      // Atualiza último login
       await localDataSource.setLastLoginAt(DateTime.now());
-      
-      // Reseta tentativas de login
       await localDataSource.setLoginAttempts(0);
       await localDataSource.setAccountLocked(false);
-      
       return Success(userModel.toEntity());
     } on ServerFailure catch (e) {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<User>> register({
     required String email,
@@ -148,41 +113,28 @@ class AuthRepositoryImpl implements AuthRepository {
         username: username,
         displayName: displayName,
       );
-      
-      // Salva usuário no cache local
       await localDataSource.cacheUser(userModel);
-      
-      // Atualiza último login
       await localDataSource.setLastLoginAt(DateTime.now());
-      
       return Success(userModel.toEntity());
     } on ServerFailure catch (e) {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<void>> logout() async {
     try {
       await remoteDataSource.logout();
-      
-      // Limpa dados locais
       await localDataSource.clearCachedUser();
-      
-      // Limpa credenciais se não está marcado para lembrar
       final rememberMe = await localDataSource.isRememberMeEnabled();
       if (!rememberMe) {
         await localDataSource.clearSavedCredentials();
       }
-      
       return const Success(null);
     } on ServerFailure catch (e) {
-      // Mesmo com erro no servidor, limpa dados locais
       await localDataSource.clearCachedUser();
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<void>> sendEmailVerification() async {
     try {
@@ -192,25 +144,20 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<void>> verifyEmail(String verificationCode) async {
     try {
       await remoteDataSource.verifyEmail(verificationCode);
-      
-      // Atualiza usuário local para marcar email como verificado
       final cachedUser = await localDataSource.getCachedUser();
       if (cachedUser != null) {
         final updatedUser = cachedUser.copyWith(isEmailVerified: true);
         await localDataSource.cacheUser(updatedUser);
       }
-      
       return const Success(null);
     } on ServerFailure catch (e) {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<void>> requestPasswordReset(String email) async {
     try {
@@ -221,7 +168,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<void>> resetPassword({
     required String token,
@@ -238,7 +184,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<User>> updateProfile({
     String? displayName,
@@ -251,16 +196,12 @@ class AuthRepositoryImpl implements AuthRepository {
         bio: bio,
         profileImageUrl: profileImageUrl,
       );
-      
-      // Atualiza usuário no cache local
       await localDataSource.cacheUser(userModel);
-      
       return Success(userModel.toEntity());
     } on ServerFailure catch (e) {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<void>> changePassword({
     required String currentPassword,
@@ -276,21 +217,16 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<void>> deleteAccount(String password) async {
     try {
       await remoteDataSource.deleteAccount(password);
-      
-      // Limpa todos os dados locais
       await localDataSource.clearAllAuthData();
-      
       return const Success(null);
     } on ServerFailure catch (e) {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<bool>> isBiometricAvailable() async {
     try {
@@ -300,7 +236,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<bool>> isBiometricEnabled() async {
     try {
@@ -310,7 +245,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: 'Erro ao verificar biometria: $e');
     }
   }
-
   @override
   Future<Result<void>> toggleBiometricAuth(bool enabled) async {
     try {
@@ -320,7 +254,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: 'Erro ao alterar configuração biométrica: $e');
     }
   }
-
   @override
   Future<Result<User>> getCurrentUser() async {
     try {
@@ -328,8 +261,6 @@ class AuthRepositoryImpl implements AuthRepository {
       if (cachedUser != null) {
         return Success(cachedUser.toEntity());
       }
-      
-      // Se não há usuário em cache, tenta obter do servidor
       final userModel = await remoteDataSource.getCurrentUser();
       await localDataSource.cacheUser(userModel);
       return Success(userModel.toEntity());
@@ -337,7 +268,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<User>> updateUser(User user) async {
     try {
@@ -348,7 +278,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<bool>> isTokenValid() async {
     try {
@@ -358,7 +287,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<String>> refreshToken() async {
     try {
@@ -368,7 +296,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<void>> saveCredentials({
     required String email,
@@ -381,7 +308,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: 'Erro ao salvar credenciais: $e');
     }
   }
-
   @override
   Future<Result<void>> clearSavedCredentials() async {
     try {
@@ -391,7 +317,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: 'Erro ao limpar credenciais: $e');
     }
   }
-
   @override
   Future<Result<Map<String, String>>> getSavedCredentials() async {
     try {
@@ -404,7 +329,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: 'Erro ao obter credenciais: $e');
     }
   }
-
   @override
   Future<Result<bool>> hasSavedCredentials() async {
     try {
@@ -414,7 +338,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: 'Erro ao verificar credenciais: $e');
     }
   }
-
   @override
   Future<Result<void>> setUserPreferences(Map<String, dynamic> preferences) async {
     try {
@@ -422,12 +345,10 @@ class AuthRepositoryImpl implements AuthRepository {
       await remoteDataSource.setUserPreferences(preferences);
       return const Success(null);
     } on ServerFailure catch (e) {
-      // Salva localmente mesmo se falhar no servidor
       await localDataSource.setUserPreferences(preferences);
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<Map<String, dynamic>>> getUserPreferences() async {
     try {
@@ -437,7 +358,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: 'Erro ao obter preferências: $e');
     }
   }
-
   @override
   Future<Result<bool>> isUserOnline() async {
     try {
@@ -447,7 +367,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<void>> updateOnlineStatus(bool isOnline) async {
     try {
@@ -457,7 +376,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<List<Map<String, dynamic>>>> getLoginHistory() async {
     try {
@@ -467,7 +385,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: 'Erro ao obter histórico de logins: $e');
     }
   }
-
   @override
   Future<Result<void>> clearLoginHistory() async {
     try {
@@ -478,7 +395,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<bool>> isAccountLocked() async {
     try {
@@ -488,7 +404,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: 'Erro ao verificar bloqueio da conta: $e');
     }
   }
-
   @override
   Future<Result<void>> unlockAccount() async {
     try {
@@ -500,7 +415,6 @@ class AuthRepositoryImpl implements AuthRepository {
       return Error(message: e.message, code: e.code);
     }
   }
-
   @override
   Future<Result<Map<String, dynamic>>> getSecurityStats() async {
     try {

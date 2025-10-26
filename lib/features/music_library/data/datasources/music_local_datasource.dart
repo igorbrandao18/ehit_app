@@ -1,12 +1,8 @@
-// features/music_library/data/datasources/music_local_datasource.dart
-
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/errors/failures.dart';
 import '../models/song_model.dart';
 import '../models/artist_model.dart';
-
-/// Data source local para cache de dados de música
 abstract class MusicLocalDataSource {
   Future<List<SongModel>> getCachedSongs();
   Future<void> cacheSongs(List<SongModel> songs);
@@ -18,19 +14,14 @@ abstract class MusicLocalDataSource {
   Future<void> addToRecentSongs(String songId);
   Future<void> clearCache();
 }
-
-/// Implementação do data source local
 class MusicLocalDataSourceImpl implements MusicLocalDataSource {
   final SharedPreferences _prefs;
-
   const MusicLocalDataSourceImpl(this._prefs);
-
   @override
   Future<List<SongModel>> getCachedSongs() async {
     try {
       final songsJson = _prefs.getStringList(AppConstants.offlineSongsKey);
       if (songsJson == null) return [];
-      
       return songsJson.map((json) => SongModel.fromJson(
         Map<String, dynamic>.from(json.split(',').asMap().map(
           (i, value) => MapEntry(['id', 'title', 'artist', 'album', 'duration', 'imageUrl', 'audioUrl'][i], value)
@@ -42,7 +33,6 @@ class MusicLocalDataSourceImpl implements MusicLocalDataSource {
       );
     }
   }
-
   @override
   Future<void> cacheSongs(List<SongModel> songs) async {
     try {
@@ -54,13 +44,11 @@ class MusicLocalDataSourceImpl implements MusicLocalDataSource {
       );
     }
   }
-
   @override
   Future<List<SongModel>> getFavoriteSongs() async {
     try {
       final favoriteIds = _prefs.getStringList('favorite_songs') ?? [];
       final cachedSongs = await getCachedSongs();
-      
       return cachedSongs.where((song) => favoriteIds.contains(song.id)).toList();
     } catch (e) {
       throw CacheFailure(
@@ -68,7 +56,6 @@ class MusicLocalDataSourceImpl implements MusicLocalDataSource {
       );
     }
   }
-
   @override
   Future<void> addToFavorites(String songId) async {
     try {
@@ -83,7 +70,6 @@ class MusicLocalDataSourceImpl implements MusicLocalDataSource {
       );
     }
   }
-
   @override
   Future<void> removeFromFavorites(String songId) async {
     try {
@@ -96,7 +82,6 @@ class MusicLocalDataSourceImpl implements MusicLocalDataSource {
       );
     }
   }
-
   @override
   Future<bool> isFavorite(String songId) async {
     try {
@@ -108,13 +93,11 @@ class MusicLocalDataSourceImpl implements MusicLocalDataSource {
       );
     }
   }
-
   @override
   Future<List<SongModel>> getRecentSongs() async {
     try {
       final recentIds = _prefs.getStringList('recent_songs') ?? [];
       final cachedSongs = await getCachedSongs();
-      
       return recentIds.map((id) => 
         cachedSongs.firstWhere((song) => song.id == id)
       ).toList();
@@ -124,19 +107,15 @@ class MusicLocalDataSourceImpl implements MusicLocalDataSource {
       );
     }
   }
-
   @override
   Future<void> addToRecentSongs(String songId) async {
     try {
       final recentIds = _prefs.getStringList('recent_songs') ?? [];
-      recentIds.remove(songId); // Remove if already exists
-      recentIds.insert(0, songId); // Add to beginning
-      
-      // Keep only last 50 songs
+      recentIds.remove(songId); 
+      recentIds.insert(0, songId); 
       if (recentIds.length > AppConstants.maxRecentSongs) {
         recentIds.removeRange(AppConstants.maxRecentSongs, recentIds.length);
       }
-      
       await _prefs.setStringList('recent_songs', recentIds);
     } catch (e) {
       throw CacheFailure(
@@ -144,7 +123,6 @@ class MusicLocalDataSourceImpl implements MusicLocalDataSource {
       );
     }
   }
-
   @override
   Future<void> clearCache() async {
     try {

@@ -1,5 +1,3 @@
-// shared/widgets/music_components/song_list_item.dart
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -7,20 +5,16 @@ import '../../../../features/music_library/domain/entities/song.dart';
 import '../../../../features/music_player/presentation/controllers/music_player_controller.dart';
 import '../../../design/design_tokens.dart';
 import '../../../utils/responsive_utils.dart';
-
-/// Componente para item individual da lista de músicas
 class SongListItem extends StatelessWidget {
   final Song song;
   final int index;
   final VoidCallback onTap;
-
   const SongListItem({
     super.key,
     required this.song,
     required this.index,
     required this.onTap,
   });
-
   @override
   Widget build(BuildContext context) {
     final spacing = ResponsiveUtils.getResponsiveSpacing(context);
@@ -30,7 +24,6 @@ class SongListItem extends StatelessWidget {
       desktop: DesignTokens.songItemThumbnailDesktop,
     );
     final isMobile = ResponsiveUtils.getDeviceType(context) == DeviceType.mobile;
-    
     return GestureDetector(
       onTap: onTap,
       child: Padding(
@@ -51,11 +44,9 @@ class SongListItem extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildAlbumArt(BuildContext context, double thumbnailSize) {
     final isMobile = ResponsiveUtils.getDeviceType(context) == DeviceType.mobile;
     final isTablet = ResponsiveUtils.getDeviceType(context) == DeviceType.tablet;
-    
     return Container(
       width: thumbnailSize,
       height: thumbnailSize,
@@ -106,13 +97,11 @@ class SongListItem extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildSongInfo(BuildContext context) {
     final fontSize = ResponsiveUtils.getResponsiveFontSize(context);
     final spacing = ResponsiveUtils.getResponsiveSpacing(context);
     final isMobile = ResponsiveUtils.getDeviceType(context) == DeviceType.mobile;
     final isTablet = ResponsiveUtils.getDeviceType(context) == DeviceType.tablet;
-    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -159,19 +148,16 @@ class SongListItem extends StatelessWidget {
       ],
     );
   }
-
   Widget _buildDownloadButton(BuildContext context) {
     final iconSize = ResponsiveUtils.getResponsiveIconSize(context);
     final spacing = ResponsiveUtils.getResponsiveSpacing(context);
     final isMobile = ResponsiveUtils.getDeviceType(context) == DeviceType.mobile;
-    
     return Consumer<MusicPlayerController>(
       builder: (context, playerController, child) {
         return FutureBuilder<bool>(
           future: _isSongAvailableOffline(),
           builder: (context, snapshot) {
             final isAvailableOffline = snapshot.data ?? false;
-            
             return GestureDetector(
               onTap: () => _handleDownloadTap(context),
               child: Container(
@@ -198,14 +184,10 @@ class SongListItem extends StatelessWidget {
       },
     );
   }
-
   Future<bool> _isSongAvailableOffline() async {
-    // TODO: Implementar verificação real usando AudioPlayerRepository
     return false;
   }
-
   void _handleDownloadTap(BuildContext context) async {
-    // TODO: Implementar download usando OfflineAudioService
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Download de "${song.title}" iniciado'),
@@ -213,15 +195,9 @@ class SongListItem extends StatelessWidget {
       ),
     );
   }
-
   void _navigateToArtist(BuildContext context, String artistName) {
     debugPrint('🎤 Navegando para artista: $artistName');
-    
-    // Por enquanto, vamos usar um ID fictício baseado no nome do artista
-    // Em uma implementação real, você teria uma busca por artista por nome
     final artistId = artistName.hashCode.abs().toString();
-    
-    // Navegar para a página de detalhes do artista
     context.pushNamed(
       'artist-detail',
       pathParameters: {'artistId': artistId},

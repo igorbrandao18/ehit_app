@@ -1,33 +1,26 @@
-// shared/widgets/music_components/artist_card.dart
 import 'package:flutter/material.dart';
 import '../../../../features/music_library/domain/entities/artist.dart';
 import '../../../design/app_colors.dart';
 import '../../../design/app_text_styles.dart';
 import '../../../design/design_tokens.dart';
 import '../../../utils/responsive_utils.dart';
-
-/// Card circular para exibir artistas
 class ArtistCard extends StatelessWidget {
   final Artist artist;
   final VoidCallback? onTap;
   final double? size;
-
   const ArtistCard({
     super.key,
     required this.artist,
     this.onTap,
     this.size,
   });
-
   @override
   Widget build(BuildContext context) {
-    // Responsive sizing based on device type
     final deviceType = ResponsiveUtils.getDeviceType(context);
     final cardSize = size ?? _getResponsiveCardSize(deviceType);
-    final imageSize = cardSize * 0.85; // Make image slightly smaller to leave space for text
+    final imageSize = cardSize * 0.85; 
     final spacing = ResponsiveUtils.getResponsiveSpacing(context);
     final fontSize = ResponsiveUtils.getResponsiveFontSize(context);
-    
     return GestureDetector(
       onTap: onTap,
       child: SizedBox(
@@ -35,7 +28,6 @@ class ArtistCard extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Square image with rounded corners
             Container(
               width: imageSize,
               height: imageSize,
@@ -76,8 +68,6 @@ class ArtistCard extends StatelessWidget {
                       ),
               ),
             ),
-            
-            // Artist name
             SizedBox(height: spacing / 2),
             Text(
               artist.name,
@@ -95,16 +85,14 @@ class ArtistCard extends StatelessWidget {
       ),
     );
   }
-
-  /// Retorna o tamanho responsivo do card baseado no tipo de dispositivo
   double _getResponsiveCardSize(DeviceType deviceType) {
     switch (deviceType) {
       case DeviceType.mobile:
-        return 90.0; // Smaller for mobile to match image
+        return 90.0; 
       case DeviceType.tablet:
-        return 110.0; // Medium for tablet
+        return 110.0; 
       case DeviceType.desktop:
-        return 130.0; // Larger for desktop
+        return 130.0; 
     }
   }
 }

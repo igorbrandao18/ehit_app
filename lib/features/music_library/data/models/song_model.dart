@@ -1,11 +1,6 @@
-// features/music_library/data/models/song_model.dart
-
 import 'package:json_annotation/json_annotation.dart';
 import '../../domain/entities/song.dart';
-
 part 'song_model.g.dart';
-
-/// Modelo de dados para Song
 @JsonSerializable()
 class SongModel extends Song {
   const SongModel({
@@ -21,14 +16,8 @@ class SongModel extends Song {
     required super.playCount,
     required super.genre,
   });
-
-  /// Cria SongModel a partir de JSON
   factory SongModel.fromJson(Map<String, dynamic> json) => _$SongModelFromJson(json);
-
-  /// Converte SongModel para JSON
   Map<String, dynamic> toJson() => _$SongModelToJson(this);
-
-  /// Cria SongModel a partir de Entity
   factory SongModel.fromEntity(Song song) {
     return SongModel(
       id: song.id,
@@ -44,8 +33,6 @@ class SongModel extends Song {
       genre: song.genre,
     );
   }
-
-  /// Converte SongModel para Entity
   Song toEntity() {
     return Song(
       id: id,
@@ -61,8 +48,6 @@ class SongModel extends Song {
       genre: genre,
     );
   }
-
-  /// Cria SongModel a partir de Map (para dados mock)
   factory SongModel.fromMap(Map<String, dynamic> map) {
     return SongModel(
       id: map['id'] as String,
@@ -78,8 +63,6 @@ class SongModel extends Song {
       genre: map['genre'] as String? ?? 'Pop',
     );
   }
-
-  /// Converte SongModel para Map
   Map<String, dynamic> toMap() {
     return {
       'id': id,

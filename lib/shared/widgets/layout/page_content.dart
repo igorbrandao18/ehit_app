@@ -1,8 +1,5 @@
-// shared/widgets/layout/page_content.dart
 import 'package:flutter/material.dart';
 import '../../design/design_tokens.dart';
-
-/// Container de conteúdo de página reutilizável
 class PageContent extends StatelessWidget {
   final List<Widget> children;
   final EdgeInsets? padding;
@@ -11,7 +8,6 @@ class PageContent extends StatelessWidget {
   final bool isScrollable;
   final ScrollPhysics? physics;
   final Future<void> Function()? onRefresh;
-
   const PageContent({
     super.key,
     required this.children,
@@ -22,7 +18,6 @@ class PageContent extends StatelessWidget {
     this.physics,
     this.onRefresh,
   });
-
   @override
   Widget build(BuildContext context) {
     final content = Column(
@@ -30,7 +25,6 @@ class PageContent extends StatelessWidget {
       mainAxisAlignment: mainAxisAlignment,
       children: children,
     );
-
     if (!isScrollable) {
       return SafeArea(
         child: Padding(
@@ -39,7 +33,6 @@ class PageContent extends StatelessWidget {
         ),
       );
     }
-
     final scrollView = SingleChildScrollView(
       physics: physics,
       child: Padding(
@@ -47,8 +40,6 @@ class PageContent extends StatelessWidget {
         child: content,
       ),
     );
-
-    // Se tem função de refresh, envolve com RefreshIndicator
     if (onRefresh != null) {
       return SafeArea(
         child: RefreshIndicator(
@@ -57,7 +48,6 @@ class PageContent extends StatelessWidget {
         ),
       );
     }
-
     return SafeArea(child: scrollView);
   }
 }

@@ -1,15 +1,11 @@
-// shared/widgets/music_components/banner_section.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../../design/design_tokens.dart';
-
 class BannerSection extends StatefulWidget {
   const BannerSection({super.key});
-
   @override
   State<BannerSection> createState() => _BannerSectionState();
 }
-
 class _BannerSectionState extends State<BannerSection>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
@@ -17,17 +13,14 @@ class _BannerSectionState extends State<BannerSection>
   int _currentIndex = 0;
   int _nextIndex = 1;
   late List<BannerData> _banners;
-
   @override
   void initState() {
     super.initState();
     _banners = _getBanners();
-    
     _animationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -35,10 +28,8 @@ class _BannerSectionState extends State<BannerSection>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
-    
     _startAutoSlide();
   }
-
   void _startAutoSlide() {
     Future.delayed(const Duration(seconds: 3), () {
       if (mounted) {
@@ -55,13 +46,11 @@ class _BannerSectionState extends State<BannerSection>
       }
     });
   }
-
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -72,10 +61,7 @@ class _BannerSectionState extends State<BannerSection>
       ),
       child: Stack(
         children: [
-          // Banner atual (sempre visível)
           _buildBannerCard(context, _banners[_currentIndex]),
-          
-          // Próximo banner (aparece por cima)
           AnimatedBuilder(
             animation: _fadeAnimation,
             builder: (context, child) {
@@ -89,7 +75,6 @@ class _BannerSectionState extends State<BannerSection>
       ),
     );
   }
-
   Widget _buildBannerCard(BuildContext context, BannerData banner) {
     return GestureDetector(
       onTap: () => _handleBannerTap(context, banner),
@@ -105,7 +90,6 @@ class _BannerSectionState extends State<BannerSection>
       ),
     );
   }
-
   void _handleBannerTap(BuildContext context, BannerData banner) {
     switch (banner.type) {
       case BannerType.playlist:
@@ -123,11 +107,9 @@ class _BannerSectionState extends State<BannerSection>
         );
         break;
       case BannerType.promotion:
-        // Abrir promoção ou link externo
         break;
     }
   }
-
   List<BannerData> _getBanners() {
     return [
       BannerData(
@@ -149,7 +131,6 @@ class _BannerSectionState extends State<BannerSection>
     ];
   }
 }
-
 class BannerData {
   final String id;
   final String title;
@@ -157,7 +138,6 @@ class BannerData {
   final String imageUrl;
   final BannerType type;
   final String actionId;
-
   BannerData({
     required this.id,
     required this.title,
@@ -167,7 +147,6 @@ class BannerData {
     required this.actionId,
   });
 }
-
 enum BannerType {
   playlist,
   artist,

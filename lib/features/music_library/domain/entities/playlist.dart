@@ -1,8 +1,5 @@
-// features/music_library/domain/entities/playlist.dart
-
 import 'package:equatable/equatable.dart';
 import 'song.dart';
-
 class Playlist extends Equatable {
   final int id;
   final String name;
@@ -12,7 +9,6 @@ class Playlist extends Equatable {
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool isActive;
-
   const Playlist({
     required this.id,
     required this.name,
@@ -23,7 +19,6 @@ class Playlist extends Equatable {
     required this.updatedAt,
     required this.isActive,
   });
-
   @override
   List<Object?> get props => [
         id,

@@ -8,7 +8,6 @@ import '../section_title.dart';
 
 class PlayHitsPersonalizedSection extends StatelessWidget {
   const PlayHitsPersonalizedSection({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Consumer<MusicLibraryController>(
@@ -16,11 +15,9 @@ class PlayHitsPersonalizedSection extends StatelessWidget {
         if (controller.isLoading) {
           return _buildLoadingState();
         }
-
         if (controller.playlists.isEmpty) {
           return _buildEmptyState(context);
         }
-
         return _buildContent(context, controller);
       },
     );
@@ -56,16 +53,11 @@ class PlayHitsPersonalizedSection extends StatelessWidget {
 
   Widget _buildContent(BuildContext context, MusicLibraryController controller) {
     final playHits = controller.playlists.take(10).toList();
-    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Título da seção
         SectionTitle(title: AppLocalizations.of(context)!.playhits),
-        
         const SizedBox(height: DesignTokens.spaceMD),
-        
-        // Lista horizontal de cards
         SizedBox(
           height: DesignTokens.playhitsCardWidth + DesignTokens.spaceLG,
           child: ListView.builder(
@@ -84,7 +76,6 @@ class PlayHitsPersonalizedSection extends StatelessWidget {
 
   Widget _buildPlaylistCard(BuildContext context, dynamic playHit) {
     final coverUrl = playHit.cover?.isNotEmpty == true ? playHit.cover : 'https://via.placeholder.com/300';
-    
     return Container(
       width: DesignTokens.playhitsCardWidth,
       margin: const EdgeInsets.only(right: DesignTokens.spaceMD),
@@ -93,9 +84,8 @@ class PlayHitsPersonalizedSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Imagem da playlist
             Container(
-              height: DesignTokens.playhitsCardWidth, // Quadrado perfeito
+              height: DesignTokens.playhitsCardWidth, 
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
                 color: Colors.grey[800],
@@ -103,7 +93,6 @@ class PlayHitsPersonalizedSection extends StatelessWidget {
                   image: NetworkImage(coverUrl),
                   fit: BoxFit.cover,
                   onError: (exception, stackTrace) {
-                    // Silenciar erro de imagem
                   },
                 ),
               ),

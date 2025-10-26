@@ -1,18 +1,12 @@
-// shared/widgets/music_components/artist_hero_section.dart
-
 import 'package:flutter/material.dart';
 import '../../../../features/music_library/domain/entities/artist.dart';
 import '../../../design/design_tokens.dart';
-
-/// Componente hero section para página de detalhes do artista
 class ArtistHeroSection extends StatelessWidget {
   final Artist artist;
-
   const ArtistHeroSection({
     super.key,
     required this.artist,
   });
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -23,7 +17,7 @@ class ArtistHeroSection extends StatelessWidget {
       ),
       child: Column(
         children: [
-          SizedBox(height: DesignTokens.spaceXL), // Space for status bar
+          SizedBox(height: DesignTokens.spaceXL), 
           _buildAlbumArt(),
           SizedBox(height: DesignTokens.spaceLG),
           _buildAlbumTitle(),
@@ -33,13 +27,11 @@ class ArtistHeroSection extends StatelessWidget {
       ),
     );
   }
-
   Widget _buildAlbumArt() {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = constraints.maxWidth;
         final imageSize = screenWidth * DesignTokens.artistHeroImageSizeRatio;
-        
         return Container(
           width: imageSize,
           height: imageSize,
@@ -92,18 +84,16 @@ class ArtistHeroSection extends StatelessWidget {
       },
     );
   }
-
   Widget _buildAlbumTitle() {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = constraints.maxWidth;
         final fontSize = screenWidth * DesignTokens.artistHeroFontSizeRatio;
-        
         return Text(
           artist.name,
           style: TextStyle(
             color: Colors.white,
-            fontSize: fontSize.clamp(20, 32), // Entre 20 e 32px
+            fontSize: fontSize.clamp(20, 32), 
             fontWeight: FontWeight.w700,
           ),
           textAlign: TextAlign.center,
@@ -113,7 +103,6 @@ class ArtistHeroSection extends StatelessWidget {
       },
     );
   }
-
   Widget _buildAlbumInfo() {
     return Text(
       '${artist.albumsCount} Álbuns • ${artist.genre}',

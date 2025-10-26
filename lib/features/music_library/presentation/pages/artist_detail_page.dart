@@ -1,5 +1,3 @@
-// features/music_library/presentation/pages/artist_detail_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -12,44 +10,34 @@ import '../../../../core/audio/audio_player_service.dart';
 import '../../../../core/injection/injection_container.dart' as di;
 import '../controllers/artist_detail_controller.dart';
 import '../../domain/entities/song.dart';
-
-/// Página de detalhes do artista completamente componentizada
 class ArtistDetailPage extends StatefulWidget {
   final String artistId;
-
   const ArtistDetailPage({
     super.key,
     required this.artistId,
   });
-
   @override
   State<ArtistDetailPage> createState() => _ArtistDetailPageState();
 }
-
 class _ArtistDetailPageState extends State<ArtistDetailPage> {
   late ArtistDetailController _controller;
-
   @override
   void initState() {
     super.initState();
-    // Criar nova instância para cada página
     _controller = ArtistDetailController(
       getArtistsUseCase: di.sl(),
       getSongsUseCase: di.sl(),
     );
     _loadArtistData();
   }
-
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
   }
-
   Future<void> _loadArtistData() async {
     await _controller.loadArtistData(widget.artistId);
   }
-
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
@@ -62,22 +50,18 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
             if (controller.isLoading) {
               return _buildLoadingState();
             }
-
             if (controller.error != null) {
               return _buildErrorState();
             }
-
             if (!controller.hasData) {
               return _buildEmptyState();
             }
-
             return _buildContent(controller);
           },
         ),
       ),
     );
   }
-
   AppBar _buildAppBar() {
     return AppBar(
       backgroundColor: Colors.transparent,
@@ -92,7 +76,6 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
       ),
     );
   }
-
   Widget _buildLoadingState() {
     return const Center(
       child: CircularProgressIndicator(
@@ -100,7 +83,6 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
       ),
     );
   }
-
   Widget _buildErrorState() {
     return Center(
       child: Column(
@@ -138,7 +120,6 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
       ),
     );
   }
-
   Widget _buildEmptyState() {
     return const Center(
       child: Column(
@@ -162,16 +143,12 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
       ),
     );
   }
-
   Widget _buildContent(ArtistDetailController controller) {
     return Column(
       children: [
-        // Hero section (fixed)
         ArtistHeroSection(
           artist: controller.artist!,
         ),
-
-        // Songs list section (scrollable)
         Expanded(
           child: SongsListSection(
             songs: controller.songs,
@@ -184,43 +161,30 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
       ],
     );
   }
-
   void _onSongTap(Song song) {
-    // Usa o AudioPlayerService para tocar a música
     final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
     final songs = _controller.songs;
-    
-    // Encontra o índice da música na lista
     final songIndex = songs.indexWhere((s) => s.id == song.id);
-    
     if (songIndex >= 0) {
       audioPlayer.playPlaylist(songs, startIndex: songIndex);
       debugPrint('🎵 Tocando artista: ${_controller.artist!.name}');
       debugPrint('🎵 Música atual: ${song.title} - ${song.artist}');
     } else {
-      // Fallback: toca apenas a música
       audioPlayer.playSong(song);
     }
-    
-    // Navegar para o player
     context.pushNamed('player');
   }
-
   void _onShuffleTap() {
-    // Usa o AudioPlayerService para tocar todas as músicas em ordem aleatória
     final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
     final songs = _controller.songs;
     if (songs.isNotEmpty) {
-      // Embaralha a lista de músicas
       final shuffledSongs = List<Song>.from(songs)..shuffle();
       audioPlayer.playPlaylist(shuffledSongs, startIndex: 0);
       debugPrint('🔀 Shuffle play: ${songs.length} músicas do artista ${_controller.artist!.name}');
       context.pushNamed('player');
     }
   }
-
   void _onRepeatTap() {
-    // Usa o AudioPlayerService para tocar todas as músicas
     final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
     final songs = _controller.songs;
     if (songs.isNotEmpty) {

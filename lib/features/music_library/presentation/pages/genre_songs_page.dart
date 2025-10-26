@@ -1,4 +1,3 @@
-// features/music_library/presentation/pages/genre_songs_page.dart
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -8,17 +7,14 @@ import '../../../../shared/design/design_tokens.dart';
 import '../../../../core/audio/audio_player_service.dart';
 import '../controllers/music_library_controller.dart';
 import '../../domain/entities/song.dart';
-
 class GenreSongsPage extends StatelessWidget {
   final String genre;
   final String genreImageUrl;
-
   const GenreSongsPage({
     super.key,
     required this.genre,
     required this.genreImageUrl,
   });
-
   @override
   Widget build(BuildContext context) {
     return GradientScaffold(
@@ -44,7 +40,6 @@ class GenreSongsPage extends StatelessWidget {
         builder: (context, controller, child) {
           return Column(
             children: [
-              // Hero section with genre image
               Container(
                 height: 200,
                 margin: const EdgeInsets.all(DesignTokens.screenPadding),
@@ -92,8 +87,6 @@ class GenreSongsPage extends StatelessWidget {
                   ),
                 ),
               ),
-              
-              // Songs list
               Expanded(
                 child: Consumer<MusicLibraryController>(
                   builder: (context, controller, child) {
@@ -102,8 +95,6 @@ class GenreSongsPage extends StatelessWidget {
                         child: CircularProgressIndicator(),
                       );
                     }
-
-                    // Filtrar músicas por gênero das playlists
                     final songs = <Song>[];
                     for (final playlist in controller.playlists) {
                       for (final song in playlist.musicsData) {
@@ -112,7 +103,6 @@ class GenreSongsPage extends StatelessWidget {
                         }
                       }
                     }
-
                     if (songs.isEmpty) {
                       return const Center(
                         child: Column(
@@ -134,7 +124,6 @@ class GenreSongsPage extends StatelessWidget {
                         ),
                       );
                     }
-
                     return SongsListSection(
                       songs: songs,
                       artistName: genre,
@@ -145,8 +134,6 @@ class GenreSongsPage extends StatelessWidget {
                   },
                 ),
               ),
-              
-              // Bottom padding for player
               const SizedBox(height: DesignTokens.miniPlayerHeight + 20),
             ],
           );
@@ -154,41 +141,28 @@ class GenreSongsPage extends StatelessWidget {
       ),
     );
   }
-
   void _onSongTap(BuildContext context, Song song, List<Song> songs) {
-    // Usa o AudioPlayerService para tocar a música
     final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
-    
-    // Encontra o índice da música na lista
     final songIndex = songs.indexWhere((s) => s.id == song.id);
-    
     if (songIndex >= 0) {
       audioPlayer.playPlaylist(songs, startIndex: songIndex);
       debugPrint('🎵 Tocando gênero: $genre');
       debugPrint('🎵 Música atual: ${song.title} - ${song.artist}');
     } else {
-      // Fallback: toca apenas a música
       audioPlayer.playSong(song);
     }
-    
-    // Navegar para o player
     context.pushNamed('player');
   }
-
   void _onShuffleTap(BuildContext context, List<Song> songs) {
-    // Usa o AudioPlayerService para tocar todas as músicas em ordem aleatória
     final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
     if (songs.isNotEmpty) {
-      // Embaralha a lista de músicas
       final shuffledSongs = List<Song>.from(songs)..shuffle();
       audioPlayer.playPlaylist(shuffledSongs, startIndex: 0);
       debugPrint('🔀 Shuffle play: ${songs.length} músicas do gênero $genre');
       context.pushNamed('player');
     }
   }
-
   void _onRepeatTap(BuildContext context, List<Song> songs) {
-    // Usa o AudioPlayerService para tocar todas as músicas
     final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
     if (songs.isNotEmpty) {
       audioPlayer.playPlaylist(songs, startIndex: 0);

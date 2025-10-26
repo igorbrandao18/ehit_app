@@ -1,26 +1,10 @@
-// core/constants/app_constants.dart
-
-/// Constantes globais da aplicação
 class AppConstants {
-  // Private constructor to prevent instantiation
   AppConstants._();
-
-  // ============================================================================
-  // APP INFO
-  // ============================================================================
-  
   static const String appName = 'ÊHIT';
   static const String appVersion = '1.0.0';
-
-  // ============================================================================
-  // API CONSTANTS
-  // ============================================================================
-  
   static const String apiBaseUrl = 'https://api.ehit.app';
   static const int connectionTimeout = 30000;
   static const int receiveTimeout = 30000;
-  
-  // API Endpoints
   static const String songsEndpoint = '/songs';
   static const String artistsEndpoint = '/artists';
   static const String albumsEndpoint = '/albums';
@@ -29,42 +13,20 @@ class AppConstants {
   static const String userEndpoint = '/user';
   static const String authEndpoint = '/auth';
   static const String uploadEndpoint = '/upload';
-
-  // ============================================================================
-  // AUDIO CONSTANTS
-  // ============================================================================
-  
   static const int audioBufferSize = 1024;
   static const double audioVolumeStep = 0.1;
   static const Duration seekStep = Duration(seconds: 10);
   static const Duration maxSongDuration = Duration(hours: 1);
-
-  // ============================================================================
-  // CACHE CONSTANTS
-  // ============================================================================
-  
-  static const int maxCacheSize = 100 * 1024 * 1024; // 100MB
+  static const int maxCacheSize = 100 * 1024 * 1024; 
   static const Duration cacheExpiration = Duration(hours: 24);
   static const int maxOfflineSongs = 50;
   static const int maxRecentSearches = 10;
   static const int maxHistoryItems = 100;
-
-  // ============================================================================
-  // UI CONSTANTS
-  // ============================================================================
-  
   static const double minTouchTarget = 48.0;
   static const Duration animationDuration = Duration(milliseconds: 300);
   static const Duration shortAnimationDuration = Duration(milliseconds: 150);
-
-  // ============================================================================
-  // MUSIC CONSTANTS
-  // ============================================================================
-  
   static const int maxPlaylistSongs = 1000;
   static const int maxRecentSongs = 50;
-  
-  // Music Categories
   static const String sertanejoCategory = 'Sertanejo';
   static const String popCategory = 'Pop';
   static const String rockCategory = 'Rock';
@@ -78,21 +40,11 @@ class AppConstants {
   static const String jazzCategory = 'Jazz';
   static const String classicalCategory = 'Clássica';
   static const String electronicCategory = 'Eletrônica';
-
-  // ============================================================================
-  // DEFAULT VALUES
-  // ============================================================================
-  
   static const String defaultArtist = 'Artista desconhecido';
   static const String defaultAlbum = 'Álbum desconhecido';
   static const String defaultPlaylist = 'Playlist sem nome';
   static const String defaultSong = 'Música sem título';
   static const String defaultGenre = 'Gênero desconhecido';
-
-  // ============================================================================
-  // ERROR MESSAGES
-  // ============================================================================
-  
   static const String networkErrorMessage = 'Erro de conexão. Verifique sua internet.';
   static const String serverErrorMessage = 'Erro do servidor. Tente novamente.';
   static const String unknownErrorMessage = 'Erro desconhecido. Tente novamente.';
@@ -104,11 +56,6 @@ class AppConstants {
   static const String permissionError = 'Permissão negada';
   static const String storageError = 'Erro de armazenamento';
   static const String unknownError = 'Erro desconhecido';
-
-  // ============================================================================
-  // SUCCESS MESSAGES
-  // ============================================================================
-  
   static const String addedToPlaylist = 'Adicionado à playlist';
   static const String removedFromPlaylist = 'Removido da playlist';
   static const String liked = 'Curtido';
@@ -117,53 +64,27 @@ class AppConstants {
   static const String uploaded = 'Enviado';
   static const String saved = 'Salvo';
   static const String deleted = 'Excluído';
-
-  // ============================================================================
-  // PLACEHOLDER TEXT
-  // ============================================================================
-  
   static const String searchPlaceholder = 'Buscar músicas, artistas, álbuns...';
   static const String playlistNamePlaceholder = 'Nome da playlist';
   static const String commentPlaceholder = 'Adicionar comentário...';
   static const String bioPlaceholder = 'Conte sobre você...';
   static const String emailPlaceholder = 'seu@email.com';
   static const String passwordPlaceholder = 'Sua senha';
-
-  // ============================================================================
-  // TIME FORMATS
-  // ============================================================================
-  
   static const String timeFormat = 'mm:ss';
   static const String dateFormat = 'dd/MM/yyyy';
   static const String timeAgoFormat = 'h:mm a';
   static const String fullDateFormat = 'dd/MM/yyyy HH:mm';
-
-  // ============================================================================
-  // FILE EXTENSIONS
-  // ============================================================================
-  
   static const List<String> supportedAudioFormats = [
     'mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg', 'wma'
   ];
-  
   static const List<String> supportedImageFormats = [
     'jpg', 'jpeg', 'png', 'gif', 'webp'
   ];
-
-  // ============================================================================
-  // SOCIAL FEATURES
-  // ============================================================================
-  
   static const int maxCommentLength = 500;
   static const int maxPlaylistNameLength = 50;
   static const int maxBioLength = 160;
   static const int maxUsernameLength = 30;
   static const int minPasswordLength = 8;
-
-  // ============================================================================
-  // STORAGE KEYS
-  // ============================================================================
-  
   static const String userTokenKey = 'user_token';
   static const String userPreferencesKey = 'user_preferences';
   static const String recentSearchesKey = 'recent_searches';
@@ -174,35 +95,20 @@ class AppConstants {
   static const String repeatKey = 'repeat';
   static const String themeKey = 'theme';
   static const String languageKey = 'language';
-
-  // ============================================================================
-  // VALIDATION RULES
-  // ============================================================================
-  
   static const int minSearchLength = 2;
   static const int maxSearchLength = 100;
   static const int minPlaylistNameLength = 1;
   static const int maxPlaylistDescriptionLength = 500;
-
-  // ============================================================================
-  // UI TEXT CONSTANTS
-  // ============================================================================
-  
-  // Section titles
   static const String playHitsTitle = 'PlayHITS da semana';
   static const String artistsTitle = 'Artistas';
   static const String recentlyPlayedTitle = 'Tocados recentemente';
   static const String featuredAlbumsTitle = 'Álbuns em destaque';
   static const String popularPlaylistsTitle = 'Playlists populares';
   static const String genresTitle = 'Gêneros';
-  
-  // Navigation labels
   static const String homeLabel = 'Início';
   static const String searchLabel = 'Buscar';
   static const String libraryLabel = 'Biblioteca';
   static const String profileLabel = 'Perfil';
-  
-  // Player controls
   static const String playButton = 'Tocar';
   static const String pauseButton = 'Pausar';
   static const String nextButton = 'Próxima';

@@ -1,10 +1,7 @@
-// shared/widgets/music_components/promotional_banner.dart
 import 'package:flutter/material.dart';
 import '../../../design/layout_tokens.dart';
-
 class PromotionalBanner extends StatelessWidget {
   const PromotionalBanner({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -54,24 +51,22 @@ class PromotionalBanner extends StatelessWidget {
       ),
     );
   }
-
   IconData _getProductIcon(int index) {
     switch (index) {
       case 0:
-        return Icons.ac_unit; // Ventilador
+        return Icons.ac_unit; 
       case 1:
-        return Icons.cable; // Cabo USB
+        return Icons.cable; 
       case 2:
-        return Icons.battery_charging_full; // Carregador
+        return Icons.battery_charging_full; 
       case 3:
-        return Icons.diamond; // Brincos
+        return Icons.diamond; 
       case 4:
-        return Icons.shopping_bag; // Shopee
+        return Icons.shopping_bag; 
       default:
         return Icons.shopping_cart;
     }
   }
-
   String _getProductName(int index) {
     switch (index) {
       case 0:

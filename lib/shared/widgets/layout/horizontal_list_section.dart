@@ -1,14 +1,10 @@
-// shared/widgets/layout/horizontal_list_section.dart
 import 'package:flutter/material.dart';
 import '../../design/design_tokens.dart';
-
-/// Seção de lista horizontal reutilizável
 class HorizontalListSection extends StatelessWidget {
   final Widget child;
   final double? height;
   final EdgeInsets? padding;
   final EdgeInsets? itemSpacing;
-
   const HorizontalListSection({
     super.key,
     required this.child,
@@ -16,7 +12,6 @@ class HorizontalListSection extends StatelessWidget {
     this.padding,
     this.itemSpacing,
   });
-
   @override
   Widget build(BuildContext context) {
     return SizedBox(

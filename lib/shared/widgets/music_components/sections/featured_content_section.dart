@@ -1,11 +1,8 @@
-// shared/widgets/music_components/featured_content_section.dart
 import 'package:flutter/material.dart';
 import '../../../design/layout_tokens.dart';
 import '../../../design/app_colors.dart';
-
 class FeaturedContentSection extends StatelessWidget {
   const FeaturedContentSection({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -13,7 +10,6 @@ class FeaturedContentSection extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: LayoutTokens.paddingMD),
       child: Row(
         children: [
-          // Bloco pequeno com playlist
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -33,7 +29,6 @@ class FeaturedContentSection extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  // Imagem do artista
                   Expanded(
                     flex: 3,
                     child: Container(
@@ -49,7 +44,6 @@ class FeaturedContentSection extends StatelessWidget {
                       ),
                     ),
                   ),
-                  // Texto da playlist
                   Expanded(
                     flex: 1,
                     child: Padding(

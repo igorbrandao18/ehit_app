@@ -1,6 +1,3 @@
-// features/music_library/domain/entities/song.dart
-
-/// Entidade que representa uma música
 class Song {
   final String id;
   final String title;
@@ -13,7 +10,6 @@ class Song {
   final DateTime releaseDate;
   final int playCount;
   final String genre;
-
   const Song({
     required this.id,
     required this.title,
@@ -27,8 +23,6 @@ class Song {
     required this.playCount,
     required this.genre,
   });
-
-  /// Cria uma cópia da música com campos modificados
   Song copyWith({
     String? id,
     String? title,
@@ -56,16 +50,13 @@ class Song {
       genre: genre ?? this.genre,
     );
   }
-
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     return other is Song && other.id == id;
   }
-
   @override
   int get hashCode => id.hashCode;
-
   @override
   String toString() {
     return 'Song(id: $id, title: $title, artist: $artist, duration: $duration)';

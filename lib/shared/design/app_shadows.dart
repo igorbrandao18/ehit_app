@@ -1,20 +1,9 @@
-// shared/design/app_shadows.dart
-
 import 'package:flutter/material.dart';
 import 'design_tokens.dart';
 import 'app_colors.dart';
-
-/// Sistema de sombras centralizado
 class AppShadows {
-  // Private constructor to prevent instantiation
   AppShadows._();
-
-  // ============================================================================
-  // SHADOW DEFINITIONS
-  // ============================================================================
-  
   static const List<BoxShadow> shadowNone = [];
-  
   static const List<BoxShadow> shadowSM = [
     BoxShadow(
       color: AppColors.shadowLight,
@@ -22,7 +11,6 @@ class AppShadows {
       offset: Offset(0, 1),
     ),
   ];
-  
   static const List<BoxShadow> shadowMD = [
     BoxShadow(
       color: AppColors.shadowLight,
@@ -30,7 +18,6 @@ class AppShadows {
       offset: Offset(0, 2),
     ),
   ];
-  
   static const List<BoxShadow> shadowLG = [
     BoxShadow(
       color: AppColors.shadowMedium,
@@ -38,7 +25,6 @@ class AppShadows {
       offset: Offset(0, 4),
     ),
   ];
-  
   static const List<BoxShadow> shadowXL = [
     BoxShadow(
       color: AppColors.shadowMedium,
@@ -46,7 +32,6 @@ class AppShadows {
       offset: Offset(0, 8),
     ),
   ];
-  
   static const List<BoxShadow> shadowXXL = [
     BoxShadow(
       color: AppColors.shadowDark,
@@ -54,22 +39,12 @@ class AppShadows {
       offset: Offset(0, 12),
     ),
   ];
-
-  // ============================================================================
-  // COMPONENT-SPECIFIC SHADOWS
-  // ============================================================================
-  
   static const List<BoxShadow> cardShadow = shadowMD;
   static const List<BoxShadow> buttonShadow = shadowSM;
   static const List<BoxShadow> modalShadow = shadowXL;
   static const List<BoxShadow> playerShadow = shadowLG;
   static const List<BoxShadow> albumArtShadow = shadowLG;
   static const List<BoxShadow> floatingButtonShadow = shadowMD;
-
-  // ============================================================================
-  // MUSIC-SPECIFIC SHADOWS
-  // ============================================================================
-  
   static const List<BoxShadow> musicCardShadow = [
     BoxShadow(
       color: AppColors.shadowMedium,
@@ -77,7 +52,6 @@ class AppShadows {
       offset: Offset(0, 2),
     ),
   ];
-  
   static const List<BoxShadow> artistCardShadow = [
     BoxShadow(
       color: AppColors.shadowLight,
@@ -85,12 +59,6 @@ class AppShadows {
       offset: Offset(0, 2),
     ),
   ];
-
-  // ============================================================================
-  // UTILITY METHODS
-  // ============================================================================
-  
-  /// Get shadow with custom elevation
   static List<BoxShadow> getShadow(double elevation) {
     if (elevation <= 0) return shadowNone;
     if (elevation <= 2) return shadowSM;
@@ -99,11 +67,8 @@ class AppShadows {
     if (elevation <= 16) return shadowXL;
     return shadowXXL;
   }
-  
-  /// Get shadow with custom color
   static List<BoxShadow> getShadowWithColor(Color color, double elevation) {
     if (elevation <= 0) return shadowNone;
-    
     return [
       BoxShadow(
         color: color.withOpacity(0.1),
@@ -112,8 +77,6 @@ class AppShadows {
       ),
     ];
   }
-  
-  /// Get shadow for music components
   static List<BoxShadow> getMusicShadow({double elevation = 4}) {
     return [
       BoxShadow(
@@ -123,8 +86,6 @@ class AppShadows {
       ),
     ];
   }
-  
-  /// Get shadow for player components
   static List<BoxShadow> getPlayerShadow({double elevation = 8}) {
     return [
       BoxShadow(

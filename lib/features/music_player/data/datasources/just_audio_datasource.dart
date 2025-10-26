@@ -1,5 +1,3 @@
-// features/music_player/data/datasources/just_audio_datasource.dart
-
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
@@ -7,23 +5,17 @@ import '../../../../core/utils/result.dart';
 import '../../../../core/errors/failures.dart';
 import '../../../music_library/domain/entities/song.dart';
 import 'audio_player_datasource.dart';
-
-/// Implementação do data source usando just_audio
 class JustAudioDataSource implements AudioPlayerDataSource {
   final AudioPlayer _audioPlayer = AudioPlayer();
   bool _isInitialized = false;
-
   @override
   Future<Result<void>> initialize() async {
     try {
       if (_isInitialized) {
         return const Success(null);
       }
-      
-      // Simula inicialização do player
       await Future.delayed(const Duration(milliseconds: 100));
       _isInitialized = true;
-      
       return const Success(null);
     } catch (e) {
       return Error<void>(
@@ -31,7 +23,6 @@ class JustAudioDataSource implements AudioPlayerDataSource {
       );
     }
   }
-
   @override
   Future<Result<void>> dispose() async {
     try {
@@ -44,23 +35,18 @@ class JustAudioDataSource implements AudioPlayerDataSource {
       );
     }
   }
-
   @override
   Future<Result<void>> playSong(Song song) async {
     try {
       if (!_isInitialized) {
         await initialize();
       }
-      
-      // Simula reprodução se o plugin não estiver disponível
       if (kIsWeb || !await _isAudioPlayerAvailable()) {
         debugPrint('⚠️ Plugin de áudio não disponível, simulando reprodução...');
         return const Success(null);
       }
-      
       await _audioPlayer.setUrl(song.audioUrl);
       await _audioPlayer.play();
-      
       return const Success(null);
     } catch (e) {
       return Error<void>(
@@ -68,7 +54,6 @@ class JustAudioDataSource implements AudioPlayerDataSource {
       );
     }
   }
-
   @override
   Future<Result<void>> pause() async {
     try {
@@ -80,7 +65,6 @@ class JustAudioDataSource implements AudioPlayerDataSource {
       );
     }
   }
-
   @override
   Future<Result<void>> resume() async {
     try {
@@ -92,7 +76,6 @@ class JustAudioDataSource implements AudioPlayerDataSource {
       );
     }
   }
-
   @override
   Future<Result<void>> stop() async {
     try {
@@ -104,7 +87,6 @@ class JustAudioDataSource implements AudioPlayerDataSource {
       );
     }
   }
-
   @override
   Future<Result<void>> seekTo(Duration position) async {
     try {
@@ -116,7 +98,6 @@ class JustAudioDataSource implements AudioPlayerDataSource {
       );
     }
   }
-
   @override
   Future<Result<void>> setVolume(double volume) async {
     try {
@@ -128,7 +109,6 @@ class JustAudioDataSource implements AudioPlayerDataSource {
       );
     }
   }
-
   @override
   Future<Result<void>> setMuted(bool muted) async {
     try {
@@ -140,7 +120,6 @@ class JustAudioDataSource implements AudioPlayerDataSource {
       );
     }
   }
-
   @override
   Future<Result<Duration>> getCurrentPosition() async {
     try {
@@ -152,7 +131,6 @@ class JustAudioDataSource implements AudioPlayerDataSource {
       );
     }
   }
-
   @override
   Future<Result<Duration>> getCurrentDuration() async {
     try {
@@ -164,7 +142,6 @@ class JustAudioDataSource implements AudioPlayerDataSource {
       );
     }
   }
-
   @override
   Future<Result<bool>> isPlaying() async {
     try {
@@ -176,7 +153,6 @@ class JustAudioDataSource implements AudioPlayerDataSource {
       );
     }
   }
-
   @override
   Future<Result<bool>> isPaused() async {
     try {
@@ -188,7 +164,6 @@ class JustAudioDataSource implements AudioPlayerDataSource {
       );
     }
   }
-
   @override
   Future<Result<double>> getVolume() async {
     try {
@@ -200,7 +175,6 @@ class JustAudioDataSource implements AudioPlayerDataSource {
       );
     }
   }
-
   @override
   Future<Result<bool>> isMuted() async {
     try {
@@ -212,26 +186,20 @@ class JustAudioDataSource implements AudioPlayerDataSource {
       );
     }
   }
-
   @override
   Stream<bool> get playingStateStream {
     return _audioPlayer.playerStateStream.map((state) => state.playing);
   }
-
   @override
   Stream<Duration> get positionStream {
     return _audioPlayer.positionStream;
   }
-
   @override
   Stream<Duration?> get durationStream {
     return _audioPlayer.durationStream;
   }
-
-  /// Verifica se o plugin de áudio está disponível
   Future<bool> _isAudioPlayerAvailable() async {
     try {
-      // Tenta uma operação simples para verificar se o plugin funciona
       await _audioPlayer.setUrl('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
       return true;
     } catch (e) {

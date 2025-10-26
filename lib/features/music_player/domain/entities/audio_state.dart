@@ -1,9 +1,5 @@
-// features/music_player/domain/entities/audio_state.dart
-
 import 'package:equatable/equatable.dart';
 import '../../../music_library/domain/entities/song.dart';
-
-/// Estados possíveis do player de áudio
 enum AudioPlayerState {
   stopped,
   playing,
@@ -11,15 +7,11 @@ enum AudioPlayerState {
   buffering,
   error,
 }
-
-/// Estados de repetição
 enum RepeatMode {
   none,
   one,
   all,
 }
-
-/// Entidade que representa o estado atual do player de áudio
 class AudioState extends Equatable {
   final AudioPlayerState playerState;
   final Song? currentSong;
@@ -33,7 +25,6 @@ class AudioState extends Equatable {
   final int currentIndex;
   final String? errorMessage;
   final bool isOfflineMode;
-
   const AudioState({
     required this.playerState,
     this.currentSong,
@@ -48,8 +39,6 @@ class AudioState extends Equatable {
     this.errorMessage,
     required this.isOfflineMode,
   });
-
-  /// Estado inicial do player
   static const AudioState initial = AudioState(
     playerState: AudioPlayerState.stopped,
     position: Duration.zero,
@@ -62,8 +51,6 @@ class AudioState extends Equatable {
     currentIndex: 0,
     isOfflineMode: false,
   );
-
-  /// Cria uma cópia do estado com campos modificados
   AudioState copyWith({
     AudioPlayerState? playerState,
     Song? currentSong,
@@ -93,7 +80,6 @@ class AudioState extends Equatable {
       isOfflineMode: isOfflineMode ?? this.isOfflineMode,
     );
   }
-
   @override
   List<Object?> get props => [
         playerState,

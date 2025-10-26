@@ -1,4 +1,3 @@
-// shared/widgets/base_components/app_button.dart
 import 'package:flutter/material.dart';
 import '../../design/app_colors.dart';
 import '../../design/app_text_styles.dart';
@@ -6,10 +5,8 @@ import '../../design/design_tokens.dart';
 import '../../design/app_shadows.dart';
 import '../../design/app_borders.dart';
 import '../../design/app_animations.dart';
-
 enum AppButtonType { primary, secondary, outline, text }
 enum AppButtonSize { small, medium, large }
-
 class AppButton extends StatefulWidget {
   final String text;
   final VoidCallback? onPressed;
@@ -18,7 +15,6 @@ class AppButton extends StatefulWidget {
   final Widget? icon;
   final bool isLoading;
   final bool isFullWidth;
-
   const AppButton({
     super.key,
     required this.text,
@@ -29,16 +25,13 @@ class AppButton extends StatefulWidget {
     this.isLoading = false,
     this.isFullWidth = false,
   });
-
   @override
   State<AppButton> createState() => _AppButtonState();
 }
-
 class _AppButtonState extends State<AppButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
-
   @override
   void initState() {
     super.initState();
@@ -48,25 +41,20 @@ class _AppButtonState extends State<AppButton>
     );
     _scaleAnimation = AppAnimations.createScaleAnimation(_animationController);
   }
-
   @override
   void dispose() {
     _animationController.dispose();
     super.dispose();
   }
-
   void _onTapDown(TapDownDetails details) {
     _animationController.forward();
   }
-
   void _onTapUp(TapUpDetails details) {
     _animationController.reverse();
   }
-
   void _onTapCancel() {
     _animationController.reverse();
   }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -121,7 +109,6 @@ class _AppButtonState extends State<AppButton>
       ),
     );
   }
-
   double _getButtonHeight() {
     switch (widget.size) {
       case AppButtonSize.small:
@@ -132,12 +119,10 @@ class _AppButtonState extends State<AppButton>
         return 48;
     }
   }
-
   Color _getBackgroundColor() {
     if (widget.onPressed == null) {
       return AppColors.textTertiary;
     }
-    
     switch (widget.type) {
       case AppButtonType.primary:
         return AppColors.primaryRed;
@@ -148,7 +133,6 @@ class _AppButtonState extends State<AppButton>
         return Colors.transparent;
     }
   }
-
   Border? _getBorder() {
     switch (widget.type) {
       case AppButtonType.outline:
@@ -162,12 +146,10 @@ class _AppButtonState extends State<AppButton>
         return null;
     }
   }
-
   Color _getTextColor() {
     if (widget.onPressed == null) {
       return AppColors.textTertiary;
     }
-    
     switch (widget.type) {
       case AppButtonType.primary:
         return AppColors.textPrimary;
@@ -178,12 +160,10 @@ class _AppButtonState extends State<AppButton>
         return AppColors.primaryRed;
     }
   }
-
   TextStyle _getTextStyle() {
     final baseStyle = AppTextStyles.buttonText.copyWith(
       color: _getTextColor(),
     );
-    
     switch (widget.size) {
       case AppButtonSize.small:
         return baseStyle.copyWith(fontSize: 12);
