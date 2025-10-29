@@ -51,6 +51,7 @@ class DesignTokens {
   static const double paddingXL = spaceXL;
   static const double sectionSpacing = spaceLG;
   static const double sectionPadding = spaceMD;
+  static const double bannerBottomSpacing = 20.0;
   static const double cardPadding = spaceSM;
   static const double cardMargin = spaceXS;
   static const double playlistCardSize = musicCardWidth;

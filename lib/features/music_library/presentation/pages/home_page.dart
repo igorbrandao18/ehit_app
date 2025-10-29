@@ -29,6 +29,9 @@ class HomePage extends StatelessWidget {
                   child: BannerSection(),
                 ),
                 const SliverToBoxAdapter(
+                  child: SizedBox(height: DesignTokens.bannerBottomSpacing),
+                ),
+                const SliverToBoxAdapter(
                   child: PlayHitsPersonalizedSection(),
                 ),
                 const SliverToBoxAdapter(

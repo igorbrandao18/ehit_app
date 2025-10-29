@@ -4,6 +4,7 @@ class LayoutTokens {
   static const double sectionSpacing = DesignTokens.spaceLG;
   static const double sectionPadding = DesignTokens.spaceMD;
   static const double sectionMargin = DesignTokens.spaceSM;
+  static const double bannerBottomSpacing = DesignTokens.bannerBottomSpacing;
   static const double cardSpacing = DesignTokens.cardSpacing;
   static const double cardPadding = DesignTokens.cardPadding;
   static const double cardMargin = DesignTokens.cardMargin;

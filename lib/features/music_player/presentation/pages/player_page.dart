@@ -5,8 +5,17 @@ import '../../../../shared/design/app_colors.dart';
 import '../../../../shared/design/design_tokens.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
 import '../../../../core/audio/audio_player_service.dart';
-class PlayerPage extends StatelessWidget {
+
+class PlayerPage extends StatefulWidget {
   const PlayerPage({super.key});
+
+  @override
+  State<PlayerPage> createState() => _PlayerPageState();
+}
+
+class _PlayerPageState extends State<PlayerPage> {
+  bool _isDragging = false;
+  double _currentSliderValue = 0.0;
   String _formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
@@ -166,6 +175,18 @@ class PlayerPage extends StatelessWidget {
   Widget _buildProgressBar(BuildContext context, AudioPlayerService audioPlayer) {
     final progress = audioPlayer.progress;
     final remaining = audioPlayer.duration - audioPlayer.position;
+    
+    // Atualizar valor do slider apenas quando não estiver arrastando
+    if (!_isDragging) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_isDragging) {
+          setState(() {
+            _currentSliderValue = progress.clamp(0.0, 1.0);
+          });
+        }
+      });
+    }
+    
     return Column(
       children: [
         SliderTheme(
@@ -177,12 +198,21 @@ class PlayerPage extends StatelessWidget {
             overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
           ),
           child: Slider(
-            value: progress.clamp(0.0, 1.0),
+            value: _isDragging ? _currentSliderValue : progress.clamp(0.0, 1.0),
             onChanged: (value) {
+              setState(() {
+                _isDragging = true;
+                _currentSliderValue = value.clamp(0.0, 1.0);
+              });
+            },
+            onChangeEnd: (value) {
               final newPosition = Duration(
                 milliseconds: (value * audioPlayer.duration.inMilliseconds).round(),
               );
               audioPlayer.seek(newPosition);
+              setState(() {
+                _isDragging = false;
+              });
             },
           ),
         ),

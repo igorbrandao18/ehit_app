@@ -69,12 +69,24 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
       final coverUrl = musicData['cover'];
       debugPrint('🎵 Parsing música: ${musicData['title']}');
       debugPrint('🎵 Cover URL: $coverUrl');
+      
+      // Tratar duration que pode ser null, int ou string
+      String durationFormatted = '0:00';
+      final duration = musicData['duration'];
+      if (duration != null) {
+        if (duration is int) {
+          durationFormatted = _formatDuration(duration);
+        } else if (duration is String) {
+          durationFormatted = duration;
+        }
+      }
+      
       return SongModel(
         id: musicData['id'].toString(),
         title: musicData['title'],
         artist: musicData['artist_name'],
         album: musicData['album_data']?['title'] ?? 'Unknown Album',
-        duration: musicData['duration_formatted'],
+        duration: durationFormatted,
         imageUrl: coverUrl,
         audioUrl: musicData['file'],
         isExplicit: false, 
@@ -83,5 +95,11 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
         genre: musicData['genre_data']?['name'] ?? 'Unknown',
       );
     }).toList();
+  }
+  
+  String _formatDuration(int seconds) {
+    final minutes = seconds ~/ 60;
+    final secs = seconds % 60;
+    return '$minutes:${secs.toString().padLeft(2, '0')}';
   }
 }

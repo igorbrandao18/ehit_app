@@ -10,6 +10,7 @@ import 'features/music_player/presentation/controllers/music_player_controller.d
 import 'features/music_player/presentation/controllers/playlist_controller.dart';
 import 'features/music_library/presentation/controllers/music_library_controller.dart';
 import 'features/music_library/presentation/controllers/artists_controller.dart';
+import 'features/music_library/presentation/controllers/banner_controller.dart';
 import 'features/authentication/presentation/controllers/auth_controller.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 void main() async {
@@ -30,6 +31,7 @@ class EhitApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => di.sl<PlaylistController>()..initialize()),
         ChangeNotifierProvider(create: (_) => di.sl<MusicLibraryController>()..initialize()),
         ChangeNotifierProvider(create: (_) => di.sl<ArtistsController>()..initialize()),
+        ChangeNotifierProvider(create: (_) => di.sl<BannerController>()..initialize()),
       ],
       child: MaterialApp.router(
         title: 'ÊHIT',

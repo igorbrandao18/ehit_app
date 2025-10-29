@@ -30,13 +30,28 @@ if [ ! -f "pubspec.yaml" ]; then
     error "Execute este script na raiz do projeto Flutter"
 fi
 
-# Parâmetros
-VERSION=${1:-"1.0.13"}
-BUILD_NUMBER=${2:-"7"}
+# Ler versão atual do pubspec.yaml
+CURRENT_VERSION=$(grep "^version:" pubspec.yaml | sed -E 's/version: ([0-9]+\.[0-9]+\.[0-9]+)\+([0-9]+)/\1 \2/')
+CURRENT_VERSION_STRING=$(echo $CURRENT_VERSION | awk '{print $1}')
+CURRENT_BUILD=$(echo $CURRENT_VERSION | awk '{print $2}')
+
+# Incrementar automaticamente
+if [ "$1" = "" ] && [ "$2" = "" ]; then
+    # Extrair major.minor.patch
+    IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION_STRING"
+    # Incrementar patch
+    PATCH=$((PATCH + 1))
+    VERSION="$MAJOR.$MINOR.$PATCH"
+    BUILD_NUMBER=$((CURRENT_BUILD + 1))
+else
+    # Usar versões passadas como parâmetro
+    VERSION=${1:-"$CURRENT_VERSION_STRING"}
+    BUILD_NUMBER=${2:-"$CURRENT_BUILD"}
+fi
 
 log "Iniciando build iOS..."
-log "Versão: $VERSION"
-log "Build Number: $BUILD_NUMBER"
+log "Versão atual: $CURRENT_VERSION_STRING+$CURRENT_BUILD"
+log "Nova versão: $VERSION+$BUILD_NUMBER"
 
 # 1. Atualizar versão no pubspec.yaml
 log "Atualizando versão no pubspec.yaml..."
@@ -102,8 +117,37 @@ fi
 # 10. Voltar para diretório raiz
 cd ..
 
+# 11. Upload para TestFlight
+log "Fazendo upload para TestFlight..."
+UPLOAD_FILE=""
+if [ -f "ios/ehit_app.ipa" ]; then
+    UPLOAD_FILE="ios/ehit_app.ipa"
+elif [ -f "ios/Runner.ipa" ]; then
+    UPLOAD_FILE="ios/Runner.ipa"
+fi
+
+if [ -n "$UPLOAD_FILE" ]; then
+    log "📤 Enviando $UPLOAD_FILE para App Store Connect..."
+    
+    # Tentar upload via altool
+    if xcrun altool --upload-app \
+        --type ios \
+        --file "$UPLOAD_FILE" \
+        --username "brandaodeveloperapp@gmail.com" \
+        --password "hxtw-sqnv-lsee-grbp" 2>&1 | grep -q "No errors"; then
+        log "✅ Upload realizado com sucesso!"
+        log "🎉 O app está sendo processado e estará disponível no TestFlight em breve"
+    else
+        log "⚠️  Upload via altool falhou"
+        log "💡 Tentar via Transporter:"
+        log "1. Abra o app 'Transporter'"
+        log "2. Arraste o arquivo $UPLOAD_FILE"
+        log "3. Clique em 'Deliver'"
+    fi
+else
+    error "❌ Arquivo IPA não encontrado para upload"
+fi
+
 log "🎉 Build iOS finalizado!"
-log "Para fazer upload manual:"
-log "1. Abra o Transporter app"
-log "2. Arraste o arquivo ios/Runner.ipa"
-log "3. Clique em 'Deliver'"
+log "📱 Versão: $VERSION ($BUILD_NUMBER)"
+log "📦 Arquivo: $UPLOAD_FILE"
