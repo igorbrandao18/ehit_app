@@ -17,6 +17,7 @@ class _BannerSectionState extends State<BannerSection>
   late Animation<double> _fadeAnimation;
   int _currentIndex = 0;
   int _nextIndex = 1;
+  bool _autoSlideStarted = false;
 
   @override
   void initState() {
@@ -34,20 +35,10 @@ class _BannerSectionState extends State<BannerSection>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
-    
-    // Inicia o auto-slide após os banners carregarem
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final controller = Provider.of<BannerController>(context, listen: false);
-      if (controller.banners.length > 1) {
-        _startAutoSlide();
-      }
-    });
   }
 
-  void _startAutoSlide() {
-    final controller = Provider.of<BannerController>(context, listen: false);
-    
-    if (!mounted || controller.banners.length <= 1) return;
+  void _startAutoSlide(int bannersLength) {
+    if (!mounted || bannersLength <= 1) return;
     
     Future.delayed(const Duration(seconds: 3), () {
       if (!mounted) return;
@@ -57,11 +48,11 @@ class _BannerSectionState extends State<BannerSection>
         
         setState(() {
           _currentIndex = _nextIndex;
-          _nextIndex = (_nextIndex + 1) % controller.banners.length;
+          _nextIndex = (_nextIndex + 1) % bannersLength;
         });
         
         _animationController.reset();
-        _startAutoSlide();
+        _startAutoSlide(bannersLength);
       });
     });
   }
@@ -89,17 +80,29 @@ class _BannerSectionState extends State<BannerSection>
           return const SizedBox.shrink();
         }
         
-        // Atualizar índices se necessário
+        // Garante que os índices estão corretos
+        if (_currentIndex >= controller.banners.length) {
+          _currentIndex = 0;
+        }
         if (_nextIndex >= controller.banners.length) {
           _nextIndex = controller.banners.length > 1 ? 1 : 0;
+        }
+        
+        // Inicia o auto-slide quando os banners estiverem disponíveis (apenas uma vez)
+        if (controller.banners.length > 1 && !_autoSlideStarted) {
+          _autoSlideStarted = true;
+          _startAutoSlide(controller.banners.length);
         }
         
         return Container(
           height: 200,
           child: Stack(
             children: [
+              // Banner atual (sempre visível)
               _buildBannerCard(context, controller.banners[_currentIndex]),
-              if (controller.banners.length > 1 && _nextIndex < controller.banners.length)
+              
+              // Próximo banner (aparece por cima)
+              if (controller.banners.length > 1)
                 AnimatedBuilder(
                   animation: _fadeAnimation,
                   builder: (context, child) {

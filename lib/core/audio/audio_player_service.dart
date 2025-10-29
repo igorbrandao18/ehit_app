@@ -10,6 +10,7 @@ class AudioPlayerService extends ChangeNotifier {
   bool _isPlaying = false;
   Duration _position = Duration.zero;
   Duration _duration = Duration.zero;
+  Timer? _simulationTimer;
   Song? get currentSong => _currentSong;
   List<Song> get playlist => _playlist;
   int get currentIndex => _currentIndex;
@@ -107,6 +108,14 @@ class AudioPlayerService extends ChangeNotifier {
   }
   Future<void> next() async {
     if (_playlist.isEmpty) return;
+    // Se há apenas uma música na playlist, não há próxima música para tocar
+    if (_playlist.length == 1) {
+      debugPrint('⏭️ Única música na playlist, parando reprodução');
+      _isPlaying = false;
+      _position = _duration;
+      notifyListeners();
+      return;
+    }
     _currentIndex = (_currentIndex + 1) % _playlist.length;
     _currentSong = _playlist[_currentIndex];
     debugPrint('⏭️ Próxima música: ${_currentSong!.title}');
@@ -225,14 +234,18 @@ class AudioPlayerService extends ChangeNotifier {
     }
   }
   void _simulatePlayback() {
+    // Cancela o timer anterior se existir
+    _simulationTimer?.cancel();
+    
     _isPlaying = true;
     _position = Duration.zero;
     if (_duration == Duration.zero) {
       _duration = const Duration(minutes: 3, seconds: 30);
     }
-    Timer.periodic(const Duration(seconds: 1), (timer) {
+    _simulationTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!_isPlaying) {
         timer.cancel();
+        _simulationTimer = null;
         return;
       }
       _position += const Duration(seconds: 1);
@@ -240,6 +253,11 @@ class AudioPlayerService extends ChangeNotifier {
         _position = _duration;
         _isPlaying = false;
         timer.cancel();
+        _simulationTimer = null;
+        notifyListeners();
+        // Chama next() automaticamente quando a música terminar
+        next();
+        return;
       }
       notifyListeners();
     });
@@ -247,6 +265,7 @@ class AudioPlayerService extends ChangeNotifier {
   }
   @override
   void dispose() {
+    _simulationTimer?.cancel();
     _audioPlayer.dispose();
     super.dispose();
   }
