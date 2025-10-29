@@ -176,15 +176,12 @@ class _PlayerPageState extends State<PlayerPage> {
     final progress = audioPlayer.progress;
     final remaining = audioPlayer.duration - audioPlayer.position;
     
-    // Atualizar valor do slider apenas quando não estiver arrastando
+    final sliderValue = _isDragging ? _currentSliderValue : progress.clamp(0.0, 1.0);
+    
+    // Log apenas quando value muda significativamente
     if (!_isDragging) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && !_isDragging) {
-          setState(() {
-            _currentSliderValue = progress.clamp(0.0, 1.0);
-          });
-        }
-      });
+      final currentSeconds = (sliderValue * audioPlayer.duration.inMilliseconds / 1000).round();
+      debugPrint('🎚️ Progress: ${audioPlayer.position.inSeconds}s / ${audioPlayer.duration.inSeconds}s = $sliderValue');
     }
     
     return Column(
@@ -198,21 +195,25 @@ class _PlayerPageState extends State<PlayerPage> {
             overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
           ),
           child: Slider(
-            value: _isDragging ? _currentSliderValue : progress.clamp(0.0, 1.0),
+            value: sliderValue,
             onChanged: (value) {
+              debugPrint('🎚️ Slider onChanged: $value, isDragging: $_isDragging');
               setState(() {
                 _isDragging = true;
                 _currentSliderValue = value.clamp(0.0, 1.0);
               });
             },
-            onChangeEnd: (value) {
+            onChangeEnd: (value) async {
               final newPosition = Duration(
                 milliseconds: (value * audioPlayer.duration.inMilliseconds).round(),
               );
-              audioPlayer.seek(newPosition);
-              setState(() {
-                _isDragging = false;
-              });
+              debugPrint('🎚️ Slider onChangeEnd: ${newPosition.inSeconds}s');
+              await audioPlayer.seek(newPosition);
+              if (mounted) {
+                setState(() {
+                  _isDragging = false;
+                });
+              }
             },
           ),
         ),

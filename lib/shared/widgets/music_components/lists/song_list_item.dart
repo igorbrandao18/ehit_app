@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:go_router/go_router.dart';
 import '../../../../features/music_library/domain/entities/song.dart';
 import '../../../../features/music_player/presentation/controllers/music_player_controller.dart';
 import '../../../design/design_tokens.dart';
@@ -118,19 +117,16 @@ class SongListItem extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         SizedBox(height: isMobile ? spacing * DesignTokens.mobileSpacingSmallMultiplier : spacing * 0.4),
-        GestureDetector(
-          onTap: () => _navigateToArtist(context, song.artist),
-          child: Text(
-            song.artist,
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: isMobile ? (fontSize - DesignTokens.fontSizeAdjustmentMedium) : (fontSize - DesignTokens.fontSizeAdjustmentSmall),
-              fontWeight: FontWeight.w400,
-              height: DesignTokens.lineHeightTight,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+        Text(
+          song.artist,
+          style: TextStyle(
+            color: Colors.white70,
+            fontSize: isMobile ? (fontSize - DesignTokens.fontSizeAdjustmentMedium) : (fontSize - DesignTokens.fontSizeAdjustmentSmall),
+            fontWeight: FontWeight.w400,
+            height: DesignTokens.lineHeightTight,
           ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
         if (isTablet || ResponsiveUtils.getDeviceType(context) == DeviceType.desktop) ...[
           SizedBox(height: spacing * 0.2),
@@ -193,15 +189,6 @@ class SongListItem extends StatelessWidget {
         content: Text('Download de "${song.title}" iniciado'),
         duration: const Duration(seconds: 2),
       ),
-    );
-  }
-  void _navigateToArtist(BuildContext context, String artistName) {
-    debugPrint('🎤 Navegando para artista: $artistName');
-    final artistId = artistName.hashCode.abs().toString();
-    context.pushNamed(
-      'artist-detail',
-      pathParameters: {'artistId': artistId},
-      extra: artistName,
     );
   }
 }
