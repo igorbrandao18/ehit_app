@@ -4,6 +4,7 @@ import '../../../../features/music_library/domain/entities/song.dart';
 import '../../../../features/music_player/presentation/controllers/music_player_controller.dart';
 import '../../../../features/music_library/presentation/controllers/downloaded_songs_controller.dart';
 import '../../../../core/audio/offline_audio_service.dart';
+import '../../../../core/audio/audio_player_service.dart';
 import '../../../../core/storage/downloaded_songs_storage.dart';
 import '../../../../core/utils/result.dart';
 import '../../../../core/injection/injection_container.dart' as di;
@@ -224,8 +225,31 @@ class SongListItem extends StatelessWidget {
     
     result.when(
       success: (_) async {
-        // Salvar o objeto completo da música baixada
-        await downloadedStorage.addDownloadedSong(song);
+        // Obter a duração real da música usando o mesmo método do player
+        Song songToSave = song;
+        try {
+          final audioPlayerService = di.sl<AudioPlayerService>();
+          final realDuration = await audioPlayerService.getSongDuration(song.audioUrl);
+          
+          if (realDuration != null) {
+            // Formatar a duração para o formato MM:SS
+            final minutes = realDuration.inMinutes;
+            final seconds = realDuration.inSeconds % 60;
+            final formattedDuration = '$minutes:${seconds.toString().padLeft(2, '0')}';
+            
+            debugPrint('✅ Duração real obtida para "${song.title}": $formattedDuration');
+            
+            // Criar uma cópia da música com a duração correta
+            songToSave = song.copyWith(duration: formattedDuration);
+          } else {
+            debugPrint('⚠️ Não foi possível obter duração real para "${song.title}", usando duração original: ${song.duration}');
+          }
+        } catch (e) {
+          debugPrint('❌ Erro ao obter duração real: $e, usando duração original: ${song.duration}');
+        }
+        
+        // Salvar o objeto completo da música baixada (com duração correta se disponível)
+        await downloadedStorage.addDownloadedSong(songToSave);
         
         // Notificar o controller para recarregar
         try {

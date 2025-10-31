@@ -59,4 +59,3 @@ class EhitApp extends StatelessWidget {
     );
   }
 }
- 

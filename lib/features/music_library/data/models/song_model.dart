@@ -49,12 +49,19 @@ class SongModel extends Song {
     );
   }
   factory SongModel.fromMap(Map<String, dynamic> map) {
+    // Tratar duration que pode ser null ou string vazia
+    String duration = '0:00';
+    final durationValue = map['duration'];
+    if (durationValue != null && durationValue.toString().isNotEmpty) {
+      duration = durationValue.toString();
+    }
+    
     return SongModel(
       id: map['id'] as String,
       title: map['title'] as String,
       artist: map['artist'] as String,
       album: map['album'] as String,
-      duration: map['duration'] as String,
+      duration: duration,
       imageUrl: map['imageUrl'] as String,
       audioUrl: map['audioUrl'] as String,
       isExplicit: map['isExplicit'] as bool? ?? false,

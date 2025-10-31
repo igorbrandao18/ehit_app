@@ -52,13 +52,23 @@ class DownloadedSongsStorage {
     try {
       await _ensureInitialized();
       
+      // Debug: verificar se a duração está presente antes de salvar
+      if (song.duration.isEmpty || song.duration == '0:00') {
+        debugPrint('⚠️ ATENÇÃO: Duração vazia/inválida ao salvar: ${song.title} - valor: "${song.duration}"');
+      }
+      
       final songModel = SongModel.fromEntity(song);
       final songMap = songModel.toMap();
+      
+      // Verificar se duration está no map
+      if (!songMap.containsKey('duration') || songMap['duration'] == null || songMap['duration'].toString().isEmpty) {
+        debugPrint('⚠️ ATENÇÃO: Duração ausente no map ao salvar: ${song.title}');
+      }
       
       // Usar o ID da música como chave no Hive
       await _box!.put(song.id, songMap);
       
-      debugPrint('✅ Música ${song.id} (${song.title}) salva no Hive');
+      debugPrint('✅ Música ${song.id} (${song.title}) salva no Hive - Duração: ${song.duration}');
     } catch (e) {
       debugPrint('❌ Erro ao salvar música baixada: $e');
     }
@@ -83,9 +93,15 @@ class DownloadedSongsStorage {
       final songs = _box!.values
           .map((songMap) {
             try {
-              return SongModel.fromMap(Map<String, dynamic>.from(songMap)).toEntity();
+              final map = Map<String, dynamic>.from(songMap);
+              // Debug: verificar se duration está presente no map
+              if (!map.containsKey('duration') || map['duration'] == null || map['duration'].toString().isEmpty) {
+                debugPrint('⚠️ Duração ausente no Hive para música: ${map['title']} (ID: ${map['id']})');
+              }
+              return SongModel.fromMap(map).toEntity();
             } catch (e) {
               debugPrint('❌ Erro ao deserializar música do Hive: $e');
+              debugPrint('   Dados: $songMap');
               return null;
             }
           })
