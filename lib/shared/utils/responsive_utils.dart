@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../design/design_tokens.dart';
 class ResponsiveUtils {
   static const double mobileBreakpoint = 600;
   static const double tabletBreakpoint = 1024;
@@ -109,6 +110,22 @@ class ResponsiveUtils {
   }
   static bool isDesktop(BuildContext context) {
     return getDeviceType(context) == DeviceType.desktop;
+  }
+  
+  // Album card dimensions
+  static double getAlbumCardWidth(BuildContext context) {
+    final padding = getResponsivePadding(context);
+    final spacing = getResponsiveSpacing(context);
+    final screenWidth = getScreenWidth(context);
+    // Calcula o tamanho do card para grid 2x2
+    // (largura da tela - padding horizontal - espaçamento entre cards) / 2
+    return (screenWidth - (padding.horizontal * 2) - spacing) / 2;
+  }
+  
+  static double getAlbumCardHeight(BuildContext context) {
+    final cardWidth = getAlbumCardWidth(context);
+    // Altura = largura (quadrado) - apenas a capa, sem texto
+    return cardWidth;
   }
 }
 enum DeviceType {

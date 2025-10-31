@@ -6,6 +6,7 @@ import '../../features/music_library/data/datasources/music_remote_datasource.da
 import '../../features/music_library/data/datasources/music_local_datasource.dart';
 import '../../features/music_library/data/datasources/artist_remote_datasource.dart';
 import '../../features/music_library/data/datasources/banner_remote_datasource.dart';
+import '../../features/music_library/data/datasources/album_remote_datasource.dart';
 import '../../features/music_player/data/datasources/playlist_remote_datasource.dart';
 import '../../features/music_player/data/datasources/playlist_local_datasource.dart';
 import '../../features/music_player/data/datasources/just_audio_datasource.dart';
@@ -15,10 +16,12 @@ import '../../features/authentication/data/datasources/auth_local_datasource.dar
 import '../../features/music_library/data/repositories/music_repository_impl.dart' as music_lib_impl;
 import '../../features/music_library/data/repositories/artist_repository_impl.dart';
 import '../../features/music_library/data/repositories/banner_repository_impl.dart';
+import '../../features/music_library/data/repositories/album_repository_impl.dart';
 import '../../features/music_library/domain/repositories/playlist_repository.dart' as music_lib;
 import '../../features/music_library/domain/repositories/music_repository.dart';
 import '../../features/music_library/domain/repositories/artist_repository.dart' as artist_repo;
 import '../../features/music_library/domain/repositories/banner_repository.dart';
+import '../../features/music_library/domain/repositories/album_repository.dart' as album_repo;
 import '../../features/music_player/data/repositories/playlist_repository_impl.dart';
 import '../../features/music_player/domain/repositories/playlist_repository.dart' as playlist_repo;
 import '../../features/music_player/data/repositories/audio_player_repository_impl.dart';
@@ -29,6 +32,8 @@ import '../../features/music_library/domain/usecases/get_playlists_usecase.dart'
 import '../../features/music_library/domain/usecases/get_artists_usecase.dart';
 import '../../features/music_library/domain/usecases/get_songs_usecase.dart';
 import '../../features/music_library/domain/usecases/get_banners_usecase.dart';
+import '../../features/music_library/domain/usecases/get_albums_by_artist_usecase.dart';
+import '../../features/music_library/domain/usecases/get_songs_by_album_usecase.dart';
 import '../../features/music_player/domain/usecases/playlist_usecases.dart';
 import '../../features/music_player/domain/usecases/play_song_usecase.dart';
 import '../../features/music_player/domain/usecases/play_queue_usecase.dart';
@@ -36,6 +41,7 @@ import '../../features/music_player/domain/usecases/audio_player_usecases.dart';
 import '../../features/authentication/domain/usecases/auth_usecases.dart';
 import '../../features/music_library/presentation/controllers/music_library_controller.dart';
 import '../../features/music_library/presentation/controllers/artist_detail_controller.dart';
+import '../../features/music_library/presentation/controllers/album_detail_controller.dart';
 import '../../features/music_library/presentation/controllers/artists_controller.dart';
 import '../../features/music_library/presentation/controllers/banner_controller.dart';
 import '../../features/music_player/presentation/controllers/music_player_controller.dart';
@@ -70,6 +76,9 @@ Future<void> init() async {
   sl.registerLazySingleton<BannerRemoteDataSource>(
     () => BannerRemoteDataSourceImpl(sl<Dio>()),
   );
+  sl.registerLazySingleton<AlbumRemoteDataSource>(
+    () => AlbumRemoteDataSourceImpl(sl<Dio>()),
+  );
   sl.registerLazySingleton<PlaylistRemoteDataSource>(
     () => PlaylistRemoteDataSourceImpl(sl<Dio>()),
   );
@@ -97,6 +106,9 @@ Future<void> init() async {
   sl.registerLazySingleton<BannerRepository>(
     () => BannerRepositoryImpl(sl<BannerRemoteDataSource>()),
   );
+  sl.registerLazySingleton<album_repo.AlbumRepository>(
+    () => AlbumRepositoryImpl(sl<AlbumRemoteDataSource>()),
+  );
   sl.registerLazySingleton<playlist_repo.PlaylistRepository>(
     () => PlaylistRepositoryImpl(
       remoteDataSource: sl<PlaylistRemoteDataSource>(),
@@ -116,6 +128,8 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetArtistsUseCase(sl<artist_repo.ArtistRepository>()));
   sl.registerLazySingleton(() => GetSongsUseCase(sl<MusicRepository>()));
   sl.registerLazySingleton(() => GetBannersUseCase(sl<BannerRepository>()));
+  sl.registerLazySingleton(() => GetAlbumsByArtistUseCase(sl<album_repo.AlbumRepository>()));
+  sl.registerLazySingleton(() => GetSongsByAlbumUseCase(sl<album_repo.AlbumRepository>()));
   sl.registerLazySingleton(() => GetUserPlaylistsUseCase(sl<playlist_repo.PlaylistRepository>()));
   sl.registerLazySingleton(() => GetPlaylistByIdUseCase(sl<playlist_repo.PlaylistRepository>()));
   sl.registerLazySingleton(() => GetPublicPlaylistsUseCase(sl<playlist_repo.PlaylistRepository>()));
@@ -158,7 +172,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ArtistsController(sl<GetArtistsUseCase>()));
   sl.registerLazySingleton(() => ArtistDetailController(
     getArtistsUseCase: sl<GetArtistsUseCase>(),
-    getSongsUseCase: sl<GetSongsUseCase>(),
+    getAlbumsByArtistUseCase: sl<GetAlbumsByArtistUseCase>(),
   ));
   sl.registerLazySingleton(() => BannerController(
     getBannersUseCase: sl<GetBannersUseCase>(),

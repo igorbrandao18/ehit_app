@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../features/music_library/presentation/pages/home_page.dart';
-import '../../features/music_library/presentation/pages/category_detail_page.dart';
 import '../../features/music_library/presentation/pages/artist_detail_page.dart';
+import '../../features/music_library/presentation/pages/album_detail_page.dart';
+import '../../features/music_library/presentation/pages/category_detail_page.dart';
 import '../../features/music_library/presentation/pages/playlist_detail_page.dart';
 import '../../features/music_library/presentation/controllers/music_library_controller.dart';
 import '../../features/music_player/presentation/pages/player_page.dart';
@@ -66,7 +67,11 @@ class AppRouter {
         name: 'album-detail',
         builder: (context, state) {
           final albumId = state.pathParameters['albumId']!;
-          return AlbumDetailPage(albumId: albumId);
+          final album = state.extra;
+          return AlbumDetailPage(
+            albumId: albumId,
+            album: album,
+          );
         },
       ),
       GoRoute(
@@ -180,23 +185,6 @@ class MorePage extends StatelessWidget {
       ),
       body: const Center(
         child: Text('Página Mais'),
-      ),
-    );
-  }
-}
-class AlbumDetailPage extends StatelessWidget {
-  final String albumId;
-  const AlbumDetailPage({super.key, required this.albumId});
-  @override
-  Widget build(BuildContext context) {
-    return GradientScaffold(
-      appBar: AppBar(
-        title: Text('Álbum: $albumId'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: Center(
-        child: Text('Detalhes do Álbum: $albumId'),
       ),
     );
   }

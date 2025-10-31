@@ -97,8 +97,11 @@ class DesignTokens {
   static const double artistHeroFontSizeRatio = 0.045;
   static const double artistHeroShadowBlur = 12.0;
   static const double artistHeroShadowOffset = 6.0;
-  static const double albumArtSize = 160.0; 
-  static const double playlistCoverSizeRatio = 1.0; 
+  static const double albumArtSize = 160.0;
+  static const double playlistCoverSizeRatio = 1.0;
+  // Album list dimensions
+  static const double albumsListOffset = -100.0; // Offset para subir a listagem de álbuns
+  static const double albumCardTextHeight = 60.0; // Altura adicional para texto do card de álbum 
   static const double titleFontSize = fontSizeXL;
   static const double subtitleFontSize = fontSizeLG;
   static const double bodyFontSize = fontSizeMD;

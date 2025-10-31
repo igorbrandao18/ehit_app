@@ -17,7 +17,7 @@ class ArtistHeroSection extends StatelessWidget {
       ),
       child: Column(
         children: [
-          SizedBox(height: DesignTokens.spaceXL), 
+          SizedBox(height: DesignTokens.spaceXL), // Alinha com PlayHITS
           _buildAlbumArt(),
           SizedBox(height: DesignTokens.spaceLG),
           _buildAlbumTitle(),

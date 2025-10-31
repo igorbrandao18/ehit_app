@@ -1,26 +1,26 @@
 import 'package:flutter/foundation.dart';
 import '../../domain/entities/artist.dart';
-import '../../domain/entities/song.dart';
+import '../../domain/entities/album.dart';
 import '../../domain/usecases/get_artists_usecase.dart';
-import '../../domain/usecases/get_songs_usecase.dart';
+import '../../domain/usecases/get_albums_by_artist_usecase.dart';
 import '../../../../core/utils/result.dart';
 class ArtistDetailController extends ChangeNotifier {
   final GetArtistsUseCase _getArtistsUseCase;
-  final GetSongsUseCase _getSongsUseCase;
+  final GetAlbumsByArtistUseCase _getAlbumsByArtistUseCase;
   bool _isLoading = true;
   String? _error;
   Artist? _artist;
-  List<Song> _songs = [];
+  List<Album> _albums = [];
   ArtistDetailController({
     required GetArtistsUseCase getArtistsUseCase,
-    required GetSongsUseCase getSongsUseCase,
+    required GetAlbumsByArtistUseCase getAlbumsByArtistUseCase,
   }) : _getArtistsUseCase = getArtistsUseCase,
-       _getSongsUseCase = getSongsUseCase;
+       _getAlbumsByArtistUseCase = getAlbumsByArtistUseCase;
   bool get isLoading => _isLoading;
   String? get error => _error;
   Artist? get artist => _artist;
-  List<Song> get songs => _songs;
-  bool get hasData => _artist != null && _songs.isNotEmpty;
+  List<Album> get albums => _albums;
+  bool get hasData => _artist != null && _albums.isNotEmpty;
   Future<void> loadArtistData(String artistId) async {
     try {
       _isLoading = true;
@@ -43,15 +43,15 @@ class ArtistDetailController extends ChangeNotifier {
         },
       );
       if (_artist != null) {
-        final songsResult = await _getSongsUseCase();
-        songsResult.when(
-          success: (songs) {
-            _songs = songs.where((s) => s.artist == _artist!.name).toList();
-            debugPrint('ArtistDetailController: Songs loaded: ${_songs.length} songs');
+        final albumsResult = await _getAlbumsByArtistUseCase(_artist!.id);
+        albumsResult.when(
+          success: (albums) {
+            _albums = albums;
+            debugPrint('ArtistDetailController: Albums loaded: ${_albums.length} albums');
           },
           error: (message, code) {
-            _error = 'Erro ao carregar músicas: $message';
-            debugPrint('ArtistDetailController: Error loading songs: $message');
+            _error = 'Erro ao carregar álbuns: $message';
+            debugPrint('ArtistDetailController: Error loading albums: $message');
           },
         );
       }
@@ -62,15 +62,6 @@ class ArtistDetailController extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
-  }
-  void playSong(Song song) {
-    debugPrint('Reproduzindo: ${song.title} - ${song.artist}');
-  }
-  void shufflePlay() {
-    debugPrint('Reproduzindo músicas em ordem aleatória');
-  }
-  void repeatPlay() {
-    debugPrint('Reproduzindo músicas em loop');
   }
   @override
   void dispose() {

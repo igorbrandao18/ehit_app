@@ -5,11 +5,10 @@ import '../../../../shared/design/design_tokens.dart';
 import '../../../../shared/design/app_colors.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
 import '../../../../shared/widgets/music_components/sections/artist_hero_section.dart';
-import '../../../../shared/widgets/music_components/lists/songs_list_section.dart';
-import '../../../../core/audio/audio_player_service.dart';
+import '../../../../shared/widgets/music_components/lists/albums_list_section.dart';
 import '../../../../core/injection/injection_container.dart' as di;
 import '../controllers/artist_detail_controller.dart';
-import '../../domain/entities/song.dart';
+import '../../domain/entities/album.dart';
 class ArtistDetailPage extends StatefulWidget {
   final String artistId;
   const ArtistDetailPage({
@@ -26,7 +25,7 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
     super.initState();
     _controller = ArtistDetailController(
       getArtistsUseCase: di.sl(),
-      getSongsUseCase: di.sl(),
+      getAlbumsByArtistUseCase: di.sl(),
     );
     _loadArtistData();
   }
@@ -144,53 +143,27 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
     );
   }
   Widget _buildContent(ArtistDetailController controller) {
-    return Column(
-      children: [
-        ArtistHeroSection(
-          artist: controller.artist!,
-        ),
-        Expanded(
-          child: SongsListSection(
-            songs: controller.songs,
-            artistName: controller.artist!.name,
-            onSongTap: (song) => _onSongTap(song),
-            onShuffleTap: () => _onShuffleTap(),
-            onRepeatTap: () => _onRepeatTap(),
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(height: MediaQuery.of(context).padding.top + DesignTokens.spaceMD), // Alinha com PlayHITS
+          ArtistHeroSection(
+            artist: controller.artist!,
           ),
-        ),
-      ],
+          AlbumsListSection(
+            albums: controller.albums,
+            onAlbumTap: (album) => _onAlbumTap(album),
+          ),
+        ],
+      ),
     );
   }
-  void _onSongTap(Song song) {
-    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
-    final songs = _controller.songs;
-    final songIndex = songs.indexWhere((s) => s.id == song.id);
-    if (songIndex >= 0) {
-      audioPlayer.playPlaylist(songs, startIndex: songIndex);
-      debugPrint('🎵 Tocando artista: ${_controller.artist!.name}');
-      debugPrint('🎵 Música atual: ${song.title} - ${song.artist}');
-    } else {
-      audioPlayer.playSong(song);
-    }
-    context.pushNamed('player');
-  }
-  void _onShuffleTap() {
-    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
-    final songs = _controller.songs;
-    if (songs.isNotEmpty) {
-      final shuffledSongs = List<Song>.from(songs)..shuffle();
-      audioPlayer.playPlaylist(shuffledSongs, startIndex: 0);
-      debugPrint('🔀 Shuffle play: ${songs.length} músicas do artista ${_controller.artist!.name}');
-      context.pushNamed('player');
-    }
-  }
-  void _onRepeatTap() {
-    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
-    final songs = _controller.songs;
-    if (songs.isNotEmpty) {
-      audioPlayer.playPlaylist(songs, startIndex: 0);
-      debugPrint('🔁 Repeat play: ${songs.length} músicas do artista ${_controller.artist!.name}');
-      context.pushNamed('player');
-    }
+
+  void _onAlbumTap(Album album) {
+    context.pushNamed(
+      'album-detail',
+      pathParameters: {'albumId': album.id.toString()},
+      extra: album,
+    );
   }
 }

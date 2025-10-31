@@ -28,85 +28,37 @@ class AlbumCard extends StatelessWidget {
       child: Container(
         width: cardWidth,
         height: cardHeight,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(spacing),
-                child: Image.network(
-                  imageUrl,
-                  width: cardWidth,
-                  height: double.infinity,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: cardWidth,
-                      height: double.infinity,
-                      color: AppColors.backgroundCard,
-                      child: Icon(
-                        Icons.album,
-                        color: AppColors.textTertiary,
-                        size: iconSize * 2,
-                      ),
-                    );
-                  },
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(spacing),
+          child: Image.network(
+            imageUrl,
+            width: cardWidth,
+            height: cardHeight,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                width: cardWidth,
+                height: cardHeight,
+                color: AppColors.backgroundCard,
+                child: Icon(
+                  Icons.album,
+                  color: AppColors.textTertiary,
+                  size: iconSize * 2,
                 ),
-              ),
-            ),
-            SizedBox(height: spacing),
-            Container(
-              height: _getResponsiveTextHeight(deviceType),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: AppTextStyles.bodyMedium.copyWith(
-                      fontWeight: FontWeight.w600,
-                      fontSize: fontSize,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  SizedBox(height: spacing / 2),
-                  Text(
-                    artist,
-                    style: AppTextStyles.bodySmall.copyWith(
-                      fontSize: fontSize - 2,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-          ],
+              );
+            },
+          ),
         ),
       ),
     );
   }
   double _getResponsiveCardWidth(DeviceType deviceType) {
-    switch (deviceType) {
-      case DeviceType.mobile:
-        return 160.0; 
-      case DeviceType.tablet:
-        return 180.0; 
-      case DeviceType.desktop:
-        return 200.0; 
-    }
+    // Tamanho será calculado via MediaQuery no componente pai
+    return double.infinity; // Usa toda a largura disponível
   }
   double _getResponsiveCardHeight(DeviceType deviceType) {
-    switch (deviceType) {
-      case DeviceType.mobile:
-        return 220.0; 
-      case DeviceType.tablet:
-        return 260.0; 
-      case DeviceType.desktop:
-        return 300.0; 
-    }
+    // Altura será calculada no componente pai
+    return double.infinity; // Usa toda a altura disponível
   }
   double _getResponsiveTextHeight(DeviceType deviceType) {
     switch (deviceType) {
