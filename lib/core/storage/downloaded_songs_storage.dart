@@ -12,8 +12,31 @@ class DownloadedSongsStorage {
 
   /// Inicializa o box do Hive
   Future<void> init() async {
-    if (_box == null || !_box!.isOpen) {
+    try {
+      // Verificar se já existe um box aberto com esse nome
+      if (Hive.isBoxOpen(_boxName)) {
+        _box = Hive.box(_boxName);
+        return;
+      }
+      
+      // Tentar abrir o box (o Hive deve estar inicializado no main.dart)
       _box = await Hive.openBox(_boxName);
+    } catch (e) {
+      debugPrint('❌ Erro ao inicializar box do Hive: $e');
+      // Se falhar, pode ser que o Hive não esteja inicializado (durante hot reload)
+      // Tentar inicializar e abrir novamente
+      try {
+        // Verificar se precisa inicializar
+        try {
+          await Hive.initFlutter();
+        } catch (_) {
+          // Já inicializado, continuar
+        }
+        _box = await Hive.openBox(_boxName);
+      } catch (e2) {
+        debugPrint('❌ Erro ao reinicializar Hive: $e2');
+        rethrow;
+      }
     }
   }
 

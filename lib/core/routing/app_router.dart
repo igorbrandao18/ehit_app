@@ -8,13 +8,17 @@ import '../../features/music_library/presentation/pages/category_detail_page.dar
 import '../../features/music_library/presentation/pages/playlist_detail_page.dart';
 import '../../features/music_player/presentation/pages/player_page.dart';
 import '../../features/music_library/presentation/controllers/downloaded_songs_controller.dart';
+import '../../features/music_library/domain/entities/song.dart';
 import '../../core/audio/audio_player_service.dart';
 import '../../core/injection/injection_container.dart' as di;
 import '../../shared/widgets/layout/app_shell.dart';
 import '../../shared/widgets/layout/app_layout.dart';
 import '../../shared/widgets/layout/app_header.dart';
 import '../../shared/widgets/music_components/lists/song_list_item.dart';
+import '../../shared/widgets/music_components/sections/offline_songs_header.dart';
+import '../../shared/widgets/music_components/cards/offline_song_card.dart';
 import '../../shared/design/app_colors.dart';
+import '../../shared/design/design_tokens.dart';
 import 'app_routes.dart';
 
 class AppRouter {
@@ -275,26 +279,75 @@ class _LibraryPageState extends State<LibraryPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.music_off,
-                      color: Colors.white70,
-                      size: 64,
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Nenhuma música baixada',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                    Container(
+                      padding: const EdgeInsets.all(32),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryRed.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.download_outlined,
+                        color: AppColors.primaryRed.withOpacity(0.6),
+                        size: 80,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: DesignTokens.spaceLG),
                     const Text(
-                      'Baixe músicas para ouvir offline',
+                      'Nenhuma música offline',
                       style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: DesignTokens.spaceSM),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: DesignTokens.spaceXL,
+                      ),
+                      child: Text(
+                        'Baixe suas músicas favoritas para ouvir mesmo sem internet',
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.6),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(height: DesignTokens.spaceXL),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: DesignTokens.spaceLG,
+                        vertical: DesignTokens.spaceSM,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.primaryRed,
+                            AppColors.primaryRed.withOpacity(0.8),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(DesignTokens.radiusLG),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.info_outline,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                          const SizedBox(width: DesignTokens.spaceXS),
+                          const Text(
+                            'Toque no ícone de download para baixar',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -305,27 +358,73 @@ class _LibraryPageState extends State<LibraryPage> {
             return RefreshIndicator(
               onRefresh: () => controller.loadDownloadedSongs(),
               color: AppColors.primaryRed,
-              child: ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: controller.downloadedSongs.length,
-                itemBuilder: (context, index) {
-                  final song = controller.downloadedSongs[index];
-                  return SongListItem(
-                    song: song,
-                    index: index,
-                    onTap: () {
-                      final audioPlayer = Provider.of<AudioPlayerService>(
-                        context,
-                        listen: false,
-                      );
-                      audioPlayer.playPlaylist(
-                        controller.downloadedSongs,
-                        startIndex: index,
-                      );
-                      context.pushNamed('player');
-                    },
-                  );
-                },
+              child: CustomScrollView(
+                slivers: [
+                  // Header impressionante
+                  SliverToBoxAdapter(
+                    child: OfflineSongsHeader(
+                      totalSongs: controller.songsCount,
+                      onShufflePlay: () {
+                        final audioPlayer = Provider.of<AudioPlayerService>(
+                          context,
+                          listen: false,
+                        );
+                        final shuffled = List<Song>.from(controller.downloadedSongs)..shuffle();
+                        if (shuffled.isNotEmpty) {
+                          audioPlayer.playPlaylist(shuffled, startIndex: 0);
+                          context.pushNamed('player');
+                        }
+                      },
+                      onPlayAll: () {
+                        final audioPlayer = Provider.of<AudioPlayerService>(
+                          context,
+                          listen: false,
+                        );
+                        if (controller.downloadedSongs.isNotEmpty) {
+                          audioPlayer.playPlaylist(
+                            controller.downloadedSongs,
+                            startIndex: 0,
+                          );
+                          context.pushNamed('player');
+                        }
+                      },
+                    ),
+                  ),
+                  
+                  // Lista de músicas
+                  SliverPadding(
+                    padding: EdgeInsets.only(
+                      top: DesignTokens.spaceMD,
+                      bottom: DesignTokens.spaceXL,
+                    ),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate(
+                        (context, index) {
+                          final song = controller.downloadedSongs[index];
+                          return OfflineSongCard(
+                            song: song,
+                            index: index,
+                            onTap: () {
+                              final audioPlayer = Provider.of<AudioPlayerService>(
+                                context,
+                                listen: false,
+                              );
+                              audioPlayer.playPlaylist(
+                                controller.downloadedSongs,
+                                startIndex: index,
+                              );
+                              context.pushNamed('player');
+                            },
+                            onMoreOptions: () {
+                              // TODO: Implementar menu de opções
+                            },
+                          );
+                        },
+                        childCount: controller.downloadedSongs.length,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             );
           },
