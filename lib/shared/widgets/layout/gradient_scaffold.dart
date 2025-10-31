@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../design/app_colors.dart';
-import 'app_layout_with_mini_player.dart';
+import 'app_layout.dart';
+
 class GradientScaffold extends StatelessWidget {
   final Widget body;
   final bool extendBodyBehindAppBar;
@@ -11,6 +12,7 @@ class GradientScaffold extends StatelessWidget {
   final Color? backgroundColor;
   final LinearGradient? gradient;
   final bool showMiniPlayer;
+
   const GradientScaffold({
     super.key,
     required this.body,
@@ -23,6 +25,7 @@ class GradientScaffold extends StatelessWidget {
     this.gradient,
     this.showMiniPlayer = true,
   });
+
   @override
   Widget build(BuildContext context) {
     final scaffoldBody = Container(
@@ -34,6 +37,16 @@ class GradientScaffold extends StatelessWidget {
       ),
       child: body,
     );
+    
+    if (showMiniPlayer) {
+      // Usar AppLayout para páginas dentro do shell
+      return AppLayout(
+        appBar: appBar,
+        extendBodyBehindAppBar: extendBodyBehindAppBar,
+        child: scaffoldBody,
+      );
+    }
+    
     return Scaffold(
       extendBodyBehindAppBar: extendBodyBehindAppBar,
       appBar: appBar,
@@ -41,9 +54,7 @@ class GradientScaffold extends StatelessWidget {
       floatingActionButton: floatingActionButton,
       floatingActionButtonLocation: floatingActionButtonLocation,
       backgroundColor: backgroundColor ?? Colors.transparent,
-      body: showMiniPlayer 
-          ? AppLayoutWithMiniPlayer(child: scaffoldBody)
-          : scaffoldBody,
+      body: scaffoldBody,
     );
   }
 }

@@ -6,42 +6,64 @@ import '../../features/music_library/presentation/pages/artist_detail_page.dart'
 import '../../features/music_library/presentation/pages/album_detail_page.dart';
 import '../../features/music_library/presentation/pages/category_detail_page.dart';
 import '../../features/music_library/presentation/pages/playlist_detail_page.dart';
-import '../../features/music_library/presentation/controllers/music_library_controller.dart';
 import '../../features/music_player/presentation/pages/player_page.dart';
-import '../../shared/design/app_theme.dart';
-import '../../shared/design/app_colors.dart';
-import '../../shared/widgets/layout/gradient_scaffold.dart';
+import '../../shared/widgets/layout/app_shell.dart';
 import 'app_routes.dart';
+
 class AppRouter {
   static final GoRouter _router = GoRouter(
     initialLocation: AppRoutes.home,
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: false,
     routes: [
-      GoRoute(
-        path: AppRoutes.home,
-        name: 'home',
-        builder: (context, state) => const HomePage(),
+      // Shell route que mantém o menu fixo apenas nas rotas principais
+      ShellRoute(
+        builder: (BuildContext context, GoRouterState state, Widget child) {
+          return AppShell(child: child);
+        },
+        routes: [
+          GoRoute(
+            path: AppRoutes.home,
+            name: 'home',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const HomePage(),
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.search,
+            name: 'search',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const SearchPage(),
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.library,
+            name: 'library',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const LibraryPage(),
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.radios,
+            name: 'radios',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const RadiosPage(),
+            ),
+          ),
+          GoRoute(
+            path: AppRoutes.more,
+            name: 'more',
+            pageBuilder: (context, state) => NoTransitionPage(
+              key: state.pageKey,
+              child: const MorePage(),
+            ),
+          ),
+        ],
       ),
-      GoRoute(
-        path: AppRoutes.search,
-        name: 'search',
-        builder: (context, state) => const SearchPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.library,
-        name: 'library',
-        builder: (context, state) => const LibraryPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.radios,
-        name: 'radios',
-        builder: (context, state) => const RadiosPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.more,
-        name: 'more',
-        builder: (context, state) => const MorePage(),
-      ),
+      // Rotas de detalhes SEM shell (não mostram menu)
       GoRoute(
         path: AppRoutes.categoryDetailPath(':categoryTitle'),
         name: 'category-detail',
@@ -82,6 +104,7 @@ class AppRouter {
           return PlaylistDetailPage(playlistId: playlistId);
         },
       ),
+      // Rotas sem shell (player, queue, etc)
       GoRoute(
         path: AppRoutes.player,
         name: 'player',
@@ -123,76 +146,77 @@ class AppRouter {
       ),
     ),
   );
+
   static GoRouter get router => _router;
 }
+
+// Páginas simples
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return Scaffold(
       appBar: AppBar(
         title: const Text('Buscar'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 90), // 70 (menu) + 20 (spacing)
-          child: const Center(
-            child: Text('Página de Busca'),
-          ),
+        child: const Center(
+          child: Text('Página de Busca'),
         ),
       ),
     );
   }
 }
+
 class LibraryPage extends StatelessWidget {
   const LibraryPage({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return Scaffold(
       appBar: AppBar(
         title: const Text('Minhas Músicas'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 90), // 70 (menu) + 20 (spacing)
-          child: const Center(
-            child: Text('Página Minhas Músicas'),
-          ),
+        child: const Center(
+          child: Text('Página Minhas Músicas'),
         ),
       ),
     );
   }
 }
+
 class RadiosPage extends StatelessWidget {
   const RadiosPage({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return Scaffold(
       appBar: AppBar(
         title: const Text('Rádios'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 90), // 70 (menu) + 20 (spacing)
-          child: const Center(
-            child: Text('Página de Rádios'),
-          ),
+        child: const Center(
+          child: Text('Página de Rádios'),
         ),
       ),
     );
   }
 }
+
 class MorePage extends StatelessWidget {
   const MorePage({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
+    return Scaffold(
       appBar: AppBar(
         title: const Text('Mais'),
         backgroundColor: Colors.transparent,
@@ -204,8 +228,10 @@ class MorePage extends StatelessWidget {
     );
   }
 }
+
 class QueuePage extends StatelessWidget {
   const QueuePage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

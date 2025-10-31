@@ -127,6 +127,67 @@ class ResponsiveUtils {
     // Altura = largura (quadrado) - apenas a capa, sem texto
     return cardWidth;
   }
+  
+  // Mini Player dimensions
+  static double getMiniPlayerHeight(BuildContext context) {
+    final deviceType = getDeviceType(context);
+    switch (deviceType) {
+      case DeviceType.mobile:
+        return 70.0;
+      case DeviceType.tablet:
+        return 80.0;
+      case DeviceType.desktop:
+        return 90.0;
+    }
+  }
+  
+  static double getMiniPlayerAlbumSize(BuildContext context) {
+    final deviceType = getDeviceType(context);
+    switch (deviceType) {
+      case DeviceType.mobile:
+        return 50.0;
+      case DeviceType.tablet:
+        return 55.0;
+      case DeviceType.desktop:
+        return 60.0;
+    }
+  }
+  
+  static double getMiniPlayerButtonSize(BuildContext context) {
+    final deviceType = getDeviceType(context);
+    switch (deviceType) {
+      case DeviceType.mobile:
+        return 32.0;
+      case DeviceType.tablet:
+        return 36.0;
+      case DeviceType.desktop:
+        return 40.0;
+    }
+  }
+  
+  static double getMiniPlayerIconSize(BuildContext context) {
+    final deviceType = getDeviceType(context);
+    switch (deviceType) {
+      case DeviceType.mobile:
+        return 16.0;
+      case DeviceType.tablet:
+        return 18.0;
+      case DeviceType.desktop:
+        return 20.0;
+    }
+  }
+  
+  static double getMiniPlayerSmallIconSize(BuildContext context) {
+    final deviceType = getDeviceType(context);
+    switch (deviceType) {
+      case DeviceType.mobile:
+        return 14.0;
+      case DeviceType.tablet:
+        return 16.0;
+      case DeviceType.desktop:
+        return 18.0;
+    }
+  }
 }
 enum DeviceType {
   mobile,

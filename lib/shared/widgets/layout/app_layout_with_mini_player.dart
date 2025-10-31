@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../music_components/player/mini_player.dart';
-import 'bottom_navigation_menu.dart';
 import '../../../../core/audio/audio_player_service.dart';
+import '../../utils/responsive_utils.dart';
 
 class AppLayoutWithMiniPlayer extends StatelessWidget {
   final Widget child;
@@ -19,27 +19,36 @@ class AppLayoutWithMiniPlayer extends StatelessWidget {
     return Consumer<AudioPlayerService>(
       builder: (context, audioPlayer, _) {
         final hasMusic = audioPlayer.currentSong != null;
+        final safeAreaBottom = MediaQuery.of(context).padding.bottom;
         
         return Stack(
+          clipBehavior: Clip.none,
           children: [
             // Conteúdo principal
-            child,
-            // Menu fixo por cima da safe area
-            Positioned(
-              left: 0,
-              right: 0,
-              bottom: hasMusic && !isOnPlayerPage 
-                  ? 90 
-                  : MediaQuery.of(context).padding.bottom * 0.2,
-              child: const BottomNavigationMenu(),
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: hasMusic && !isOnPlayerPage 
+                    ? ResponsiveUtils.getMiniPlayerHeight(context) + safeAreaBottom * 0.2
+                    : 0.0,
+              ),
+              child: child,
             ),
-            // MiniPlayer por cima da safe area
+            // MiniPlayer fixo na parte inferior
             if (!isOnPlayerPage && hasMusic)
               Positioned(
                 left: 0,
                 right: 0,
-                bottom: MediaQuery.of(context).padding.bottom,
-                child: const MiniPlayer(),
+                bottom: safeAreaBottom * 0.5,
+                child: Builder(
+                  builder: (ctx) {
+                    // Verificação adicional
+                    final location = GoRouterState.of(ctx).uri.path;
+                    if (location == '/player' || location.contains('/player')) {
+                      return const SizedBox.shrink();
+                    }
+                    return const MiniPlayer();
+                  },
+                ),
               ),
           ],
         );

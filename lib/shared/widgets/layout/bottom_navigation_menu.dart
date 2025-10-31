@@ -4,143 +4,173 @@ import '../../design/app_colors.dart';
 import '../../design/design_tokens.dart';
 import '../../../core/routing/app_routes.dart';
 
-class BottomNavigationMenu extends StatelessWidget {
+class BottomNavigationMenu extends StatefulWidget {
   const BottomNavigationMenu({super.key});
 
   @override
+  State<BottomNavigationMenu> createState() => _BottomNavigationMenuState();
+}
+
+class _BottomNavigationMenuState extends State<BottomNavigationMenu> {
+  String _currentLocation = AppRoutes.home;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _updateLocation();
+  }
+
+  void _updateLocation() {
+    // Atualizar após o frame para evitar problemas durante build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      
+      try {
+        final routerState = GoRouterState.of(context);
+        final newLocation = routerState.uri.path;
+        if (_currentLocation != newLocation) {
+          setState(() {
+            _currentLocation = newLocation;
+          });
+        }
+      } catch (e) {
+        // Ignorar erros ao acessar router state
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final currentLocation = GoRouterState.of(context).uri.path;
+    // Atualizar localização se necessário
+    _updateLocation();
     
-    // Mostrar menu apenas nas páginas principais: home, library, search, radios
+    // Menu aparece APENAS nas rotas principais: home, library, search, radios, more
     final mainRoutes = [
       AppRoutes.home,
       AppRoutes.library,
       AppRoutes.search,
       AppRoutes.radios,
+      AppRoutes.more,
     ];
 
-    // Debug: verificar rota atual
-    debugPrint('📍 BottomNavigationMenu - Rota atual: $currentLocation');
-    debugPrint('📍 Main routes: $mainRoutes');
-    debugPrint('📍 Menu deve aparecer: ${mainRoutes.contains(currentLocation)}');
-
-    if (!mainRoutes.contains(currentLocation)) {
+    // Se não for uma rota principal, não mostrar o menu
+    if (!mainRoutes.contains(_currentLocation)) {
       return const SizedBox.shrink();
     }
 
-    return Material(
-      elevation: 8,
-      color: AppColors.solidBackground,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            height: 1,
-            color: AppColors.borderLight.withOpacity(0.3),
-          ),
-          Container(
-            height: 70,
-            decoration: BoxDecoration(
-              color: AppColors.solidBackground,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(DesignTokens.opacityShadow),
-                  blurRadius: DesignTokens.miniPlayerShadowBlur,
-                  offset: const Offset(0, -DesignTokens.miniPlayerShadowOffset),
-                ),
-              ],
+    return RepaintBoundary(
+      child: Material(
+        elevation: 8,
+        color: AppColors.solidBackground,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 1,
+              color: AppColors.borderLight.withOpacity(0.3),
             ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: DesignTokens.spaceXS),
-              child: Row(
+            Container(
+              height: 70,
+              decoration: BoxDecoration(
+                color: AppColors.solidBackground,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(DesignTokens.opacityShadow),
+                    blurRadius: DesignTokens.miniPlayerShadowBlur,
+                    offset: const Offset(0, -DesignTokens.miniPlayerShadowOffset),
+                  ),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: DesignTokens.spaceXS),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     _buildNavItem(
-                      context: context,
+                      key: const ValueKey('nav-home'),
                       icon: Icons.home,
                       label: 'Home',
                       route: AppRoutes.home,
-                      isActive: currentLocation == AppRoutes.home,
+                      isActive: _currentLocation == AppRoutes.home,
                     ),
                     _buildNavItem(
-                      context: context,
+                      key: const ValueKey('nav-library'),
                       icon: Icons.library_music,
                       label: 'Minhas Músicas',
                       route: AppRoutes.library,
-                      isActive: currentLocation == AppRoutes.library,
+                      isActive: _currentLocation == AppRoutes.library,
                     ),
                     _buildNavItem(
-                      context: context,
+                      key: const ValueKey('nav-search'),
                       icon: Icons.search,
                       label: 'Buscar',
                       route: AppRoutes.search,
-                      isActive: currentLocation == AppRoutes.search,
+                      isActive: _currentLocation == AppRoutes.search,
                     ),
                     _buildNavItem(
-                      context: context,
+                      key: const ValueKey('nav-radios'),
                       icon: Icons.radio,
                       label: 'Rádios',
                       route: AppRoutes.radios,
-                      isActive: currentLocation == AppRoutes.radios,
+                      isActive: _currentLocation == AppRoutes.radios,
                     ),
                   ],
                 ),
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildNavItem({
-    required BuildContext context,
+    Key? key,
     required IconData icon,
     required String label,
     required String route,
     required bool isActive,
   }) {
     return Expanded(
+      key: key,
       child: Material(
         color: Colors.transparent,
-        child: InkWell(
+        child: GestureDetector(
           onTap: () {
             if (!isActive) {
               context.go(route);
             }
           },
+          behavior: HitTestBehavior.opaque,
           child: Container(
             padding: const EdgeInsets.symmetric(
               horizontal: DesignTokens.spaceXS,
             ),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      icon,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  color: isActive ? AppColors.primaryRed : AppColors.textSecondary,
+                  size: 20,
+                ),
+                const SizedBox(height: 1),
+                Flexible(
+                  child: Text(
+                    label,
+                    style: TextStyle(
                       color: isActive ? AppColors.primaryRed : AppColors.textSecondary,
-                      size: 20, // Reduzido para 4 itens
+                      fontSize: 10,
+                      fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                      height: 1.0,
                     ),
-                    const SizedBox(height: 1), // Espaçamento mínimo
-                    Flexible(
-                      child: Text(
-                        label,
-                        style: TextStyle(
-                          color: isActive ? AppColors.primaryRed : AppColors.textSecondary,
-                          fontSize: 10, // Reduzido para 4 itens
-                          fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                          height: 1.0, // Altura da linha reduzida
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                );
-              },
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -148,4 +178,3 @@ class BottomNavigationMenu extends StatelessWidget {
     );
   }
 }
-

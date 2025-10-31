@@ -40,22 +40,22 @@ class _BannerSectionState extends State<BannerSection>
   void _startAutoSlide(int bannersLength) {
     if (!mounted || bannersLength <= 1) return;
     
-    Future.delayed(const Duration(seconds: 3), () {
+        Future.delayed(const Duration(seconds: 3), () {
       if (!mounted) return;
       
-      _animationController.forward().then((_) {
+            _animationController.forward().then((_) {
         if (!mounted) return;
         
-        setState(() {
-          _currentIndex = _nextIndex;
+                setState(() {
+                  _currentIndex = _nextIndex;
           _nextIndex = (_nextIndex + 1) % bannersLength;
-        });
+                });
         
-        _animationController.reset();
+                _animationController.reset();
         _startAutoSlide(bannersLength);
       });
-    });
-  }
+            });
+          }
 
   @override
   void dispose() {
@@ -103,15 +103,15 @@ class _BannerSectionState extends State<BannerSection>
               
               // Próximo banner (aparece por cima)
               if (controller.banners.length > 1)
-                AnimatedBuilder(
-                  animation: _fadeAnimation,
-                  builder: (context, child) {
-                    return Opacity(
-                      opacity: _fadeAnimation.value,
-                      child: _buildBannerCard(context, controller.banners[_nextIndex]),
-                    );
-                  },
-                ),
+              AnimatedBuilder(
+                animation: _fadeAnimation,
+                builder: (context, child) {
+                  return Opacity(
+                    opacity: _fadeAnimation.value,
+                    child: _buildBannerCard(context, controller.banners[_nextIndex]),
+                  );
+                },
+              ),
             ],
           ),
         );
@@ -134,7 +134,7 @@ class _BannerSectionState extends State<BannerSection>
       ),
     );
   }
-
+  
   void _handleBannerTap(BuildContext context, banner_entity.Banner banner) {
     debugPrint('🎯 Banner clicado: ${banner.name}');
     debugPrint('🎯 Link: ${banner.link}');
