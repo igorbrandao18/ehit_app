@@ -34,23 +34,23 @@ class _PlayerPageState extends State<PlayerPage> {
                   _buildHeader(context),
                   Expanded(
                     child: SingleChildScrollView(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: DesignTokens.playerHorizontalSpacing,
-                        ),
-                        child: Column(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: DesignTokens.playerHorizontalSpacing,
+                      ),
+                      child: Column(
                           mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(height: DesignTokens.playerVerticalSpacing),
-                            _buildAlbumArt(context),
-                            SizedBox(height: DesignTokens.playerVerticalSpacing),
-                            _buildSongInfo(context),
-                            SizedBox(height: DesignTokens.playerVerticalSpacing),
-                            _buildProgressBar(context, audioPlayer),
+                        children: [
+                          SizedBox(height: DesignTokens.playerVerticalSpacing),
+                          _buildAlbumArt(context),
+                          SizedBox(height: DesignTokens.playerVerticalSpacing),
+                          _buildSongInfo(context),
+                          SizedBox(height: DesignTokens.playerVerticalSpacing),
+                          _buildProgressBar(context, audioPlayer),
+                          SizedBox(height: DesignTokens.playerVerticalSpacing * 2),
+                          _buildPlayerControls(context, audioPlayer),
                             SizedBox(height: DesignTokens.playerVerticalSpacing * 2),
-                            _buildPlayerControls(context, audioPlayer),
-                            SizedBox(height: DesignTokens.playerVerticalSpacing * 2),
-                          ],
+                        ],
                         ),
                       ),
                     ),

@@ -28,7 +28,7 @@ class HomePage extends StatelessWidget {
           color: AppColors.solidBackground,
         ),
         child: Consumer<MusicLibraryController>(
-          builder: (context, controller, child) {
+        builder: (context, controller, child) {
             return CustomScrollView(
               slivers: [
                 // Banner pode se estender por trás do header
@@ -46,8 +46,8 @@ class HomePage extends StatelessWidget {
                   ]),
                 ),
               ],
-            );
-          },
+          );
+        },
         ),
       ),
     );

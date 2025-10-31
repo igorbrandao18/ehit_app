@@ -31,6 +31,7 @@ import '../../features/authentication/domain/repositories/auth_repository.dart';
 import '../../features/music_library/domain/usecases/get_playlists_usecase.dart';
 import '../../features/music_library/domain/usecases/get_artists_usecase.dart';
 import '../../features/music_library/domain/usecases/get_songs_usecase.dart';
+import '../../features/music_library/domain/usecases/get_songs_usecase.dart' show GetSongByIdUseCase;
 import '../../features/music_library/domain/usecases/get_banners_usecase.dart';
 import '../../features/music_library/domain/usecases/get_albums_by_artist_usecase.dart';
 import '../../features/music_library/domain/usecases/get_songs_by_album_usecase.dart';
@@ -44,17 +45,23 @@ import '../../features/music_library/presentation/controllers/artist_detail_cont
 import '../../features/music_library/presentation/controllers/album_detail_controller.dart';
 import '../../features/music_library/presentation/controllers/artists_controller.dart';
 import '../../features/music_library/presentation/controllers/banner_controller.dart';
+import '../../features/music_library/presentation/controllers/downloaded_songs_controller.dart';
 import '../../features/music_player/presentation/controllers/music_player_controller.dart';
 import '../../features/music_player/presentation/controllers/playlist_controller.dart';
 import '../../features/music_player/presentation/controllers/audio_player_controller.dart';
 import '../../features/authentication/presentation/controllers/auth_controller.dart';
 import '../constants/app_constants.dart';
 import '../audio/offline_audio_service.dart';
+import '../storage/downloaded_songs_storage.dart';
 
 final GetIt sl = GetIt.instance;
 Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
+  final downloadedSongsStorage = DownloadedSongsStorage();
+  // Inicializar o storage do Hive
+  await downloadedSongsStorage.init();
+  sl.registerLazySingleton<DownloadedSongsStorage>(() => downloadedSongsStorage);
   sl.registerLazySingleton<Dio>(() {
     final dio = Dio();
     dio.options.baseUrl = AppConstants.apiBaseUrl;
@@ -127,6 +134,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => GetPlaylistsUseCase(sl<music_lib.PlaylistRepository>()));
   sl.registerLazySingleton(() => GetArtistsUseCase(sl<artist_repo.ArtistRepository>()));
   sl.registerLazySingleton(() => GetSongsUseCase(sl<MusicRepository>()));
+  sl.registerLazySingleton(() => GetSongByIdUseCase(sl<MusicRepository>()));
   sl.registerLazySingleton(() => GetBannersUseCase(sl<BannerRepository>()));
   sl.registerLazySingleton(() => GetAlbumsByArtistUseCase(sl<album_repo.AlbumRepository>()));
   sl.registerLazySingleton(() => GetSongsByAlbumUseCase(sl<album_repo.AlbumRepository>()));
@@ -176,6 +184,9 @@ Future<void> init() async {
   ));
   sl.registerLazySingleton(() => BannerController(
     getBannersUseCase: sl<GetBannersUseCase>(),
+  ));
+  sl.registerLazySingleton(() => DownloadedSongsController(
+    downloadedStorage: sl<DownloadedSongsStorage>(),
   ));
   sl.registerLazySingleton(() => MusicPlayerController());
   sl.registerLazySingleton(() => PlaylistController(

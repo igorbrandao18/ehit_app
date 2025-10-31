@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../features/music_library/domain/entities/song.dart';
 import '../../../../features/music_player/presentation/controllers/music_player_controller.dart';
+import '../../../../features/music_library/presentation/controllers/downloaded_songs_controller.dart';
+import '../../../../core/audio/offline_audio_service.dart';
+import '../../../../core/storage/downloaded_songs_storage.dart';
+import '../../../../core/utils/result.dart';
+import '../../../../core/injection/injection_container.dart' as di;
 import '../../../design/design_tokens.dart';
 import '../../../utils/responsive_utils.dart';
 class SongListItem extends StatelessWidget {
@@ -181,14 +186,80 @@ class SongListItem extends StatelessWidget {
     );
   }
   Future<bool> _isSongAvailableOffline() async {
-    return false;
+    try {
+      final downloadedStorage = di.sl<DownloadedSongsStorage>();
+      final isDownloaded = await downloadedStorage.isDownloaded(song.id);
+      return isDownloaded;
+    } catch (e) {
+      return false;
+    }
   }
+  
   void _handleDownloadTap(BuildContext context) async {
+    final offlineService = OfflineAudioService();
+    final downloadedStorage = di.sl<DownloadedSongsStorage>();
+    
+    // Verificar se já está baixada
+    final isDownloaded = await _isSongAvailableOffline();
+    if (isDownloaded) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('"${song.title}" já está baixada'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    // Mostrar feedback de início do download
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Download de "${song.title}" iniciado'),
+        content: Text('Baixando "${song.title}"...'),
         duration: const Duration(seconds: 2),
       ),
+    );
+
+    // Fazer o download
+    final result = await offlineService.downloadSong(song);
+    
+    result.when(
+      success: (_) async {
+        // Salvar o objeto completo da música baixada
+        await downloadedStorage.addDownloadedSong(song);
+        
+        // Notificar o controller para recarregar
+        try {
+          final downloadedController = di.sl<DownloadedSongsController>();
+          debugPrint('🔄 Recarregando músicas baixadas...');
+          await downloadedController.loadDownloadedSongs();
+        } catch (e) {
+          // Controller ainda não foi inicializado, será carregado quando a página for aberta
+          debugPrint('⚠️ Controller não disponível ainda: $e');
+        }
+        
+        // Mostrar feedback de sucesso
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('"${song.title}" baixada com sucesso!'),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      error: (message, code) {
+        // Mostrar feedback de erro
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao baixar: $message'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      },
     );
   }
 }

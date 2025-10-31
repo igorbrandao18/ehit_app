@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'shared/design/app_theme.dart';
 import 'core/injection/injection_container.dart' as di;
 import 'core/routing/app_router.dart';
@@ -13,8 +14,13 @@ import 'features/music_library/presentation/controllers/artists_controller.dart'
 import 'features/music_library/presentation/controllers/banner_controller.dart';
 import 'features/authentication/presentation/controllers/auth_controller.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Inicializar Hive
+  await Hive.initFlutter();
+  
   await di.init();
   runApp(const EhitApp());
 }

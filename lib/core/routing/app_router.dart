@@ -7,9 +7,13 @@ import '../../features/music_library/presentation/pages/album_detail_page.dart';
 import '../../features/music_library/presentation/pages/category_detail_page.dart';
 import '../../features/music_library/presentation/pages/playlist_detail_page.dart';
 import '../../features/music_player/presentation/pages/player_page.dart';
+import '../../features/music_library/presentation/controllers/downloaded_songs_controller.dart';
+import '../../core/audio/audio_player_service.dart';
+import '../../core/injection/injection_container.dart' as di;
 import '../../shared/widgets/layout/app_shell.dart';
 import '../../shared/widgets/layout/app_layout.dart';
 import '../../shared/widgets/layout/app_header.dart';
+import '../../shared/widgets/music_components/lists/song_list_item.dart';
 import '../../shared/design/app_colors.dart';
 import 'app_routes.dart';
 
@@ -45,7 +49,10 @@ class AppRouter {
             name: 'library',
             pageBuilder: (context, state) => NoTransitionPage(
               key: state.pageKey,
-              child: const LibraryPage(),
+              child: ChangeNotifierProvider.value(
+                value: di.sl<DownloadedSongsController>(),
+                child: const LibraryPage(),
+              ),
             ),
           ),
           GoRoute(
@@ -177,8 +184,40 @@ class SearchPage extends StatelessWidget {
   }
 }
 
-class LibraryPage extends StatelessWidget {
+class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});
+
+  @override
+  State<LibraryPage> createState() => _LibraryPageState();
+}
+
+class _LibraryPageState extends State<LibraryPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Carregar músicas baixadas quando a página for aberta
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final controller = context.read<DownloadedSongsController>();
+        controller.loadDownloadedSongs();
+      }
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Recarregar sempre que a página for visitada
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final controller = context.read<DownloadedSongsController>();
+        // Só recarregar se não estiver carregando
+        if (!controller.isLoading) {
+          controller.loadDownloadedSongs();
+        }
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -192,8 +231,104 @@ class LibraryPage extends StatelessWidget {
         decoration: const BoxDecoration(
           color: AppColors.solidBackground,
         ),
-        child: const Center(
-          child: Text('Página Minhas Músicas'),
+        child: Consumer<DownloadedSongsController>(
+          builder: (context, controller, child) {
+            if (controller.isLoading) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryRed),
+                ),
+              );
+            }
+
+            if (controller.error != null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.white70,
+                      size: 64,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      controller.error!,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 16,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: () => controller.loadDownloadedSongs(),
+                      child: const Text('Tentar Novamente'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            if (!controller.hasSongs) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.music_off,
+                      color: Colors.white70,
+                      size: 64,
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Nenhuma música baixada',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Baixe músicas para ouvir offline',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return RefreshIndicator(
+              onRefresh: () => controller.loadDownloadedSongs(),
+              color: AppColors.primaryRed,
+              child: ListView.builder(
+                padding: const EdgeInsets.all(16),
+                itemCount: controller.downloadedSongs.length,
+                itemBuilder: (context, index) {
+                  final song = controller.downloadedSongs[index];
+                  return SongListItem(
+                    song: song,
+                    index: index,
+                    onTap: () {
+                      final audioPlayer = Provider.of<AudioPlayerService>(
+                        context,
+                        listen: false,
+                      );
+                      audioPlayer.playPlaylist(
+                        controller.downloadedSongs,
+                        startIndex: index,
+                      );
+                      context.pushNamed('player');
+                    },
+                  );
+                },
+              ),
+            );
+          },
         ),
       ),
     );
