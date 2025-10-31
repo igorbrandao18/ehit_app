@@ -4,13 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../shared/design/design_tokens.dart';
 import '../../../../shared/design/app_colors.dart';
-import '../../../../shared/widgets/layout/gradient_scaffold.dart';
+import '../../../../shared/widgets/layout/app_layout.dart';
 import '../../../../shared/widgets/music_components/lists/songs_list_section.dart';
 import '../../../../core/audio/audio_player_service.dart';
 import '../../../../core/injection/injection_container.dart' as di;
 import '../controllers/album_detail_controller.dart';
 import '../../domain/entities/song.dart';
 import '../../domain/entities/album.dart';
+import '../../../../shared/utils/responsive_utils.dart';
 
 class AlbumDetailPage extends StatefulWidget {
   final String albumId;
@@ -54,30 +55,36 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
-      extendBodyBehindAppBar: true,
+    return AppLayout(
       appBar: _buildAppBar(),
-      body: ChangeNotifierProvider.value(
-        value: _controller,
-        child: Consumer<AlbumDetailController>(
-          builder: (context, controller, child) {
-            if (controller.isLoading) {
-              return _buildLoadingState();
-            }
-            if (controller.error != null) {
-              return _buildErrorState();
-            }
-            if (!controller.hasData) {
-              return _buildEmptyState();
-            }
-            return _buildContent(controller);
-          },
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          color: AppColors.solidBackground,
+        ),
+        child: ChangeNotifierProvider.value(
+          value: _controller,
+          child: Consumer<AlbumDetailController>(
+            builder: (context, controller, child) {
+              if (controller.isLoading) {
+                return _buildLoadingState();
+              }
+              if (controller.error != null) {
+                return _buildErrorState();
+              }
+              if (!controller.hasData) {
+                return _buildEmptyState();
+              }
+              return _buildContent(controller);
+            },
+          ),
         ),
       ),
     );
   }
 
-  AppBar _buildAppBar() {
+  PreferredSizeWidget _buildAppBar() {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -171,48 +178,73 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: MediaQuery.of(context).padding.top + DesignTokens.spaceMD),
           _buildHeaderSection(context, album),
           _buildSongsSection(context, controller),
-          SizedBox(height: DesignTokens.miniPlayerHeight + DesignTokens.spaceLG),
+          // Padding inferior para não sobrepor o footer (se houver)
+          SizedBox(height: MediaQuery.of(context).padding.bottom + 140),
         ],
       ),
     );
   }
 
   Widget _buildHeaderSection(BuildContext context, Album album) {
-    return Padding(
-      padding: DesignTokens.getResponsivePadding(context),
+    final padding = ResponsiveUtils.getResponsivePadding(context);
+    final screenWidth = MediaQuery.of(context).size.width;
+    // Mesmo tamanho da imagem do artista: 50% da largura da tela
+    final imageSize = screenWidth * 0.5;
+    
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.only(
+        left: padding.horizontal,
+        right: padding.horizontal,
+        top: DesignTokens.spaceXS, // Padding superior mínimo (igual ao artista)
+        bottom: DesignTokens.spaceMD,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(height: DesignTokens.spaceXL), 
+          // Sem espaçamento superior adicional para maximizar a posição da imagem
           Center(
-            child: ClipOval(
-              child: Image.network(
-                album.imageUrl,
-                width: DesignTokens.albumArtSize * DesignTokens.playlistCoverSizeRatio,
-                height: DesignTokens.albumArtSize * DesignTokens.playlistCoverSizeRatio,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: DesignTokens.albumArtSize * DesignTokens.playlistCoverSizeRatio,
-                    height: DesignTokens.albumArtSize * DesignTokens.playlistCoverSizeRatio,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade800,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.album,
-                      color: Colors.grey,
-                      size: DesignTokens.iconXXL,
-                    ),
-                  );
-                },
+            child: Container(
+              width: imageSize,
+              height: imageSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(DesignTokens.opacityShadow),
+                    blurRadius: DesignTokens.artistHeroShadowBlur,
+                    offset: const Offset(0, DesignTokens.artistHeroShadowOffset),
+                  ),
+                ],
+              ),
+              child: ClipOval(
+                child: Image.network(
+                  album.imageUrl,
+                  width: imageSize,
+                  height: imageSize,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: imageSize,
+                      height: imageSize,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade800,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.album,
+                        color: Colors.grey,
+                        size: imageSize * DesignTokens.artistHeroIconSizeRatio,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ),
-          SizedBox(height: DesignTokens.spaceXL), 
+          SizedBox(height: DesignTokens.spaceLG), 
           Center(
             child: Column(
               children: [

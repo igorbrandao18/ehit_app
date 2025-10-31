@@ -81,38 +81,45 @@ class _BottomNavigationMenuState extends State<BottomNavigationMenu> {
                   ),
                 ],
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildNavItem(
-                    key: const ValueKey('nav-home'),
-                    icon: Icons.home,
-                    label: 'Home',
-                    route: AppRoutes.home,
-                    isActive: _currentLocation == AppRoutes.home,
-                  ),
-                  _buildNavItem(
-                    key: const ValueKey('nav-library'),
-                    icon: Icons.library_music,
-                    label: 'Minhas Músicas',
-                    route: AppRoutes.library,
-                    isActive: _currentLocation == AppRoutes.library,
-                  ),
-                  _buildNavItem(
-                    key: const ValueKey('nav-search'),
-                    icon: Icons.search,
-                    label: 'Buscar',
-                    route: AppRoutes.search,
-                    isActive: _currentLocation == AppRoutes.search,
-                  ),
-                  _buildNavItem(
-                    key: const ValueKey('nav-radios'),
-                    icon: Icons.radio,
-                    label: 'Rádios',
-                    route: AppRoutes.radios,
-                    isActive: _currentLocation == AppRoutes.radios,
-                  ),
-                ],
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final screenWidth = constraints.maxWidth;
+                  // Usar MediaQuery para garantir que o menu se adapte à largura da tela
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      _buildNavItem(
+                        key: const ValueKey('nav-home'),
+                        icon: Icons.home,
+                        label: 'Home',
+                        route: AppRoutes.home,
+                        isActive: _currentLocation == AppRoutes.home,
+                      ),
+                      _buildNavItem(
+                        key: const ValueKey('nav-library'),
+                        icon: Icons.library_music,
+                        label: 'Minhas Músicas',
+                        route: AppRoutes.library,
+                        isActive: _currentLocation == AppRoutes.library,
+                      ),
+                      _buildNavItem(
+                        key: const ValueKey('nav-search'),
+                        icon: Icons.search,
+                        label: 'Buscar',
+                        route: AppRoutes.search,
+                        isActive: _currentLocation == AppRoutes.search,
+                      ),
+                      _buildNavItem(
+                        key: const ValueKey('nav-radios'),
+                        icon: Icons.radio,
+                        label: 'Rádios',
+                        route: AppRoutes.radios,
+                        isActive: _currentLocation == AppRoutes.radios,
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ],
@@ -132,16 +139,15 @@ class _BottomNavigationMenuState extends State<BottomNavigationMenu> {
       key: key,
       child: Material(
         color: Colors.transparent,
-        child: GestureDetector(
+        child: InkWell(
           onTap: () {
             if (!isActive) {
               context.go(route);
             }
           },
-          behavior: HitTestBehavior.opaque,
           child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: DesignTokens.spaceXS,
+            padding: EdgeInsets.symmetric(
+              horizontal: MediaQuery.of(context).size.width * 0.02, // 2% da largura da tela
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -152,7 +158,7 @@ class _BottomNavigationMenuState extends State<BottomNavigationMenu> {
                   color: isActive ? AppColors.primaryRed : AppColors.textSecondary,
                   size: 20,
                 ),
-                const SizedBox(height: 1),
+                const SizedBox(height: 2),
                 Flexible(
                   child: Text(
                     label,

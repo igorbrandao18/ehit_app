@@ -18,49 +18,57 @@ class AlbumsListSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (albums.isEmpty) {
       return const Center(
-        child: Text(
-          'Nenhum álbum encontrado',
-          style: TextStyle(color: Colors.white70),
+        child: Padding(
+          padding: EdgeInsets.all(DesignTokens.spaceLG),
+          child: Text(
+            'Nenhum álbum encontrado',
+            style: TextStyle(color: Colors.white70),
+          ),
         ),
       );
     }
 
-    final spacing = ResponsiveUtils.getResponsiveSpacing(context);
+    // Usar MediaQuery para cálculos responsivos precisos
+    final screenWidth = MediaQuery.of(context).size.width;
     final padding = ResponsiveUtils.getResponsivePadding(context);
-    final cardWidth = ResponsiveUtils.getAlbumCardWidth(context);
-    final cardHeight = ResponsiveUtils.getAlbumCardHeight(context);
+    final spacing = ResponsiveUtils.getResponsiveSpacing(context);
+    
+    // Calcular largura do card baseado na largura disponível
+    final availableWidth = screenWidth - (padding.horizontal * 2) - spacing;
+    final cardWidth = availableWidth / 2;
+    final cardHeight = cardWidth; // Quadrado
+    
+    // Calcular aspect ratio correto
+    final aspectRatio = cardWidth / cardHeight;
 
-    return Transform.translate(
-      offset: Offset(0, DesignTokens.albumsListOffset), // Offset para subir a listagem
-      child: Padding(
-        padding: EdgeInsets.only(
-          left: padding.horizontal,
-          right: padding.horizontal,
-        ),
-        child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // 2 colunas
-          crossAxisSpacing: spacing, // Espaçamento horizontal entre cards
-          mainAxisSpacing: spacing, // Espaçamento vertical entre cards
-          childAspectRatio: cardWidth / cardHeight,
-        ),
-        itemCount: albums.length,
-        itemBuilder: (context, index) {
-          final album = albums[index];
-          return SizedBox(
-            width: cardWidth,
-            height: cardHeight,
-            child: AlbumCard(
-              title: album.title,
-              artist: album.artistName,
-              imageUrl: album.imageUrl,
-              onTap: () => onAlbumTap(album),
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: padding.horizontal,
+        vertical: DesignTokens.spaceMD,
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, // 2 colunas
+              crossAxisSpacing: spacing, // Espaçamento horizontal entre cards
+              mainAxisSpacing: spacing, // Espaçamento vertical entre cards
+              childAspectRatio: aspectRatio,
             ),
+            itemCount: albums.length,
+            itemBuilder: (context, index) {
+              final album = albums[index];
+              return AlbumCard(
+                title: album.title,
+                artist: album.artistName,
+                imageUrl: album.imageUrl,
+                onTap: () => onAlbumTap(album),
+              );
+            },
           );
         },
-        ),
       ),
     );
   }

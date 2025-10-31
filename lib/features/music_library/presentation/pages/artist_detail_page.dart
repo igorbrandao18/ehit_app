@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../shared/design/design_tokens.dart';
 import '../../../../shared/design/app_colors.dart';
-import '../../../../shared/widgets/layout/gradient_scaffold.dart';
+import '../../../../shared/widgets/layout/app_layout.dart';
 import '../../../../shared/widgets/music_components/sections/artist_hero_section.dart';
 import '../../../../shared/widgets/music_components/lists/albums_list_section.dart';
 import '../../../../core/injection/injection_container.dart' as di;
@@ -39,29 +39,36 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
   }
   @override
   Widget build(BuildContext context) {
-    return GradientScaffold(
-      extendBodyBehindAppBar: true,
+    return AppLayout(
       appBar: _buildAppBar(),
-      body: ChangeNotifierProvider.value(
-        value: _controller,
-        child: Consumer<ArtistDetailController>(
-          builder: (context, controller, child) {
-            if (controller.isLoading) {
-              return _buildLoadingState();
-            }
-            if (controller.error != null) {
-              return _buildErrorState();
-            }
-            if (!controller.hasData) {
-              return _buildEmptyState();
-            }
-            return _buildContent(controller);
-          },
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          color: AppColors.solidBackground,
+        ),
+        child: ChangeNotifierProvider.value(
+          value: _controller,
+          child: Consumer<ArtistDetailController>(
+            builder: (context, controller, child) {
+              if (controller.isLoading) {
+                return _buildLoadingState();
+              }
+              if (controller.error != null) {
+                return _buildErrorState();
+              }
+              if (!controller.hasData) {
+                return _buildEmptyState();
+              }
+              return _buildContent(controller);
+            },
+          ),
         ),
       ),
     );
   }
-  AppBar _buildAppBar() {
+  
+  PreferredSizeWidget _buildAppBar() {
     return AppBar(
       backgroundColor: Colors.transparent,
       elevation: 0,
@@ -146,7 +153,6 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(height: MediaQuery.of(context).padding.top + DesignTokens.spaceMD), // Alinha com PlayHITS
           ArtistHeroSection(
             artist: controller.artist!,
           ),
@@ -154,6 +160,8 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
             albums: controller.albums,
             onAlbumTap: (album) => _onAlbumTap(album),
           ),
+          // Padding inferior para não sobrepor o footer (se houver)
+          SizedBox(height: MediaQuery.of(context).padding.bottom + 140),
         ],
       ),
     );
