@@ -135,8 +135,13 @@ class SearchPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: const Center(
-        child: Text('Página de Busca'),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 90), // 70 (menu) + 20 (spacing)
+          child: const Center(
+            child: Text('Página de Busca'),
+          ),
+        ),
       ),
     );
   }
@@ -147,12 +152,17 @@ class LibraryPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return GradientScaffold(
       appBar: AppBar(
-        title: const Text('Sua Biblioteca'),
+        title: const Text('Minhas Músicas'),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: const Center(
-        child: Text('Página da Biblioteca'),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 90), // 70 (menu) + 20 (spacing)
+          child: const Center(
+            child: Text('Página Minhas Músicas'),
+          ),
+        ),
       ),
     );
   }
@@ -167,8 +177,13 @@ class RadiosPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: const Center(
-        child: Text('Página de Rádios'),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 90), // 70 (menu) + 20 (spacing)
+          child: const Center(
+            child: Text('Página de Rádios'),
+          ),
+        ),
       ),
     );
   }

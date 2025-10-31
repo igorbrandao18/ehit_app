@@ -41,7 +41,7 @@ class HomePage extends StatelessWidget {
                   child: FeaturedArtistsSection(),
                 ),
                 SliverToBoxAdapter(
-                  child: SizedBox(height: LayoutTokens.getSafeAreaPadding(context).bottom + 20),
+                  child: SizedBox(height: LayoutTokens.getSafeAreaPadding(context).bottom + 70), // Espaço para o menu fixo
                 ),
               ],
             ),
