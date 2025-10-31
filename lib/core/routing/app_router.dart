@@ -8,6 +8,9 @@ import '../../features/music_library/presentation/pages/category_detail_page.dar
 import '../../features/music_library/presentation/pages/playlist_detail_page.dart';
 import '../../features/music_player/presentation/pages/player_page.dart';
 import '../../shared/widgets/layout/app_shell.dart';
+import '../../shared/widgets/layout/app_layout.dart';
+import '../../shared/widgets/layout/app_header.dart';
+import '../../shared/design/app_colors.dart';
 import 'app_routes.dart';
 
 class AppRouter {
@@ -156,13 +159,16 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Buscar'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+    return AppLayout(
+      appBar: AppHeader(
+        title: 'Buscar',
       ),
-      body: SafeArea(
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          color: AppColors.solidBackground,
+        ),
         child: const Center(
           child: Text('Página de Busca'),
         ),
@@ -176,13 +182,16 @@ class LibraryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Minhas Músicas'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+    return AppLayout(
+      appBar: AppHeader(
+        title: 'Minhas Músicas',
       ),
-      body: SafeArea(
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          color: AppColors.solidBackground,
+        ),
         child: const Center(
           child: Text('Página Minhas Músicas'),
         ),
@@ -196,13 +205,16 @@ class RadiosPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Rádios'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+    return AppLayout(
+      appBar: AppHeader(
+        title: 'Rádios',
       ),
-      body: SafeArea(
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          color: AppColors.solidBackground,
+        ),
         child: const Center(
           child: Text('Página de Rádios'),
         ),
@@ -216,14 +228,19 @@ class MorePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mais'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+    return AppLayout(
+      appBar: AppHeader(
+        title: 'Mais',
       ),
-      body: const Center(
-        child: Text('Página Mais'),
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          color: AppColors.solidBackground,
+        ),
+        child: const Center(
+          child: Text('Página Mais'),
+        ),
       ),
     );
   }

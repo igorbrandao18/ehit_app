@@ -81,41 +81,38 @@ class _BottomNavigationMenuState extends State<BottomNavigationMenu> {
                   ),
                 ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: DesignTokens.spaceXS),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildNavItem(
-                      key: const ValueKey('nav-home'),
-                      icon: Icons.home,
-                      label: 'Home',
-                      route: AppRoutes.home,
-                      isActive: _currentLocation == AppRoutes.home,
-                    ),
-                    _buildNavItem(
-                      key: const ValueKey('nav-library'),
-                      icon: Icons.library_music,
-                      label: 'Minhas Músicas',
-                      route: AppRoutes.library,
-                      isActive: _currentLocation == AppRoutes.library,
-                    ),
-                    _buildNavItem(
-                      key: const ValueKey('nav-search'),
-                      icon: Icons.search,
-                      label: 'Buscar',
-                      route: AppRoutes.search,
-                      isActive: _currentLocation == AppRoutes.search,
-                    ),
-                    _buildNavItem(
-                      key: const ValueKey('nav-radios'),
-                      icon: Icons.radio,
-                      label: 'Rádios',
-                      route: AppRoutes.radios,
-                      isActive: _currentLocation == AppRoutes.radios,
-                    ),
-                  ],
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  _buildNavItem(
+                    key: const ValueKey('nav-home'),
+                    icon: Icons.home,
+                    label: 'Home',
+                    route: AppRoutes.home,
+                    isActive: _currentLocation == AppRoutes.home,
+                  ),
+                  _buildNavItem(
+                    key: const ValueKey('nav-library'),
+                    icon: Icons.library_music,
+                    label: 'Minhas Músicas',
+                    route: AppRoutes.library,
+                    isActive: _currentLocation == AppRoutes.library,
+                  ),
+                  _buildNavItem(
+                    key: const ValueKey('nav-search'),
+                    icon: Icons.search,
+                    label: 'Buscar',
+                    route: AppRoutes.search,
+                    isActive: _currentLocation == AppRoutes.search,
+                  ),
+                  _buildNavItem(
+                    key: const ValueKey('nav-radios'),
+                    icon: Icons.radio,
+                    label: 'Rádios',
+                    route: AppRoutes.radios,
+                    isActive: _currentLocation == AppRoutes.radios,
+                  ),
+                ],
               ),
             ),
           ],

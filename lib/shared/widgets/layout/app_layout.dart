@@ -19,7 +19,11 @@ class AppLayout extends StatelessWidget {
     return Scaffold(
       extendBodyBehindAppBar: extendBodyBehindAppBar,
       appBar: appBar,
-      body: child,
+      body: SafeArea(
+        top: true, // Sempre respeitar a status bar
+        bottom: false, // O footer já gerencia o safe area inferior
+        child: child,
+      ),
     );
   }
 }

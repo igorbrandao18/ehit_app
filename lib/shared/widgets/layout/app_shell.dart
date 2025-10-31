@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import '../music_components/player/mini_player.dart';
 import '../../../../core/audio/audio_player_service.dart';
 import '../../../../core/routing/app_routes.dart';
 import '../../utils/responsive_utils.dart';
+import 'app_footer.dart';
 
 /// Shell que envolve todas as rotas principais
 /// Renderiza o mini player nas rotas principais quando há música tocando
@@ -91,30 +91,35 @@ class AppShell extends StatelessWidget {
         final hasMusic = audioPlayer.currentSong != null;
         final safeAreaBottom = MediaQuery.of(context).padding.bottom;
         
+        // Altura do menu de navegação
+        const menuHeight = 70.0;
+        
         // Calcular altura do mini player se houver música
-        final miniPlayerHeight = hasMusic 
+        final miniPlayerHeight = hasMusic && !_isPlayerRouteActive(context)
             ? ResponsiveUtils.getMiniPlayerHeight(context)
             : 0.0;
-        final bottomPadding = miniPlayerHeight + (safeAreaBottom * 0.2);
+        
+        // Altura total do footer: menu + mini player (se houver) + safe area
+        final footerHeight = menuHeight + miniPlayerHeight + safeAreaBottom;
 
         return Scaffold(
+          extendBody: true,
+          backgroundColor: Colors.black,
           body: Stack(
             clipBehavior: Clip.none,
             children: [
-              // Conteúdo principal com padding inferior
+              // Conteúdo principal com padding inferior para não sobrepor o footer
               Padding(
-                padding: EdgeInsets.only(bottom: bottomPadding),
+                padding: EdgeInsets.only(bottom: footerHeight),
                 child: child,
               ),
-              // MiniPlayer fixo na parte inferior (só aparece se houver música)
-              // O MiniPlayer já tem verificação interna, mas garantimos aqui também
-              if (hasMusic && !isOnPlayerPage)
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: safeAreaBottom * 0.5,
-                  child: const MiniPlayer(),
-                ),
+              // Footer fixo na parte inferior (contém menu + mini player)
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: 0,
+                child: const AppFooter(),
+              ),
             ],
           ),
         );
