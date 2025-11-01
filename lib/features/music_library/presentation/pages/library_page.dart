@@ -64,7 +64,7 @@ class _LibraryPageState extends State<LibraryPage> {
             if (controller.isLoading) {
               return const Center(
                 child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryRed),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.genreCardRed),
                 ),
               );
             }
@@ -106,12 +106,12 @@ class _LibraryPageState extends State<LibraryPage> {
                     Container(
                       padding: const EdgeInsets.all(32),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryRed.withOpacity(0.1),
+                        color: AppColors.genreCardRed.withOpacity(0.1),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         Icons.download_outlined,
-                        color: AppColors.primaryRed.withOpacity(0.6),
+                        color: AppColors.genreCardRed.withOpacity(0.6),
                         size: 80,
                       ),
                     ),
@@ -148,8 +148,8 @@ class _LibraryPageState extends State<LibraryPage> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            AppColors.primaryRed,
-                            AppColors.primaryRed.withOpacity(0.8),
+                            AppColors.genreCardRed,
+                            AppColors.genreCardRed.withOpacity(0.8),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(DesignTokens.radiusLG),
@@ -181,7 +181,7 @@ class _LibraryPageState extends State<LibraryPage> {
 
             return RefreshIndicator(
               onRefresh: () => controller.loadDownloadedSongs(),
-              color: AppColors.primaryRed,
+              color: AppColors.genreCardRed,
               child: CustomScrollView(
                 slivers: [
                   // Header impressionante

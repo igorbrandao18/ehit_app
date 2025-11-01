@@ -77,13 +77,13 @@ class _GenreCardState extends State<GenreCard>
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    AppColors.primaryRed,
-                    AppColors.primaryRed.withOpacity(0.75),
+                    AppColors.genreCardRed,
+                    AppColors.genreCardRed.withOpacity(0.75),
                   ],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primaryRed.withOpacity(0.3),
+                    color: AppColors.genreCardRed.withOpacity(0.3),
                     blurRadius: _isPressed ? 8 : 12,
                     offset: Offset(0, _isPressed ? 2 : 4),
                     spreadRadius: _isPressed ? 0 : 1,

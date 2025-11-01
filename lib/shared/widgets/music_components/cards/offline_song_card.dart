@@ -142,12 +142,12 @@ class _OfflineSongCardState extends State<OfflineSongCard>
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.primaryRed.withOpacity(0.2),
+                                color: AppColors.genreCardRed.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(4),
                               ),
                               child: Icon(
                                 Icons.download_done,
-                                color: AppColors.primaryRed,
+                                color: AppColors.genreCardRed,
                                 size: 12,
                               ),
                             ),

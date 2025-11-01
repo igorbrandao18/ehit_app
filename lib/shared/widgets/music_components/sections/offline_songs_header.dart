@@ -28,8 +28,8 @@ class OfflineSongsHeader extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppColors.primaryRed.withOpacity(0.2),
-            AppColors.primaryRed.withOpacity(0.05),
+            AppColors.genreCardRed.withOpacity(0.2),
+            AppColors.genreCardRed.withOpacity(0.05),
             Colors.transparent,
           ],
           stops: const [0.0, 0.5, 1.0],
@@ -49,10 +49,10 @@ class OfflineSongsHeader extends StatelessWidget {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.primaryRed.withOpacity(0.2),
+                    color: AppColors.genreCardRed.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(DesignTokens.radiusSM),
                     border: Border.all(
-                      color: AppColors.primaryRed.withOpacity(0.5),
+                      color: AppColors.genreCardRed.withOpacity(0.5),
                       width: 1,
                     ),
                   ),
@@ -61,7 +61,7 @@ class OfflineSongsHeader extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.download_done,
-                        color: AppColors.primaryRed,
+                        color: AppColors.genreCardRed,
                         size: 14,
                       ),
                       const SizedBox(width: 4),
@@ -155,8 +155,8 @@ class OfflineSongsHeader extends StatelessWidget {
             gradient: isPrimary
                 ? LinearGradient(
                     colors: [
-                      AppColors.primaryRed,
-                      AppColors.primaryRed.withOpacity(0.8),
+                      AppColors.genreCardRed,
+                      AppColors.genreCardRed.withOpacity(0.8),
                     ],
                   )
                 : null,
