@@ -114,51 +114,19 @@ class _GenreCardState extends State<GenreCard>
                   // Conteúdo principal
                   Padding(
                     padding: EdgeInsets.all(spacing * 1.5),
-                    child: Row(
-                      children: [
-                        // Ícone do gênero
-                        Container(
-                          width: 64,
-                          height: 64,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
-                            border: Border.all(
-                              color: Colors.white.withOpacity(0.3),
-                              width: 1.5,
-                            ),
-                          ),
-                          child: Icon(
-                            Icons.music_note,
-                            color: Colors.white,
-                            size: 32,
-                          ),
+                    child: Center(
+                      child: Text(
+                        widget.name,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5,
                         ),
-                        SizedBox(width: spacing * 1.5),
-                        // Nome do gênero
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              widget.name,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 0.5,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ),
-                        // Seta de navegação
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          color: Colors.white.withOpacity(0.7),
-                          size: 20,
-                        ),
-                      ],
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
                 ],

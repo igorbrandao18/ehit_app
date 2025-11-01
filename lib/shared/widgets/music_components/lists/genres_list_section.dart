@@ -63,26 +63,44 @@ class GenresListSection extends StatelessWidget {
       );
     }
 
-    // Lista de gêneros
-    final spacing = ResponsiveUtils.getResponsiveSpacing(context);
+    // Lista de gêneros em grid 2x2
+    final screenWidth = MediaQuery.of(context).size.width;
     final sectionPadding = padding ??
         EdgeInsets.symmetric(
           horizontal: DesignTokens.screenPadding,
         );
+    final spacing = ResponsiveUtils.getResponsiveSpacing(context);
+    
+    // Calcular largura do card baseado na largura disponível
+    final availableWidth = screenWidth - (sectionPadding.horizontal * 2) - spacing;
+    final cardWidth = availableWidth / 2;
+    const cardHeight = 120.0; // Altura fixa do GenreCard
+    
+    // Calcular aspect ratio correto
+    final aspectRatio = cardWidth / cardHeight;
 
     return Padding(
       padding: sectionPadding,
-      child: ListView.separated(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: genres.length,
-        separatorBuilder: (context, index) => SizedBox(height: spacing),
-        itemBuilder: (context, index) {
-          final genre = genres[index];
-          return GenreCard(
-            name: genre.name,
-            imageUrl: genre.imageUrl,
-            onTap: () => onGenreTap(genre),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, // 2 colunas
+              crossAxisSpacing: spacing, // Espaçamento horizontal entre cards
+              mainAxisSpacing: spacing, // Espaçamento vertical entre cards
+              childAspectRatio: aspectRatio,
+            ),
+            itemCount: genres.length,
+            itemBuilder: (context, index) {
+              final genre = genres[index];
+              return GenreCard(
+                name: genre.name,
+                imageUrl: genre.imageUrl,
+                onTap: () => onGenreTap(genre),
+              );
+            },
           );
         },
       ),
