@@ -13,6 +13,7 @@ import '../../features/music_library/presentation/pages/playlist_detail_page.dar
 import '../../features/music_player/presentation/pages/player_page.dart';
 import '../../features/music_player/presentation/pages/queue_page.dart';
 import '../../features/music_library/presentation/controllers/downloaded_songs_controller.dart';
+import '../../features/music_library/presentation/controllers/genres_controller.dart';
 import '../../core/injection/injection_container.dart' as di;
 import '../../shared/widgets/layout/app_shell.dart';
 import 'app_routes.dart';
@@ -41,7 +42,10 @@ class AppRouter {
             name: 'search',
             pageBuilder: (context, state) => NoTransitionPage(
               key: state.pageKey,
-              child: const SearchPage(),
+              child: ChangeNotifierProvider.value(
+                value: di.sl<GenresController>(),
+                child: const SearchPage(),
+              ),
             ),
           ),
           GoRoute(
