@@ -7,6 +7,7 @@ class GenresController extends ChangeNotifier {
   final GetGenresUseCase _getGenresUseCase;
   
   List<Genre> _genres = [];
+  String _searchQuery = '';
   bool _isLoading = false;
   String? _errorMessage;
   bool _isDisposed = false;
@@ -14,8 +15,33 @@ class GenresController extends ChangeNotifier {
   GenresController(this._getGenresUseCase);
 
   List<Genre> get genres => _genres;
+  List<Genre> get filteredGenres => _getFilteredGenres();
+  String get searchQuery => _searchQuery;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+  
+  List<Genre> _getFilteredGenres() {
+    if (_searchQuery.isEmpty) {
+      return _genres;
+    }
+    return _genres.where((genre) {
+      return genre.name.toLowerCase().contains(_searchQuery.toLowerCase().trim());
+    }).toList();
+  }
+  
+  void updateSearchQuery(String query) {
+    if (_searchQuery != query) {
+      _searchQuery = query;
+      notifyListeners();
+    }
+  }
+  
+  void clearSearch() {
+    if (_searchQuery.isNotEmpty) {
+      _searchQuery = '';
+      notifyListeners();
+    }
+  }
 
   Future<void> initialize() async {
     await loadGenres();

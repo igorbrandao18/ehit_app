@@ -42,10 +42,7 @@ class AppRouter {
             name: 'search',
             pageBuilder: (context, state) => NoTransitionPage(
               key: state.pageKey,
-              child: ChangeNotifierProvider.value(
-                value: di.sl<GenresController>(),
-                child: const SearchPage(),
-              ),
+              child: const SearchPage(),
             ),
           ),
           GoRoute(
