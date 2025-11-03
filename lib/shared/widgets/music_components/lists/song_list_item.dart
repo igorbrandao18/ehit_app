@@ -33,6 +33,7 @@ class SongListItem extends StatelessWidget {
     final isMobile = ResponsiveUtils.getDeviceType(context) == DeviceType.mobile;
     return GestureDetector(
       onTap: onTap,
+      behavior: HitTestBehavior.opaque,
       child: Padding(
         padding: EdgeInsets.symmetric(
           vertical: isMobile ? spacing * DesignTokens.mobileSpacingMultiplier : spacing,
@@ -43,7 +44,11 @@ class SongListItem extends StatelessWidget {
             _buildAlbumArt(context, thumbnailSize),
             SizedBox(width: isMobile ? spacing * DesignTokens.mobileSpacingMultiplier * 1.5 : spacing * 1.5),
             Expanded(
-              child: _buildSongInfo(context),
+              child: GestureDetector(
+                onTap: onTap,
+                behavior: HitTestBehavior.opaque,
+                child: _buildSongInfo(context),
+              ),
             ),
             _buildDownloadButton(context),
           ],
