@@ -82,7 +82,7 @@ class FeaturedArtistsSection extends StatelessWidget {
             Container(
               height: DesignTokens.playhitsCardWidth, 
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+                borderRadius: BorderRadius.circular(DesignTokens.radiusCircular),
                 color: Colors.grey[800],
                 image: DecorationImage(
                   image: NetworkImage(imageUrl),

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/audio/audio_player_service.dart';
-import '../../../../core/injection/injection_container.dart' as di;
 import '../../domain/entities/song.dart';
 import '../controllers/downloaded_songs_controller.dart';
 import '../../../../shared/design/app_colors.dart';
@@ -234,9 +233,6 @@ class _LibraryPageState extends State<LibraryPage> {
                             startIndex: index,
                           );
                           context.pushNamed('player');
-                        },
-                        onMoreOptions: (song) {
-                          // TODO: Implementar menu de opções
                         },
                       ),
                     ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../design/design_tokens.dart';
 import '../../design/app_colors.dart';
 import '../../design/app_text_styles.dart';
+import '../../utils/responsive_utils.dart';
 
 class SectionTitle extends StatelessWidget {
   final String title;
@@ -21,16 +22,32 @@ class SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsiveFontSize = fontSize ?? ResponsiveUtils.getResponsiveFontSize(
+      context,
+      mobile: DesignTokens.fontSizeLG,
+      tablet: DesignTokens.fontSizeLG + DesignTokens.fontSizeAdjustmentSmall,
+      desktop: DesignTokens.fontSizeXL - DesignTokens.fontSizeAdjustmentMedium,
+    );
+
     final style = textStyle ??
-        AppTextStyles.headlineLarge.copyWith(
-          fontSize: fontSize ?? 24,
-          fontWeight: FontWeight.bold,
+        AppTextStyles.headlineMedium.copyWith(
+          fontSize: responsiveFontSize,
+          fontWeight: FontWeight.w700,
           color: color ?? AppColors.textPrimary,
         );
 
+    final responsivePadding = padding ?? 
+        EdgeInsets.symmetric(
+          horizontal: ResponsiveUtils.getResponsiveSpacing(
+            context,
+            mobile: DesignTokens.screenPadding,
+            tablet: DesignTokens.screenPadding + DesignTokens.spaceSM,
+            desktop: DesignTokens.screenPadding + DesignTokens.spaceMD,
+          ),
+        );
+
     return Padding(
-      padding: padding ??
-          const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
+      padding: responsivePadding,
       child: Text(
         title,
         style: style,
