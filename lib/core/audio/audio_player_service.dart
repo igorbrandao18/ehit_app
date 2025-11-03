@@ -167,6 +167,7 @@ class AudioPlayerService extends ChangeNotifier {
 
   Future<void> pause() async {
     await _audioPlayer.pause();
+    _isPlaying = false; // Atualizar estado manualmente
     // Pausar helper - ele para de contar mas mantém a posição salva
     _positionHelper?.pause();
     // Garantir que temos a posição atual do helper
@@ -178,6 +179,7 @@ class AudioPlayerService extends ChangeNotifier {
 
   Future<void> resume() async {
     await _audioPlayer.play();
+    _isPlaying = true; // Atualizar estado manualmente
     // Retomar helper - ele continua de onde parou
     _positionHelper?.resume();
     notifyListeners();
