@@ -38,11 +38,33 @@ class AudioPlayerService extends ChangeNotifier {
       
       // Gerenciar positionHelper baseado no estado de reprodução
       if (_isPlaying && !wasPlaying) {
-        // Começou a tocar - iniciar positionHelper
-        _startPositionPolling();
+        // Começou a tocar - iniciar ou retomar positionHelper
+        if (_positionHelper != null) {
+          // Helper já existe, apenas retomar usando a posição atual salva
+          debugPrint('🔄 playerStateStream: Retomando helper existente na posição: ${_positionHelper!.position.inSeconds}s');
+          _positionHelper!.resume();
+        } else {
+          // Helper não existe, criar novo
+          debugPrint('🔄 playerStateStream: Criando novo helper na posição: ${_position.inSeconds}s');
+          _startPositionPolling();
+        }
       } else if (!_isPlaying && wasPlaying) {
-        // Pausou - pausar positionHelper
-        _positionHelper?.pause();
+        // Pausou - apenas pausar positionHelper sem reiniciar
+        // IMPORTANTE: NÃO criar novo helper, NÃO descartar, apenas pausar
+        if (_positionHelper != null) {
+          // Salvar posição atual antes de pausar
+          final currentPos = _positionHelper!.position;
+          _positionHelper!.pause();
+          // Garantir que temos a posição atual do helper após pausar
+          _position = _positionHelper!.position;
+          debugPrint('⏸️ playerStateStream: Pausado - posição preservada: ${_position.inSeconds}s (era: ${currentPos.inSeconds}s)');
+          
+          // Proteção extra: se a posição ficou zero mas não deveria
+          if (_position == Duration.zero && currentPos != Duration.zero) {
+            _position = currentPos;
+            debugPrint('⚠️ playerStateStream: Corrigindo posição de 0s para ${currentPos.inSeconds}s');
+          }
+        }
       }
       
       notifyListeners();
@@ -85,11 +107,19 @@ class AudioPlayerService extends ChangeNotifier {
   }
   
   void _startPositionPolling() {
+    // Não reiniciar se já existe um helper ativo
+    // apenas retomar se estiver pausado
+    if (_positionHelper != null) {
+      // Se o helper já existe, apenas retomar
+      _positionHelper!.resume();
+      debugPrint('🔄 PositionHelper retomado - posição atual: ${_positionHelper!.position.inSeconds}s');
+      return;
+    }
+    
     _stopPositionPolling();
     
     // Usar AudioPositionHelper para calcular posição manualmente
     // já que o positionStream não funciona durante reprodução no iOS
-    _positionHelper?.dispose();
     _positionHelper = AudioPositionHelper(
       onPositionUpdate: (position) {
         _position = position;
@@ -104,7 +134,8 @@ class AudioPlayerService extends ChangeNotifier {
   void _stopPositionPolling() {
     _positionPollTimer?.cancel();
     _positionPollTimer = null;
-    _positionHelper?.pause();
+    // Não pausar o helper aqui, apenas parar o timer antigo se existir
+    // O helper será pausado explicitamente quando necessário
   }
 
   Future<void> playSong(Song song) async {
@@ -166,14 +197,42 @@ class AudioPlayerService extends ChangeNotifier {
   }
 
   Future<void> pause() async {
+    // Salvar a posição ANTES de pausar o player
+    // Isso garante que temos a posição correta mesmo se o player resetar algo
+    Duration? savedPosition;
+    if (_positionHelper != null) {
+      // Forçar atualização da posição no helper antes de pausar
+      savedPosition = _positionHelper!.position;
+      _position = savedPosition;
+      debugPrint('⏸️ Pausando na posição: ${_position.inSeconds}s (helper: ${savedPosition.inSeconds}s)');
+    } else {
+      // Se não tem helper, usar a posição atual
+      savedPosition = _position;
+      debugPrint('⏸️ Pausando na posição: ${_position.inSeconds}s (sem helper)');
+    }
+    
     await _audioPlayer.pause();
     _isPlaying = false; // Atualizar estado manualmente
+    
     // Pausar helper - ele para de contar mas mantém a posição salva
-    _positionHelper?.pause();
-    // Garantir que temos a posição atual do helper
+    // IMPORTANTE: NÃO descartar o helper, apenas pausar
     if (_positionHelper != null) {
+      _positionHelper!.pause();
+      // Garantir que a posição está preservada
       _position = _positionHelper!.position;
+      debugPrint('⏸️ Posição após pausar helper: ${_position.inSeconds}s');
+    } else {
+      // Se não tinha helper, usar a posição salva
+      _position = savedPosition ?? Duration.zero;
+      debugPrint('⏸️ Posição preservada (sem helper): ${_position.inSeconds}s');
     }
+    
+    // Proteção: garantir que a posição nunca seja zero após pausar se estava tocando
+    if (_position == Duration.zero && savedPosition != null && savedPosition != Duration.zero) {
+      _position = savedPosition;
+      debugPrint('⚠️ Corrigindo posição de 0s para ${savedPosition.inSeconds}s');
+    }
+    
     notifyListeners();
   }
 

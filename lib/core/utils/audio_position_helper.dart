@@ -46,11 +46,11 @@ class AudioPositionHelper {
       final elapsed = now.difference(_startTime!);
       _startPosition = _startPosition + elapsed;
       _currentPosition = _startPosition;
+      
+      // Chamar callback uma última vez com a posição atual ao pausar
+      // Isso garante que a UI seja atualizada com a posição correta
+      onPositionUpdate?.call(_currentPosition);
     }
-    
-    // Continuar atualizando a posição mesmo quando pausado (mantém sincronizado)
-    // O timer continua rodando, mas só salva a posição sem chamar callback durante reprodução
-    // Isso garante que a posição fique sempre atualizada internamente
   }
 
   /// Retoma o tracking da posição
