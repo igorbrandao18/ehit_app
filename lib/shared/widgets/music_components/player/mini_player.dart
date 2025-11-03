@@ -164,8 +164,8 @@ class _MiniPlayerState extends State<MiniPlayer> {
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                // Usar go em vez de push para navegação mais limpa
-                context.go(AppRoutes.player);
+                // Usar pushNamed para adicionar à stack e permitir voltar
+                context.pushNamed('player');
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(

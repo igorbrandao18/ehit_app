@@ -5,6 +5,7 @@ import '../../../../shared/design/app_colors.dart';
 import '../../../../shared/design/design_tokens.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
 import '../../../../core/audio/audio_player_service.dart';
+import '../../../../core/routing/app_routes.dart';
 
 class PlayerPage extends StatefulWidget {
   const PlayerPage({super.key});
@@ -72,7 +73,15 @@ class _PlayerPageState extends State<PlayerPage> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => context.pop(),
+            onTap: () {
+              // Verificar se pode fazer pop, senão voltar para home
+              if (context.canPop()) {
+                context.pop();
+              } else {
+                // Se não há nada para fazer pop, voltar para a rota home
+                context.go(AppRoutes.home);
+              }
+            },
             child: Icon(
               Icons.keyboard_arrow_down,
               color: Colors.white,
