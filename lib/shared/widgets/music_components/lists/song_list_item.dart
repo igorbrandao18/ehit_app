@@ -14,11 +14,13 @@ class SongListItem extends StatelessWidget {
   final Song song;
   final int index;
   final VoidCallback onTap;
+  final String? playlistCoverUrl; // URL da capa da playlist
   const SongListItem({
     super.key,
     required this.song,
     required this.index,
     required this.onTap,
+    this.playlistCoverUrl,
   });
   @override
   Widget build(BuildContext context) {
@@ -52,6 +54,36 @@ class SongListItem extends StatelessWidget {
   Widget _buildAlbumArt(BuildContext context, double thumbnailSize) {
     final isMobile = ResponsiveUtils.getDeviceType(context) == DeviceType.mobile;
     final isTablet = ResponsiveUtils.getDeviceType(context) == DeviceType.tablet;
+    
+    // Usar cover da playlist se song.imageUrl estiver vazio
+    final imageUrl = (song.imageUrl.isNotEmpty) 
+        ? song.imageUrl 
+        : (playlistCoverUrl ?? '');
+    
+    // Se ainda estiver vazio, mostrar placeholder
+    if (imageUrl.isEmpty) {
+      return Container(
+        width: thumbnailSize,
+        height: thumbnailSize,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.grey.shade800,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(DesignTokens.cardOverlayOpacity),
+              blurRadius: isMobile ? DesignTokens.shadowBlurMobile : (isTablet ? DesignTokens.shadowBlurTablet : DesignTokens.shadowBlurDesktop),
+              offset: const Offset(0, DesignTokens.cardShadowOffset),
+            ),
+          ],
+        ),
+        child: Icon(
+          Icons.music_note,
+          color: Colors.grey,
+          size: thumbnailSize * DesignTokens.cardIconSizeRatio,
+        ),
+      );
+    }
+    
     return Container(
       width: thumbnailSize,
       height: thumbnailSize,
@@ -67,7 +99,7 @@ class SongListItem extends StatelessWidget {
       ),
       child: ClipOval(
         child: Image.network(
-          song.imageUrl,
+          imageUrl,
           fit: BoxFit.cover,
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) return child;
@@ -85,7 +117,7 @@ class SongListItem extends StatelessWidget {
             );
           },
           errorBuilder: (context, error, stackTrace) {
-            print('❌ SongListItem: Error loading image: ${song.imageUrl}');
+            print('❌ SongListItem: Error loading image: $imageUrl');
             return Container(
               decoration: BoxDecoration(
                 color: Colors.grey.shade800,

@@ -10,6 +10,7 @@ class SongsListSection extends StatelessWidget {
   final Function(Song) onSongTap;
   final VoidCallback onShuffleTap;
   final VoidCallback onRepeatTap;
+  final String? playlistCoverUrl; // URL da capa da playlist
   const SongsListSection({
     super.key,
     required this.songs,
@@ -17,6 +18,7 @@ class SongsListSection extends StatelessWidget {
     required this.onSongTap,
     required this.onShuffleTap,
     required this.onRepeatTap,
+    this.playlistCoverUrl,
   });
   @override
   Widget build(BuildContext context) {
@@ -96,6 +98,7 @@ class SongsListSection extends StatelessWidget {
           song: song,
           index: index + 1,
           onTap: () => onSongTap(song),
+          playlistCoverUrl: playlistCoverUrl,
         );
       },
     );

@@ -9,14 +9,13 @@ abstract class PlaylistRemoteDataSource {
 
 class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
   final Dio _dio;
-  static const String _baseUrl = 'https://prod.ehitapp.com.br/api';
 
   PlaylistRemoteDataSourceImpl(this._dio);
 
   @override
   Future<List<PlaylistModel>> getPlaylists() async {
     try {
-      final response = await _dio.get('$_baseUrl/playlists/');
+      final response = await _dio.get(AppConfig.getApiEndpoint('playlists/'));
       if (response.statusCode == 200) {
         final data = response.data;
         final results = data['results'] as List;

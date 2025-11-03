@@ -177,9 +177,19 @@ class _PlayerPageState extends State<PlayerPage> {
   }
   Widget _buildProgressBar(BuildContext context, AudioPlayerService audioPlayer) {
     final progress = audioPlayer.progress;
-    final remaining = audioPlayer.duration - audioPlayer.position;
     
-    final sliderValue = _isDragging ? _currentSliderValue : progress.clamp(0.0, 1.0);
+    // Garantir que a duração seja pelo menos a pré-carregada da API
+    final effectiveDuration = audioPlayer.duration.inSeconds > 0 
+        ? audioPlayer.duration 
+        : Duration.zero;
+    
+    final remaining = effectiveDuration > audioPlayer.position 
+        ? effectiveDuration - audioPlayer.position 
+        : Duration.zero;
+    
+    final sliderValue = effectiveDuration.inMilliseconds > 0 
+        ? (_isDragging ? _currentSliderValue : progress.clamp(0.0, 1.0))
+        : 0.0;
     
     // Log apenas quando value muda significativamente
     if (!_isDragging) {
@@ -207,11 +217,13 @@ class _PlayerPageState extends State<PlayerPage> {
               });
             },
             onChangeEnd: (value) async {
-              final newPosition = Duration(
-                milliseconds: (value * audioPlayer.duration.inMilliseconds).round(),
-              );
-              debugPrint('🎚️ Slider onChangeEnd: ${newPosition.inSeconds}s');
-              await audioPlayer.seek(newPosition);
+              if (effectiveDuration.inMilliseconds > 0) {
+                final newPosition = Duration(
+                  milliseconds: (value * effectiveDuration.inMilliseconds).round(),
+                );
+                debugPrint('🎚️ Slider onChangeEnd: ${newPosition.inSeconds}s');
+                await audioPlayer.seek(newPosition);
+              }
               if (mounted) {
                 setState(() {
                   _isDragging = false;

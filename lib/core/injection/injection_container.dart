@@ -56,6 +56,7 @@ import '../../features/music_player/presentation/controllers/playlist_controller
 import '../../features/music_player/presentation/controllers/audio_player_controller.dart';
 import '../../features/authentication/presentation/controllers/auth_controller.dart';
 import '../constants/app_constants.dart';
+import '../constants/app_config.dart';
 import '../audio/offline_audio_service.dart';
 import '../storage/downloaded_songs_storage.dart';
 
@@ -69,7 +70,7 @@ Future<void> init() async {
   sl.registerSingleton<DownloadedSongsStorage>(downloadedSongsStorage);
   sl.registerLazySingleton<Dio>(() {
     final dio = Dio();
-    dio.options.baseUrl = AppConstants.apiBaseUrl;
+    dio.options.baseUrl = AppConfig.apiBaseUrl;
     dio.options.connectTimeout = const Duration(milliseconds: AppConstants.connectionTimeout);
     dio.options.receiveTimeout = const Duration(milliseconds: AppConstants.receiveTimeout);
     return dio;

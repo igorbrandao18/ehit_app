@@ -2,18 +2,21 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../models/song_model.dart';
 import '../models/playlist_model.dart';
+import '../../../../core/constants/app_config.dart';
+
 abstract class MusicRemoteDataSource {
   Future<List<PlaylistModel>> getPlaylists();
   Future<List<PlaylistModel>> getFeaturedPlayHits();
 }
 class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
   final Dio _dio;
-  static const String _baseUrl = 'https://prod.ehitapp.com.br/api';
+  
   MusicRemoteDataSourceImpl(this._dio);
+  
   @override
   Future<List<PlaylistModel>> getPlaylists() async {
     try {
-      final response = await _dio.get('$_baseUrl/playlists/');
+      final response = await _dio.get(AppConfig.getApiEndpoint('playlists/'));
       if (response.statusCode == 200) {
         final data = response.data;
         final results = data['results'] as List;
@@ -40,7 +43,7 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
   @override
   Future<List<PlaylistModel>> getFeaturedPlayHits() async {
     try {
-      final response = await _dio.get('$_baseUrl/playlists/');
+      final response = await _dio.get(AppConfig.getApiEndpoint('playlists/'));
       if (response.statusCode == 200) {
         final data = response.data;
         final results = data['results'] as List;
@@ -66,9 +69,7 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
   }
   List<SongModel> _parseMusicsData(List<dynamic> musicsData) {
     return musicsData.map((musicData) {
-      final coverUrl = musicData['cover'];
       debugPrint('🎵 Parsing música: ${musicData['title']}');
-      debugPrint('🎵 Cover URL: $coverUrl');
       
       // Tratar duration que pode ser null, int ou string
       String durationFormatted = '0:00';
@@ -81,14 +82,20 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
         }
       }
       
+      // A API não retorna 'cover' no musics_data, apenas no nível da playlist
+      // Deixar imageUrl vazio, a UI usará a capa da playlist via playlistCoverUrl
+      
+      // O campo 'file' já vem com URL completa da API
+      String audioUrl = musicData['file'] as String? ?? '';
+      
       return SongModel(
         id: musicData['id'].toString(),
         title: musicData['title'],
         artist: musicData['artist_name'],
-        album: musicData['album_data']?['title'] ?? 'Unknown Album',
+        album: musicData['album_data']?['name'] ?? musicData['album_name'] ?? 'Unknown Album',
         duration: durationFormatted,
-        imageUrl: coverUrl,
-        audioUrl: musicData['file'],
+        imageUrl: '', // Deixar vazio, usar cover da playlist
+        audioUrl: audioUrl,
         isExplicit: false, 
         releaseDate: DateTime.parse(musicData['release_date']),
         playCount: musicData['streams_count'] ?? 0,

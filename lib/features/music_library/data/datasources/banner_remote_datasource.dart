@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../models/banner_model.dart';
+import '../../../../core/constants/app_config.dart';
 
 abstract class BannerRemoteDataSource {
   Future<List<BannerModel>> getBanners();
@@ -8,7 +9,6 @@ abstract class BannerRemoteDataSource {
 
 class BannerRemoteDataSourceImpl implements BannerRemoteDataSource {
   final Dio _dio;
-  static const String _baseUrl = 'https://prod.ehitapp.com.br/api';
 
   BannerRemoteDataSourceImpl(this._dio);
 
@@ -16,7 +16,7 @@ class BannerRemoteDataSourceImpl implements BannerRemoteDataSource {
   Future<List<BannerModel>> getBanners() async {
     try {
       debugPrint('🎯 Buscando banners...');
-      final response = await _dio.get('$_baseUrl/banners/');
+      final response = await _dio.get(AppConfig.getApiEndpoint('banners/'));
       
       if (response.statusCode == 200) {
         final data = response.data;

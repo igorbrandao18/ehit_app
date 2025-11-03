@@ -149,6 +149,7 @@ class PlaylistDetailPage extends StatelessWidget {
       onSongTap: (song) => _onSongTap(context, song),
       onShuffleTap: () => _onShuffleTap(context, playlist),
       onRepeatTap: () => _onRepeatTap(context, playlist),
+      playlistCoverUrl: playlist.cover, // Passar a capa da playlist
     );
   }
   void _onSongTap(BuildContext context, Song song) {

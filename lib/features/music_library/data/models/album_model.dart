@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import '../../domain/entities/album.dart';
+import '../../../../core/constants/app_config.dart';
 
 part 'album_model.g.dart';
 
@@ -17,12 +18,10 @@ class AlbumModel extends Album {
   });
 
   factory AlbumModel.fromJson(Map<String, dynamic> json) {
-    const baseUrl = 'https://prod.ehitapp.com.br';
-    
     // Helper para concatenar URL completa
     String? coverUrl = json['cover'] as String? ?? json['image'] as String? ?? '';
     if (coverUrl.isNotEmpty && !coverUrl.startsWith('http')) {
-      coverUrl = '$baseUrl$coverUrl';
+      coverUrl = '${AppConfig.resourcesBaseUrl}$coverUrl';
     }
     
     return AlbumModel(

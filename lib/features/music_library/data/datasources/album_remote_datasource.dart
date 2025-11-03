@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../models/album_model.dart';
 import '../models/song_model.dart';
+import '../../../../core/constants/app_config.dart';
 
 abstract class AlbumRemoteDataSource {
   Future<List<AlbumModel>> getAlbumsByArtist(int artistId);
@@ -10,14 +11,13 @@ abstract class AlbumRemoteDataSource {
 
 class AlbumRemoteDataSourceImpl implements AlbumRemoteDataSource {
   final Dio _dio;
-  static const String _baseUrl = 'https://prod.ehitapp.com.br/api';
 
   AlbumRemoteDataSourceImpl(this._dio);
 
   @override
   Future<List<AlbumModel>> getAlbumsByArtist(int artistId) async {
     try {
-      final response = await _dio.get('$_baseUrl/artists/$artistId/albums/');
+      final response = await _dio.get(AppConfig.getApiEndpoint('artists/$artistId/albums/'));
       if (response.statusCode == 200) {
         final data = response.data;
         // Suporta múltiplos formatos de resposta: List direta ou Map com chaves comuns
@@ -53,7 +53,7 @@ class AlbumRemoteDataSourceImpl implements AlbumRemoteDataSource {
   @override
   Future<List<SongModel>> getSongsByAlbum(int albumId) async {
     try {
-      final response = await _dio.get('$_baseUrl/artists/albums/$albumId/musics/');
+      final response = await _dio.get(AppConfig.getApiEndpoint('artists/albums/$albumId/musics/'));
       if (response.statusCode == 200) {
         final data = response.data;
         // Suporta múltiplos formatos de resposta: List direta ou Map com chaves comuns
@@ -89,16 +89,14 @@ class AlbumRemoteDataSourceImpl implements AlbumRemoteDataSource {
           }
 
           // Helper para concatenar URL completa
-          const baseUrl = 'https://prod.ehitapp.com.br';
-          
           String? coverUrl = musicData['cover'] as String? ?? '';
           if (coverUrl.isNotEmpty && !coverUrl.startsWith('http')) {
-            coverUrl = '$baseUrl$coverUrl';
+            coverUrl = '${AppConfig.resourcesBaseUrl}$coverUrl';
           }
           
           String? fileUrl = musicData['file'] as String? ?? '';
           if (fileUrl.isNotEmpty && !fileUrl.startsWith('http')) {
-            fileUrl = '$baseUrl$fileUrl';
+            fileUrl = '${AppConfig.resourcesBaseUrl}$fileUrl';
           }
           
           return SongModel(

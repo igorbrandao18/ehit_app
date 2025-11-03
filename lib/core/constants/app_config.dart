@@ -7,8 +7,11 @@ class AppConfig {
   static const String defaultArtistImage = 'https://via.placeholder.com/300x300/333333/FFFFFF?text=Artist';
   static const String defaultPlaylistImage = 'https://via.placeholder.com/300x300/333333/FFFFFF?text=Playlist';
   static const String defaultPlaylistImageUrl = 'https://via.placeholder.com/300x300/333333/FFFFFF?text=Playlist';
-  static const String apiBaseUrl = 'https://api.ehit.app';
+  static const String apiBaseUrl = 'http://31.97.173.118:3030';
   static const String apiVersion = 'v1';
+  
+  /// URL base para recursos (imagens, arquivos de áudio)
+  static const String resourcesBaseUrl = 'http://31.97.173.118:3030';
   static const int maxRetries = 3;
   static const Duration retryDelay = Duration(seconds: 1);
   static const String audioBaseUrl = 'https://audio.ehit.app';
@@ -45,7 +48,15 @@ class AppConfig {
   static const int maxUsernameLength = 30;
   static const int minPasswordLength = 8;
   static String getApiUrl(String endpoint) {
-    return '$apiBaseUrl/api/$apiVersion$endpoint';
+    // Remover barra inicial se houver
+    final cleanEndpoint = endpoint.startsWith('/') ? endpoint : '/$endpoint';
+    return '$apiBaseUrl/api$cleanEndpoint';
+  }
+  
+  /// Método auxiliar para obter endpoints da API
+  static String getApiEndpoint(String endpoint) {
+    final cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
+    return '$apiBaseUrl/api/$cleanEndpoint';
   }
   static String getAudioUrl(String songId, {int quality = 320}) {
     return '$audioBaseUrl/songs/$songId?quality=${quality}kbps';

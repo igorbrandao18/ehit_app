@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../models/genre_model.dart';
+import '../../../../core/constants/app_config.dart';
 
 abstract class GenreRemoteDataSource {
   Future<List<GenreModel>> getGenres();
@@ -8,14 +9,13 @@ abstract class GenreRemoteDataSource {
 
 class GenreRemoteDataSourceImpl implements GenreRemoteDataSource {
   final Dio _dio;
-  static const String _baseUrl = 'https://prod.ehitapp.com.br/api';
 
   GenreRemoteDataSourceImpl(this._dio);
 
   @override
   Future<List<GenreModel>> getGenres() async {
     try {
-      final response = await _dio.get('$_baseUrl/genres/genres/');
+      final response = await _dio.get(AppConfig.getApiEndpoint('genres/genres/'));
       if (response.statusCode == 200) {
         final data = response.data;
         
