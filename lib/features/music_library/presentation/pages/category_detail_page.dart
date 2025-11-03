@@ -44,9 +44,8 @@ class CategoryDetailPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: MediaQuery.of(context).padding.top + kToolbarHeight),
-            _buildHeaderSection(),
             _buildPlaylistsSection(),
-            const SizedBox(height: 100),
+            SizedBox(height: DesignTokens.miniPlayerHeight + DesignTokens.spaceLG),
           ],
         ),
       ),
@@ -70,7 +69,10 @@ class CategoryDetailPage extends StatelessWidget {
           );
         }
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: EdgeInsets.symmetric(
+            horizontal: DesignTokens.screenPadding,
+            vertical: DesignTokens.spaceMD,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -117,10 +119,10 @@ class CategoryDetailPage extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.1),
+          color: AppColors.primaryRed.withOpacity(0.2),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: Colors.white.withOpacity(0.2),
+            color: AppColors.primaryRed.withOpacity(0.4),
             width: 1,
           ),
         ),
@@ -130,7 +132,7 @@ class CategoryDetailPage extends StatelessWidget {
               width: 32,
               height: 32,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
+                color: AppColors.primaryRed.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Center(

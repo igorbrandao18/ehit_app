@@ -21,19 +21,15 @@ class AudioPositionHelper {
     _currentPosition = initialPosition;
     _isPlaying = true;
     
-    // Atualizar a posição a cada 100ms para suavidade
+    // Atualizar a posição a cada 100ms
     _updateTimer?.cancel();
     _updateTimer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-      if (!_isPlaying) {
-        return;
-      }
+      if (!_isPlaying) return;
       
       final now = DateTime.now();
       if (_startTime != null) {
         final elapsed = now.difference(_startTime!);
         _currentPosition = _startPosition + elapsed;
-        
-        // Chamar callback se fornecido
         onPositionUpdate?.call(_currentPosition);
       }
     });
@@ -41,6 +37,8 @@ class AudioPositionHelper {
 
   /// Pausa o tracking da posição
   void pause() {
+    if (!_isPlaying) return; // Já está pausado
+    
     _isPlaying = false;
     if (_startTime != null) {
       // Salvar a posição atual como nova posição inicial
@@ -49,6 +47,10 @@ class AudioPositionHelper {
       _startPosition = _startPosition + elapsed;
       _currentPosition = _startPosition;
     }
+    
+    // Continuar atualizando a posição mesmo quando pausado (mantém sincronizado)
+    // O timer continua rodando, mas só salva a posição sem chamar callback durante reprodução
+    // Isso garante que a posição fique sempre atualizada internamente
   }
 
   /// Retoma o tracking da posição

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/injection/injection_container.dart' as di;
 import '../../../../shared/widgets/layout/app_layout.dart';
 import '../../../../shared/widgets/layout/app_header.dart';
@@ -236,13 +237,11 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _onGenreTap(BuildContext context, Genre genre) {
-    // TODO: Navegar para página de músicas do gênero
-    // Por enquanto, apenas mostra um snackbar
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Gênero: ${genre.name}'),
-        duration: const Duration(seconds: 1),
-      ),
+    // Navegar para página de detalhes do gênero
+    context.pushNamed(
+      'category-detail',
+      pathParameters: {'categoryTitle': genre.name},
+      extra: '',
     );
   }
 }

@@ -51,20 +51,21 @@ class AudioPlayerService extends ChangeNotifier {
       }
     });
     
-    // O positionStream do just_audio DEVERIA atualizar automaticamente
-    // Ele é a fonte principal da posição. O timer só força notifyListeners()
+    // O positionStream do just_audio não funciona bem no iOS durante reprodução
+    // Quando temos AudioPositionHelper, ele é a fonte da verdade
+    // Ignorar positionStream completamente se temos helper ativo
     _audioPlayer.positionStream.listen(
       (position) {
-        final oldPosition = _position;
-        _position = position;
-        
-        // Log quando mudar significativamente para debug
-        if (position.inSeconds != oldPosition.inSeconds) {
-          debugPrint('📡 PositionStream: ${oldPosition.inSeconds}s -> ${position.inSeconds}s');
+        // Se temos helper ativo, ignorar positionStream (ele cuida da posição)
+        if (_positionHelper != null) {
+          return;
         }
         
-        // Notificar sempre que o stream emitir
-        notifyListeners();
+        // Fallback apenas se não temos helper
+        if (position != _position) {
+          _position = position;
+          notifyListeners();
+        }
       },
       onError: (error) {
         debugPrint('❌ PositionStream error: $error');
@@ -123,7 +124,7 @@ class AudioPlayerService extends ChangeNotifier {
       await _audioPlayer.setUrl(song.audioUrl);
       await _audioPlayer.play();
       
-      // Resetar posição e iniciar positionHelper
+      // Resetar posição
       _position = Duration.zero;
       _startPositionPolling();
       
@@ -143,6 +144,7 @@ class AudioPlayerService extends ChangeNotifier {
       debugPrint('🎵 Tocando playlist: ${songs.length} músicas');
       debugPrint('🎵 Começando em: ${_currentSong!.title}');
       debugPrint('🎵 Duração da API: ${_currentSong!.duration}');
+      debugPrint('🎵 ImageUrl da música atual: ${_currentSong!.imageUrl}');
       _preloadDuration(_currentSong!);
       if (kIsWeb || !await _isAudioPlayerAvailable()) {
         debugPrint('⚠️ Plugin de áudio não disponível, simulando playlist...');
@@ -152,7 +154,7 @@ class AudioPlayerService extends ChangeNotifier {
       await _audioPlayer.setUrl(_currentSong!.audioUrl);
       await _audioPlayer.play();
       
-      // Resetar posição e iniciar positionHelper
+      // Resetar posição
       _position = Duration.zero;
       _startPositionPolling();
       
@@ -165,12 +167,18 @@ class AudioPlayerService extends ChangeNotifier {
 
   Future<void> pause() async {
     await _audioPlayer.pause();
+    // Pausar helper - ele para de contar mas mantém a posição salva
+    _positionHelper?.pause();
+    // Garantir que temos a posição atual do helper
+    if (_positionHelper != null) {
+      _position = _positionHelper!.position;
+    }
     notifyListeners();
   }
 
   Future<void> resume() async {
     await _audioPlayer.play();
-    // Retomar positionHelper
+    // Retomar helper - ele continua de onde parou
     _positionHelper?.resume();
     notifyListeners();
   }
@@ -212,7 +220,7 @@ class AudioPlayerService extends ChangeNotifier {
       await _audioPlayer.setUrl(_currentSong!.audioUrl);
       await _audioPlayer.play();
       
-      // Resetar posição e reiniciar positionHelper
+      // Resetar posição
       _position = Duration.zero;
       _startPositionPolling();
     } catch (e) {
@@ -236,7 +244,7 @@ class AudioPlayerService extends ChangeNotifier {
       await _audioPlayer.setUrl(_currentSong!.audioUrl);
       await _audioPlayer.play();
       
-      // Resetar posição e reiniciar positionHelper
+      // Resetar posição
       _position = Duration.zero;
       _startPositionPolling();
     } catch (e) {
@@ -248,7 +256,7 @@ class AudioPlayerService extends ChangeNotifier {
 
   Future<void> seek(Duration position) async {
     await _audioPlayer.seek(position);
-    // Atualizar positionHelper após seek
+    // Atualizar helper com nova posição
     _positionHelper?.seek(position);
     _position = position;
     notifyListeners();
@@ -432,3 +440,4 @@ class AudioPlayerService extends ChangeNotifier {
     super.dispose();
   }
 }
+
