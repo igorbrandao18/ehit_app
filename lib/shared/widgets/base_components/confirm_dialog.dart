@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../design/app_colors.dart';
 import '../../design/design_tokens.dart';
 import '../../utils/responsive_utils.dart';
+import '../base_components/cached_image.dart';
 import '../../../features/music_library/domain/entities/song.dart';
 
 /// Dialog de confirmação profissional e reutilizável - Full Screen
@@ -318,19 +319,22 @@ class ConfirmDialog extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(DesignTokens.radiusLG),
             child: song!.imageUrl.isNotEmpty
-                ? Image.network(
-                    song!.imageUrl,
+                ? CachedImage(
+                    imageUrl: song!.imageUrl,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey.shade800,
-                        child: Icon(
-                          Icons.music_note,
-                          color: Colors.grey.shade400,
-                          size: iconSize,
-                        ),
-                      );
-                    },
+                    width: coverSize,
+                    height: coverSize,
+                    cacheWidth: coverSize.toInt(),
+                    cacheHeight: coverSize.toInt(),
+                    borderRadius: BorderRadius.circular(DesignTokens.radiusLG),
+                    errorWidget: Container(
+                      color: Colors.grey.shade800,
+                      child: Icon(
+                        Icons.music_note,
+                        color: Colors.grey.shade400,
+                        size: iconSize,
+                      ),
+                    ),
                   )
                 : Container(
                     color: Colors.grey.shade800,

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../widgets/base_components/cached_image.dart';
+
 class ImageUtils {
   ImageUtils._();
   static bool isValidImageUrl(String? url) {
@@ -15,6 +17,7 @@ class ImageUtils {
     final text = fallbackText ?? 'Image';
     return 'https://via.placeholder.com/300x300/333333/ffffff?text=${Uri.encodeComponent(text)}';
   }
+  /// Usa CachedImage para melhor performance (cache automático)
   static Widget buildNetworkImage(
     String? imageUrl, {
     BoxFit fit = BoxFit.cover,
@@ -25,23 +28,20 @@ class ImageUtils {
     if (!isValidImageUrl(imageUrl)) {
       return fallbackWidget ?? _buildDefaultFallback();
     }
-    return Image.network(
-      imageUrl!,
+    return CachedImage(
+      imageUrl: imageUrl,
       fit: fit,
       width: width,
       height: height,
-      errorBuilder: (context, error, stackTrace) {
-        return fallbackWidget ?? _buildDefaultFallback();
-      },
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return Container(
-          color: Colors.grey[300],
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
-      },
+      cacheWidth: width != null ? width.toInt() : null,
+      cacheHeight: height != null ? height.toInt() : null,
+      errorWidget: fallbackWidget ?? _buildDefaultFallback(),
+      placeholder: Container(
+        color: Colors.grey[300],
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      ),
     );
   }
   static Widget _buildDefaultFallback() {

@@ -10,6 +10,7 @@ import '../../../../core/utils/result.dart';
 import '../../../../core/injection/injection_container.dart' as di;
 import '../../../design/design_tokens.dart';
 import '../../../utils/responsive_utils.dart';
+import '../../base_components/cached_image.dart';
 class SongListItem extends StatelessWidget {
   final Song song;
   final int index;
@@ -103,38 +104,36 @@ class SongListItem extends StatelessWidget {
         ],
       ),
       child: ClipOval(
-        child: Image.network(
-          imageUrl,
+        child: CachedImage(
+          imageUrl: imageUrl,
           fit: BoxFit.cover,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.grey.shade800,
-                shape: BoxShape.circle,
+          width: thumbnailSize,
+          height: thumbnailSize,
+          cacheWidth: thumbnailSize.toInt(),
+          cacheHeight: thumbnailSize.toInt(),
+          placeholder: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade800,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: CircularProgressIndicator(
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                strokeWidth: isMobile ? DesignTokens.loadingStrokeMobile : DesignTokens.loadingStrokeDefault,
               ),
-              child: Center(
-                child: CircularProgressIndicator(
-                  valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
-                  strokeWidth: isMobile ? DesignTokens.loadingStrokeMobile : DesignTokens.loadingStrokeDefault,
-                ),
-              ),
-            );
-          },
-          errorBuilder: (context, error, stackTrace) {
-            print('❌ SongListItem: Error loading image: $imageUrl');
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.grey.shade800,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.music_note,
-                color: Colors.grey,
-                size: thumbnailSize * DesignTokens.cardIconSizeRatio,
-              ),
-            );
-          },
+            ),
+          ),
+          errorWidget: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade800,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.music_note,
+              color: Colors.grey,
+              size: thumbnailSize * DesignTokens.cardIconSizeRatio,
+            ),
+          ),
         ),
       ),
     );

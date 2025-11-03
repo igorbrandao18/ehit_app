@@ -2,9 +2,11 @@ import 'package:flutter/foundation.dart';
 import '../../domain/entities/genre.dart';
 import '../../domain/usecases/get_genres_usecase.dart';
 import '../../../../core/utils/result.dart';
+import '../../../../shared/utils/debouncer.dart';
 
 class GenresController extends ChangeNotifier {
   final GetGenresUseCase _getGenresUseCase;
+  final Debouncer _searchDebouncer = Debouncer(delay: const Duration(milliseconds: 500));
   
   List<Genre> _genres = [];
   String _searchQuery = '';
@@ -104,6 +106,7 @@ class GenresController extends ChangeNotifier {
   @override
   void dispose() {
     _isDisposed = true;
+    _searchDebouncer.dispose();
     super.dispose();
   }
 }

@@ -4,6 +4,7 @@ import '../../../design/app_colors.dart';
 import '../../../design/app_text_styles.dart';
 import '../../../design/design_tokens.dart';
 import '../../../utils/responsive_utils.dart';
+import '../../base_components/cached_image.dart';
 class ArtistCard extends StatelessWidget {
   final Artist artist;
   final VoidCallback? onTap;
@@ -44,19 +45,21 @@ class ArtistCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
                 child: artist.imageUrl.isNotEmpty
-                    ? Image.network(
-                        artist.imageUrl,
+                    ? CachedImage(
+                        imageUrl: artist.imageUrl,
                         fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: AppColors.backgroundCard,
-                            child: Icon(
-                              Icons.person,
-                              color: AppColors.textTertiary,
-                              size: imageSize * 0.3,
-                            ),
-                          );
-                        },
+                        width: imageSize,
+                        height: imageSize,
+                        cacheWidth: imageSize.toInt(),
+                        cacheHeight: imageSize.toInt(),
+                        errorWidget: Container(
+                          color: AppColors.backgroundCard,
+                          child: Icon(
+                            Icons.person,
+                            color: AppColors.textTertiary,
+                            size: imageSize * 0.3,
+                          ),
+                        ),
                       )
                     : Container(
                         color: AppColors.backgroundCard,

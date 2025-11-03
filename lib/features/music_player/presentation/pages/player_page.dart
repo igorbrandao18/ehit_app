@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../../shared/design/app_colors.dart';
 import '../../../../shared/design/design_tokens.dart';
 import '../../../../shared/widgets/layout/gradient_scaffold.dart';
+import '../../../../shared/widgets/base_components/cached_image.dart';
 import '../../../../core/audio/audio_player_service.dart';
 import '../../../../core/routing/app_routes.dart';
 
@@ -124,22 +125,24 @@ class _PlayerPageState extends State<PlayerPage> {
       ),
       child: ClipOval(
         child: imageUrl.isNotEmpty
-            ? Image.network(
-                imageUrl,
+            ? CachedImage(
+                imageUrl: imageUrl,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    decoration: const BoxDecoration(
-                      color: Colors.grey,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.music_note,
-                      color: Colors.white,
-                      size: albumSize * DesignTokens.artistHeroIconSizeRatio,
-                    ),
-                  );
-                },
+                width: albumSize,
+                height: albumSize,
+                cacheWidth: albumSize.toInt(),
+                cacheHeight: albumSize.toInt(),
+                errorWidget: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.grey,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.music_note,
+                    color: Colors.white,
+                    size: albumSize * DesignTokens.artistHeroIconSizeRatio,
+                  ),
+                ),
               )
             : Container(
                 decoration: const BoxDecoration(

@@ -3,6 +3,7 @@ import '../../../design/app_colors.dart';
 import '../../../design/app_text_styles.dart';
 import '../../../design/design_tokens.dart';
 import '../../../utils/responsive_utils.dart';
+import '../../base_components/cached_image.dart';
 class MusicCard extends StatefulWidget {
   final String title;
   final String artist;
@@ -104,19 +105,19 @@ class _MusicCardState extends State<MusicCard>
                     child: Stack(
                       children: [
                         Positioned.fill(
-                          child: Image.network(
-                            widget.imageUrl,
+                          child: CachedImage(
+                            imageUrl: widget.imageUrl,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: AppColors.backgroundCard,
-                                child: Icon(
-                                  widget.isCircular ? Icons.person : Icons.music_note,
-                                  color: AppColors.textTertiary,
-                                  size: iconSize * 2,
-                                ),
-                              );
-                            },
+                            cacheWidth: cardWidth.toInt(),
+                            cacheHeight: cardHeight.toInt(),
+                            errorWidget: Container(
+                              color: AppColors.backgroundCard,
+                              child: Icon(
+                                widget.isCircular ? Icons.person : Icons.music_note,
+                                color: AppColors.textTertiary,
+                                size: iconSize * 2,
+                              ),
+                            ),
                           ),
                         ),
                         if (widget.showText)
@@ -210,12 +211,13 @@ class _MusicCardState extends State<MusicCard>
                           child: Stack(
                             children: [
                               Positioned.fill(
-                                child: Image.network(
-                                  widget.imageUrl,
+                                child: CachedImage(
+                                  imageUrl: widget.imageUrl,
                                   fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      color: AppColors.backgroundCard,
+                                  cacheWidth: cardWidth.toInt(),
+                                  cacheHeight: cardHeight.toInt(),
+                                  errorWidget: Container(
+                                    color: AppColors.backgroundCard,
                                       child: Icon(
                                         widget.isCircular ? Icons.person : Icons.music_note,
                                         color: AppColors.textTertiary,

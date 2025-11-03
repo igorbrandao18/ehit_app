@@ -12,6 +12,7 @@ import '../controllers/album_detail_controller.dart';
 import '../../domain/entities/song.dart';
 import '../../domain/entities/album.dart';
 import '../../../../shared/utils/responsive_utils.dart';
+import '../../../../shared/widgets/base_components/cached_image.dart';
 
 class AlbumDetailPage extends StatefulWidget {
   final String albumId;
@@ -220,26 +221,26 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
                 ],
               ),
               child: ClipOval(
-                child: Image.network(
-                  album.imageUrl,
+                child: CachedImage(
+                  imageUrl: album.imageUrl,
                   width: imageSize,
                   height: imageSize,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      width: imageSize,
-                      height: imageSize,
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade800,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.album,
-                        color: Colors.grey,
-                        size: imageSize * DesignTokens.artistHeroIconSizeRatio,
-                      ),
-                    );
-                  },
+                  cacheWidth: imageSize.toInt(),
+                  cacheHeight: imageSize.toInt(),
+                  errorWidget: Container(
+                    width: imageSize,
+                    height: imageSize,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade800,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.album,
+                      color: Colors.grey,
+                      size: imageSize * DesignTokens.artistHeroIconSizeRatio,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -258,12 +259,9 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: DesignTokens.spaceSM), 
-                FutureBuilder<Duration>(
-                  future: _calculateTotalDurationAsync(context, _controller.songs),
-                  builder: (context, snapshot) {
-                    final duration = snapshot.hasData 
-                        ? snapshot.data! 
-                        : Duration(minutes: _calculateTotalDurationFallback(_controller.songs));
+                Builder(
+                  builder: (context) {
+                    final duration = Duration(seconds: _calculateTotalDuration(_controller.songs));
                     final durationText = _formatDuration(duration);
                     return Text(
                       '${album.songsCount} Músicas • $durationText',
@@ -329,24 +327,36 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
     }
   }
 
-  Future<Duration> _calculateTotalDurationAsync(BuildContext context, List<Song> songs) async {
-    if (songs.isEmpty) return Duration.zero;
-    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
-    return await audioPlayer.calculateTotalDuration(songs);
-  }
-
-  int _calculateTotalDurationFallback(List<Song> songs) {
+  int _calculateTotalDuration(List<Song> songs) {
     if (songs.isEmpty) return 0;
     int totalSeconds = 0;
     for (final song in songs) {
+      if (song.duration.isEmpty) continue;
+      
+      // Tentar parsear formato MM:SS
       final durationParts = song.duration.split(':');
       if (durationParts.length == 2) {
         final minutes = int.tryParse(durationParts[0]) ?? 0;
         final seconds = int.tryParse(durationParts[1]) ?? 0;
         totalSeconds += minutes * 60 + seconds;
+      } else if (durationParts.length == 3) {
+        // Formato HH:MM:SS
+        final hours = int.tryParse(durationParts[0]) ?? 0;
+        final minutes = int.tryParse(durationParts[1]) ?? 0;
+        final seconds = int.tryParse(durationParts[2]) ?? 0;
+        totalSeconds += hours * 3600 + minutes * 60 + seconds;
+      } else {
+        // Tentar parsear como segundos diretos
+        final seconds = int.tryParse(song.duration);
+        if (seconds != null && seconds > 0) {
+          totalSeconds += seconds;
+        } else {
+          // Duração padrão se não conseguir parsear
+          totalSeconds += 210; // 3:30
+        }
       }
     }
-    return totalSeconds ~/ 60;
+    return totalSeconds;
   }
 
   String _formatDuration(Duration duration) {

@@ -5,6 +5,7 @@ import '../../../../shared/widgets/layout/app_layout.dart';
 import '../../../../shared/design/design_tokens.dart';
 import '../../../../shared/design/app_colors.dart';
 import '../../../../shared/utils/responsive_utils.dart';
+import '../../../../shared/widgets/base_components/cached_image.dart';
 import '../controllers/music_library_controller.dart';
 import '../../domain/entities/playlist.dart';
 class CategoryDetailPage extends StatelessWidget {
@@ -173,26 +174,27 @@ class CategoryDetailPage extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(DesignTokens.radiusSM),
-              child: Image.network(
-                playlist.cover,
+              child: CachedImage(
+                imageUrl: playlist.cover,
                 width: imageSize,
                 height: imageSize,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: imageSize,
-                    height: imageSize,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade800,
-                      borderRadius: BorderRadius.circular(DesignTokens.radiusSM),
-                    ),
-                    child: Icon(
-                      Icons.music_note,
-                      color: Colors.grey.shade400,
-                      size: imageSize * 0.4,
-                    ),
-                  );
-                },
+                cacheWidth: imageSize.toInt(),
+                cacheHeight: imageSize.toInt(),
+                borderRadius: BorderRadius.circular(DesignTokens.radiusSM),
+                errorWidget: Container(
+                  width: imageSize,
+                  height: imageSize,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade800,
+                    borderRadius: BorderRadius.circular(DesignTokens.radiusSM),
+                  ),
+                  child: Icon(
+                    Icons.music_note,
+                    color: Colors.grey.shade400,
+                    size: imageSize * 0.4,
+                  ),
+                ),
               ),
             ),
             SizedBox(width: ResponsiveUtils.getResponsiveSpacing(

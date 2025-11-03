@@ -400,35 +400,36 @@ class AudioPlayerService extends ChangeNotifier {
   Future<Duration> calculateTotalDuration(List<Song> songs) async {
     if (songs.isEmpty) return Duration.zero;
     int totalSeconds = 0;
+    
     for (final song in songs) {
-      final realDuration = await getSongDuration(song.audioUrl);
-      if (realDuration != null) {
-        totalSeconds += realDuration.inSeconds;
-        debugPrint('🎵 Duração real de "${song.title}": ${realDuration.inMinutes}:${(realDuration.inSeconds % 60).toString().padLeft(2, '0')}');
+      if (song.duration.isEmpty) continue;
+      
+      Duration? parsedDuration;
+      // Tentar parsear formato MM:SS
+      final durationParts = song.duration.split(':');
+      if (durationParts.length == 2) {
+        final minutes = int.tryParse(durationParts[0]) ?? 0;
+        final seconds = int.tryParse(durationParts[1]) ?? 0;
+        parsedDuration = Duration(minutes: minutes, seconds: seconds);
+      } else if (durationParts.length == 3) {
+        // Formato HH:MM:SS
+        final hours = int.tryParse(durationParts[0]) ?? 0;
+        final minutes = int.tryParse(durationParts[1]) ?? 0;
+        final seconds = int.tryParse(durationParts[2]) ?? 0;
+        parsedDuration = Duration(hours: hours, minutes: minutes, seconds: seconds);
       } else {
-        // Fallback para duração da API se não conseguir obter do arquivo
-        Duration? parsedDuration;
-        final durationParts = song.duration.split(':');
-        if (durationParts.length == 2) {
-          final minutes = int.tryParse(durationParts[0]) ?? 0;
-          final seconds = int.tryParse(durationParts[1]) ?? 0;
-          parsedDuration = Duration(minutes: minutes, seconds: seconds);
-        } else {
-          final seconds = int.tryParse(song.duration);
-          if (seconds != null && seconds > 0) {
-            parsedDuration = Duration(seconds: seconds);
-          }
-        }
-        
-        if (parsedDuration != null && parsedDuration.inSeconds > 0) {
-          totalSeconds += parsedDuration.inSeconds;
-          debugPrint('🎵 Duração fallback de "${song.title}": ${song.duration} (${parsedDuration.inSeconds}s)');
-        } else {
-          totalSeconds += 210; // Duração padrão
-          debugPrint('🎵 Duração padrão para "${song.title}": 3:30');
+        // Tentar parsear como segundos diretos
+        final seconds = int.tryParse(song.duration);
+        if (seconds != null && seconds > 0) {
+          parsedDuration = Duration(seconds: seconds);
         }
       }
+      
+      if (parsedDuration != null && parsedDuration.inSeconds > 0) {
+        totalSeconds += parsedDuration.inSeconds;
+      }
     }
+    
     return Duration(seconds: totalSeconds);
   }
 

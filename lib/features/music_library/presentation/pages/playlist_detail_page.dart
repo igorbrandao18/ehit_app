@@ -7,22 +7,29 @@ import '../../../../shared/design/app_colors.dart';
 import '../../../../shared/design/design_tokens.dart';
 import '../../../../shared/utils/responsive_utils.dart';
 import '../../../../shared/widgets/music_components/lists/songs_list_section.dart';
+import '../../../../shared/widgets/base_components/cached_image.dart';
 import '../../../../core/audio/audio_player_service.dart';
 import '../controllers/music_library_controller.dart';
 import '../../domain/entities/playlist.dart';
 import '../../domain/entities/song.dart';
-class PlaylistDetailPage extends StatelessWidget {
+class PlaylistDetailPage extends StatefulWidget {
   final String playlistId;
   const PlaylistDetailPage({
     super.key,
     required this.playlistId,
   });
+
+  @override
+  State<PlaylistDetailPage> createState() => _PlaylistDetailPageState();
+}
+
+class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<MusicLibraryController>(
       builder: (context, controller, child) {
         final playlist = controller.playlists
-            .where((p) => p.id.toString() == playlistId)
+            .where((p) => p.id.toString() == widget.playlistId)
             .firstOrNull;
         if (playlist == null) {
           return GradientScaffold(
@@ -114,22 +121,24 @@ class PlaylistDetailPage extends StatelessWidget {
             ],
           ),
           child: ClipOval(
-            child: Image.network(
-              playlist.cover,
+            child: CachedImage(
+              imageUrl: playlist.cover,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  decoration: const BoxDecoration(
-                    color: Colors.grey,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.music_note,
-                    color: Colors.white,
-                    size: albumSize * DesignTokens.artistHeroIconSizeRatio,
-                  ),
-                );
-              },
+              width: albumSize,
+              height: albumSize,
+              cacheWidth: albumSize.toInt(),
+              cacheHeight: albumSize.toInt(),
+              errorWidget: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.grey,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.music_note,
+                  color: Colors.white,
+                  size: albumSize * DesignTokens.artistHeroIconSizeRatio,
+                ),
+              ),
             ),
           ),
         ),
@@ -144,12 +153,9 @@ class PlaylistDetailPage extends StatelessWidget {
           textAlign: TextAlign.center,
         ),
         SizedBox(height: DesignTokens.spaceSM),
-        FutureBuilder<Duration>(
-          future: _calculateTotalDurationAsync(context, playlist),
-          builder: (context, snapshot) {
-            final duration = snapshot.hasData 
-                ? snapshot.data! 
-                : Duration(minutes: _calculateTotalDurationFallback(playlist));
+        Builder(
+          builder: (context) {
+            final duration = Duration(seconds: _calculateTotalDuration(playlist));
             final durationText = _formatDuration(duration);
             return Text(
               '${playlist.musicsCount} Músicas • $durationText',
@@ -179,7 +185,7 @@ class PlaylistDetailPage extends StatelessWidget {
     final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
     final playlist = Provider.of<MusicLibraryController>(context, listen: false)
         .playlists
-        .where((p) => p.id.toString() == playlistId)
+        .where((p) => p.id.toString() == widget.playlistId)
         .firstOrNull;
     if (playlist != null && playlist.musicsData.isNotEmpty) {
       final songIndex = playlist.musicsData.indexWhere((s) => s.id == song.id);
@@ -217,23 +223,36 @@ class PlaylistDetailPage extends StatelessWidget {
     }
     context.pushNamed('player');
   }
-  Future<Duration> _calculateTotalDurationAsync(BuildContext context, Playlist playlist) async {
-    if (playlist.musicsData.isEmpty) return Duration.zero;
-    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
-    return await audioPlayer.calculateTotalDuration(playlist.musicsData);
-  }
-  int _calculateTotalDurationFallback(Playlist playlist) {
+  int _calculateTotalDuration(Playlist playlist) {
     if (playlist.musicsData.isEmpty) return 0;
     int totalSeconds = 0;
     for (final song in playlist.musicsData) {
+      if (song.duration.isEmpty) continue;
+      
+      // Tentar parsear formato MM:SS
       final durationParts = song.duration.split(':');
       if (durationParts.length == 2) {
         final minutes = int.tryParse(durationParts[0]) ?? 0;
         final seconds = int.tryParse(durationParts[1]) ?? 0;
         totalSeconds += minutes * 60 + seconds;
+      } else if (durationParts.length == 3) {
+        // Formato HH:MM:SS
+        final hours = int.tryParse(durationParts[0]) ?? 0;
+        final minutes = int.tryParse(durationParts[1]) ?? 0;
+        final seconds = int.tryParse(durationParts[2]) ?? 0;
+        totalSeconds += hours * 3600 + minutes * 60 + seconds;
+      } else {
+        // Tentar parsear como segundos diretos
+        final seconds = int.tryParse(song.duration);
+        if (seconds != null && seconds > 0) {
+          totalSeconds += seconds;
+        } else {
+          // Duração padrão se não conseguir parsear
+          totalSeconds += 210; // 3:30
+        }
       }
     }
-    return totalSeconds ~/ 60;
+    return totalSeconds;
   }
   String _formatDuration(Duration duration) {
     final minutes = duration.inMinutes;

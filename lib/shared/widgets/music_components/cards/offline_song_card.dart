@@ -3,6 +3,7 @@ import '../../../../features/music_library/domain/entities/song.dart';
 import '../../../design/app_colors.dart';
 import '../../../design/design_tokens.dart';
 import '../../../utils/responsive_utils.dart';
+import '../../base_components/cached_image.dart';
 
 /// Card impressionante para exibir música offline
 class OfflineSongCard extends StatefulWidget {
@@ -196,19 +197,19 @@ class _OfflineSongCardState extends State<OfflineSongCard>
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.network(
-              widget.song.imageUrl,
+            CachedImage(
+              imageUrl: widget.song.imageUrl,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Colors.grey.shade800,
-                  child: Icon(
-                    Icons.music_note,
-                    color: Colors.grey.shade400,
-                    size: size * 0.4,
-                  ),
-                );
-              },
+              cacheWidth: size.toInt(),
+              cacheHeight: size.toInt(),
+              errorWidget: Container(
+                color: Colors.grey.shade800,
+                child: Icon(
+                  Icons.music_note,
+                  color: Colors.grey.shade400,
+                  size: size * 0.4,
+                ),
+              ),
             ),
             // Overlay gradient
             Container(

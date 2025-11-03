@@ -6,6 +6,7 @@ import '../../../../core/routing/app_routes.dart';
 import '../../../design/app_colors.dart';
 import '../../../design/design_tokens.dart';
 import '../../../utils/responsive_utils.dart';
+import '../../base_components/cached_image.dart';
 
 /// Mini player reutilizável e controlável
 /// Pode ser usado em qualquer lugar da aplicação
@@ -205,12 +206,15 @@ class _MiniPlayerState extends State<MiniPlayer> {
         ],
       ),
         child: ClipOval(
-          child: audioPlayer.currentSong != null
-              ? Image.network(
-                  audioPlayer.currentSong!.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
+          child: audioPlayer.currentSong != null && audioPlayer.currentSong!.imageUrl.isNotEmpty
+              ? CachedImage(
+                  imageUrl: audioPlayer.currentSong!.imageUrl,
+                  fit: BoxFit.cover,
+                  width: ResponsiveUtils.getMiniPlayerAlbumSize(context),
+                  height: ResponsiveUtils.getMiniPlayerAlbumSize(context),
+                  cacheWidth: ResponsiveUtils.getMiniPlayerAlbumSize(context).toInt(),
+                  cacheHeight: ResponsiveUtils.getMiniPlayerAlbumSize(context).toInt(),
+                  errorWidget: Container(
                     decoration: BoxDecoration(
                       color: Colors.grey.shade800,
                       shape: BoxShape.circle,
@@ -220,9 +224,8 @@ class _MiniPlayerState extends State<MiniPlayer> {
                       color: Colors.white,
                       size: ResponsiveUtils.getMiniPlayerIconSize(context) * 0.8,
                     ),
-                  );
-                },
-              )
+                  ),
+                )
             : Container(
                 decoration: BoxDecoration(
                   color: Colors.grey.shade800,

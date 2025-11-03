@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../features/music_library/domain/entities/artist.dart';
 import '../../../design/design_tokens.dart';
 import '../../../utils/responsive_utils.dart';
+import '../../base_components/cached_image.dart';
 class ArtistHeroSection extends StatelessWidget {
   final Artist artist;
   const ArtistHeroSection({
@@ -54,38 +55,35 @@ class ArtistHeroSection extends StatelessWidget {
             ],
           ),
           child: ClipOval(
-            child: Image.network(
-              artist.imageUrl,
+            child: CachedImage(
+              imageUrl: artist.imageUrl,
               fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade800,
-                    shape: BoxShape.circle,
+              width: imageSize,
+              height: imageSize,
+              cacheWidth: imageSize.toInt(),
+              cacheHeight: imageSize.toInt(),
+              placeholder: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade800,
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
-                  child: const Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    ),
-                  ),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) {
-                debugPrint('ArtistHeroSection: Error loading image: ${artist.imageUrl}');
-                debugPrint('ArtistHeroSection: Error: $error');
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade800,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.person,
-                    color: Colors.grey,
-                    size: imageSize * DesignTokens.artistHeroIconSizeRatio,
-                  ),
-                );
-              },
+                ),
+              ),
+              errorWidget: Container(
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade800,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.person,
+                  color: Colors.grey,
+                  size: imageSize * DesignTokens.artistHeroIconSizeRatio,
+                ),
+              ),
             ),
           ),
         );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../design/app_colors.dart';
 import '../../../design/app_text_styles.dart';
 import '../../../utils/responsive_utils.dart';
+import '../../base_components/cached_image.dart';
 class AlbumCard extends StatelessWidget {
   final String title;
   final String artist;
@@ -30,23 +31,22 @@ class AlbumCard extends StatelessWidget {
         height: cardHeight,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(spacing),
-          child: Image.network(
-            imageUrl,
+          child: CachedImage(
+            imageUrl: imageUrl,
             width: cardWidth,
             height: cardHeight,
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Container(
-                width: cardWidth,
-                height: cardHeight,
-                color: AppColors.backgroundCard,
-                child: Icon(
-                  Icons.album,
-                  color: AppColors.textTertiary,
-                  size: iconSize * 2,
-                ),
-              );
-            },
+            borderRadius: BorderRadius.circular(spacing),
+            errorWidget: Container(
+              width: cardWidth,
+              height: cardHeight,
+              color: AppColors.backgroundCard,
+              child: Icon(
+                Icons.album,
+                color: AppColors.textTertiary,
+                size: iconSize * 2,
+              ),
+            ),
           ),
         ),
       ),
