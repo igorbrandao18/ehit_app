@@ -11,6 +11,7 @@ import 'features/music_player/presentation/controllers/music_player_controller.d
 import 'features/music_player/presentation/controllers/playlist_controller.dart';
 import 'features/music_library/presentation/controllers/music_library_controller.dart';
 import 'features/music_library/presentation/controllers/artists_controller.dart';
+import 'features/music_library/presentation/controllers/featured_albums_controller.dart';
 import 'features/music_library/presentation/controllers/banner_controller.dart';
 import 'features/authentication/presentation/controllers/auth_controller.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -29,11 +30,13 @@ class EhitApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final musicLibraryController = di.sl<MusicLibraryController>();
     final artistsController = di.sl<ArtistsController>();
+    final featuredAlbumsController = di.sl<FeaturedAlbumsController>();
     final bannerController = di.sl<BannerController>();
     
     Future.microtask(() async {
       await musicLibraryController.initialize();
       await artistsController.initialize();
+      await featuredAlbumsController.initialize();
       await bannerController.initialize();
     });
     
@@ -46,6 +49,7 @@ class EhitApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => di.sl<PlaylistController>()..initialize()),
         ChangeNotifierProvider.value(value: musicLibraryController),
         ChangeNotifierProvider.value(value: artistsController),
+        ChangeNotifierProvider.value(value: featuredAlbumsController),
         ChangeNotifierProvider.value(value: bannerController),
       ],
       child: MaterialApp.router(

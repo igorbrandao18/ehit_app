@@ -48,6 +48,7 @@ import '../../features/music_library/presentation/controllers/music_library_cont
 import '../../features/music_library/presentation/controllers/artist_detail_controller.dart';
 import '../../features/music_library/presentation/controllers/album_detail_controller.dart';
 import '../../features/music_library/presentation/controllers/artists_controller.dart';
+import '../../features/music_library/presentation/controllers/featured_albums_controller.dart';
 import '../../features/music_library/presentation/controllers/banner_controller.dart';
 import '../../features/music_library/presentation/controllers/downloaded_songs_controller.dart';
 import '../../features/music_library/presentation/controllers/genres_controller.dart';
@@ -190,6 +191,7 @@ Future<void> init() async {
     getPlaylistsUseCase: sl<GetPlaylistsUseCase>(),
   ));
   sl.registerLazySingleton(() => ArtistsController(sl<GetArtistsUseCase>()));
+  sl.registerLazySingleton(() => FeaturedAlbumsController(sl<AlbumRemoteDataSource>()));
   sl.registerLazySingleton(() => ArtistDetailController(
     getArtistsUseCase: sl<GetArtistsUseCase>(),
     getAlbumsByArtistUseCase: sl<GetAlbumsByArtistUseCase>(),

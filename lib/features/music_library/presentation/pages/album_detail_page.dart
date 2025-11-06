@@ -286,6 +286,7 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
       onSongTap: (song) => _onSongTap(song),
       onShuffleTap: () => _onShuffleTap(controller),
       onRepeatTap: () => _onRepeatTap(controller),
+      hideArtist: true,
     );
   }
 
@@ -303,24 +304,72 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
     context.pushNamed('player');
   }
 
-  void _onShuffleTap(AlbumDetailController controller) {
-    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
-    final songs = controller.songs;
-    if (songs.isNotEmpty) {
+  void _onShuffleTap(AlbumDetailController controller) async {
+    try {
+      final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
+      final songs = controller.songs;
+      if (songs.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Nenhuma música disponível para reproduzir'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
+      
       final shuffledSongs = List<Song>.from(songs)..shuffle();
-      audioPlayer.playPlaylist(shuffledSongs, startIndex: 0, playlistName: controller.album?.title);
+      await audioPlayer.playPlaylist(shuffledSongs, startIndex: 0, playlistName: controller.album?.title);
       debugPrint('🔀 Shuffle play: ${songs.length} músicas do álbum ${controller.album?.title}');
-      context.pushNamed('player');
+      
+      if (context.mounted) {
+        context.pushNamed('player');
+      }
+    } catch (e) {
+      debugPrint('❌ Erro ao tocar shuffle: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao iniciar reprodução: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     }
   }
 
-  void _onRepeatTap(AlbumDetailController controller) {
-    final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
-    final songs = controller.songs;
-    if (songs.isNotEmpty) {
-      audioPlayer.playPlaylist(songs, startIndex: 0, playlistName: controller.album?.title);
+  void _onRepeatTap(AlbumDetailController controller) async {
+    try {
+      final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
+      final songs = controller.songs;
+      if (songs.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Nenhuma música disponível para reproduzir'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+        return;
+      }
+      
+      await audioPlayer.playPlaylist(songs, startIndex: 0, playlistName: controller.album?.title);
       debugPrint('🔁 Repeat play: ${songs.length} músicas do álbum ${controller.album?.title}');
-      context.pushNamed('player');
+      
+      if (context.mounted) {
+        context.pushNamed('player');
+      }
+    } catch (e) {
+      debugPrint('❌ Erro ao tocar repeat: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao iniciar reprodução: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
     }
   }
 

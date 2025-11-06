@@ -7,6 +7,7 @@ import '../../../../core/constants/app_config.dart';
 abstract class AlbumRemoteDataSource {
   Future<List<AlbumModel>> getAlbumsByArtist(int artistId);
   Future<List<SongModel>> getSongsByAlbum(int albumId);
+  Future<List<AlbumModel>> getFeaturedAlbums();
 }
 
 class AlbumRemoteDataSourceImpl implements AlbumRemoteDataSource {
@@ -153,6 +154,41 @@ class AlbumRemoteDataSourceImpl implements AlbumRemoteDataSource {
         genre: musicData['genre_data']?['name'] as String? ?? 'Unknown',
       );
     }).toList();
+  }
+
+  @override
+  Future<List<AlbumModel>> getFeaturedAlbums() async {
+    try {
+      final response = await _dio.get(AppConfig.getApiEndpoint('artists/albums/featured/'));
+      if (response.statusCode == 200) {
+        final data = response.data;
+        List<dynamic> results;
+        if (data is Map<String, dynamic>) {
+          if (data['albums'] is List) {
+            results = data['albums'] as List;
+          } else if (data['results'] is List) {
+            results = data['results'] as List;
+          } else if (data['data'] is List) {
+            results = data['data'] as List;
+          } else {
+            results = const [];
+          }
+        } else if (data is List) {
+          results = data;
+        } else {
+          results = const [];
+        }
+        debugPrint('💿 API retornou ${results.length} álbuns em destaque');
+        return results.map((albumData) {
+          return AlbumModel.fromJson(albumData);
+        }).toList();
+      } else {
+        throw Exception('Failed to load featured albums: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('❌ Erro ao buscar álbuns em destaque: $e');
+      throw Exception('Error fetching featured albums: $e');
+    }
   }
 
   String _formatDuration(int seconds) {

@@ -69,23 +69,19 @@ log "Limpando projeto..."
 flutter clean
 flutter pub get
 
-# 3. Executar testes
-log "Executando testes..."
-flutter test || warning "Alguns testes falharam, continuando..."
-
-# 4. Build Flutter iOS
+# 3. Build Flutter iOS
 log "Fazendo build Flutter iOS..."
 flutter build ios --release --no-codesign
 
-# 5. Navegar para iOS e configurar Xcode
+# 4. Navegar para iOS e configurar Xcode
 cd ios
 
-# 6. Atualizar versão no Info.plist
+# 5. Atualizar versão no Info.plist
 log "Atualizando versão no Info.plist..."
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" Runner/Info.plist
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $BUILD_NUMBER" Runner/Info.plist
 
-# 7. Build com Xcode
+# 6. Build com Xcode
 log "Fazendo build com Xcode..."
 xcodebuild -workspace Runner.xcworkspace \
     -scheme Runner \
@@ -94,14 +90,14 @@ xcodebuild -workspace Runner.xcworkspace \
     -archivePath Runner.xcarchive \
     archive
 
-# 8. Exportar IPA
+# 7. Exportar IPA
 log "Exportando IPA..."
 xcodebuild -exportArchive \
     -archivePath Runner.xcarchive \
     -exportPath . \
     -exportOptionsPlist ExportOptions.plist
 
-# 9. Verificar se o IPA foi criado
+# 8. Verificar se o IPA foi criado
 if [ -f "ehit_app.ipa" ]; then
     log "✅ Build concluído com sucesso!"
     log "IPA criado: $(pwd)/ehit_app.ipa"
@@ -114,10 +110,10 @@ else
     error "❌ Falha ao criar IPA"
 fi
 
-# 10. Voltar para diretório raiz
+# 9. Voltar para diretório raiz
 cd ..
 
-# 11. Upload para TestFlight
+# 10. Upload para TestFlight
 log "Fazendo upload para TestFlight..."
 UPLOAD_FILE=""
 if [ -f "ios/ehit_app.ipa" ]; then

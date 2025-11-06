@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../features/music_library/domain/entities/song.dart';
 import '../../../design/design_tokens.dart';
 import '../../../design/app_colors.dart';
+import '../../../design/app_text_styles.dart';
 import '../../../utils/responsive_utils.dart';
 import 'song_list_item.dart';
 class SongsListSection extends StatelessWidget {
@@ -10,7 +11,8 @@ class SongsListSection extends StatelessWidget {
   final Function(Song) onSongTap;
   final VoidCallback onShuffleTap;
   final VoidCallback onRepeatTap;
-  final String? playlistCoverUrl; 
+  final String? playlistCoverUrl;
+  final bool hideArtist;
   const SongsListSection({
     super.key,
     required this.songs,
@@ -19,6 +21,7 @@ class SongsListSection extends StatelessWidget {
     required this.onShuffleTap,
     required this.onRepeatTap,
     this.playlistCoverUrl,
+    this.hideArtist = false,
   });
   @override
   Widget build(BuildContext context) {
@@ -34,25 +37,29 @@ class SongsListSection extends StatelessWidget {
     );
   }
   Widget _buildSectionHeader(BuildContext context) {
+    final padding = ResponsiveUtils.getResponsivePadding(context);
+    final spacing = ResponsiveUtils.getResponsiveSpacing(context);
+    final fontSize = ResponsiveUtils.getResponsiveFontSize(context);
+    
     return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: ResponsiveUtils.getResponsiveSpacing(context, mobile: 16, tablet: 20, desktop: 24),
+      padding: EdgeInsets.only(
+        left: padding.left,
+        right: padding.right,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
             'Lista de sons',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: ResponsiveUtils.getResponsiveFontSize(context, mobile: 20, tablet: 22, desktop: 24),
+            style: AppTextStyles.headlineSmall.copyWith(
+              fontSize: fontSize + 4,
               fontWeight: FontWeight.w700,
             ),
           ),
           Row(
             children: [
               _buildActionButton(context, icon: Icons.shuffle, onTap: onShuffleTap),
-              SizedBox(width: ResponsiveUtils.getResponsiveSpacing(context, mobile: 8, tablet: 10, desktop: 12)),
+              SizedBox(width: spacing),
               _buildActionButton(context, icon: Icons.repeat, onTap: onRepeatTap),
             ],
           ),
@@ -64,32 +71,51 @@ class SongsListSection extends StatelessWidget {
     required IconData icon,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
+    final spacing = ResponsiveUtils.getResponsiveSpacing(context);
+    final iconSize = ResponsiveUtils.getResponsiveIconSize(context);
+    
+    return InkWell(
       onTap: onTap,
-      child: Icon(
-        icon,
-        color: Colors.white,
-        size: ResponsiveUtils.getResponsiveIconSize(context, mobile: 20, tablet: 24, desktop: 28),
+      borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+      child: Container(
+        padding: EdgeInsets.all(spacing * 0.75),
+        child: Icon(
+          icon,
+          color: AppColors.textPrimary,
+          size: iconSize,
+        ),
       ),
     );
   }
   Widget _buildSongsList(BuildContext context) {
     if (songs.isEmpty) {
-      return Center(
-        child: Text(
-          'Nenhuma música encontrada',
-          style: TextStyle(
-            color: Colors.white70,
-            fontSize: ResponsiveUtils.getResponsiveFontSize(context, mobile: 16, tablet: 18, desktop: 20),
-          ),
-        ),
-      );
+      return _buildEmptyState(context);
     }
+    return _buildSongsListView(context);
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
+    final fontSize = ResponsiveUtils.getResponsiveFontSize(context);
+    
+    return Center(
+      child: Text(
+        'Nenhuma música encontrada',
+        style: AppTextStyles.bodyMedium.copyWith(
+          color: AppColors.textSecondary,
+          fontSize: fontSize,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSongsListView(BuildContext context) {
+    final padding = ResponsiveUtils.getResponsivePadding(context);
+    
     return ListView.builder(
       padding: EdgeInsets.only(
-        top: ResponsiveUtils.getResponsiveSpacing(context, mobile: 16, tablet: 20, desktop: 24),
-        left: ResponsiveUtils.getResponsiveSpacing(context, mobile: 16, tablet: 20, desktop: 24),
-        right: ResponsiveUtils.getResponsiveSpacing(context, mobile: 16, tablet: 20, desktop: 24),
+        top: padding.top,
+        left: padding.left,
+        right: padding.right,
       ),
       itemCount: songs.length,
       itemBuilder: (context, index) {
@@ -99,6 +125,7 @@ class SongsListSection extends StatelessWidget {
           index: index + 1,
           onTap: () => onSongTap(song),
           playlistCoverUrl: playlistCoverUrl,
+          hideArtist: hideArtist,
         );
       },
     );

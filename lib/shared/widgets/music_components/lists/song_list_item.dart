@@ -15,13 +15,15 @@ class SongListItem extends StatelessWidget {
   final Song song;
   final int index;
   final VoidCallback onTap;
-  final String? playlistCoverUrl; 
+  final String? playlistCoverUrl;
+  final bool hideArtist;
   const SongListItem({
     super.key,
     required this.song,
     required this.index,
     required this.onTap,
     this.playlistCoverUrl,
+    this.hideArtist = false,
   });
   @override
   Widget build(BuildContext context) {
@@ -156,18 +158,20 @@ class SongListItem extends StatelessWidget {
           maxLines: isMobile ? 1 : 2,
           overflow: TextOverflow.ellipsis,
         ),
-        SizedBox(height: isMobile ? spacing * DesignTokens.mobileSpacingSmallMultiplier : spacing * 0.4),
-        Text(
-          song.artist,
-          style: TextStyle(
-            color: Colors.white70,
-            fontSize: isMobile ? (fontSize - DesignTokens.fontSizeAdjustmentMedium) : (fontSize - DesignTokens.fontSizeAdjustmentSmall),
-            fontWeight: FontWeight.w400,
-            height: DesignTokens.lineHeightTight,
+        if (!hideArtist) ...[
+          SizedBox(height: isMobile ? spacing * DesignTokens.mobileSpacingSmallMultiplier : spacing * 0.4),
+          Text(
+            song.artist,
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: isMobile ? (fontSize - DesignTokens.fontSizeAdjustmentMedium) : (fontSize - DesignTokens.fontSizeAdjustmentSmall),
+              fontWeight: FontWeight.w400,
+              height: DesignTokens.lineHeightTight,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
+        ],
         if (isTablet || ResponsiveUtils.getDeviceType(context) == DeviceType.desktop) ...[
           SizedBox(height: spacing * 0.2),
           Text(
