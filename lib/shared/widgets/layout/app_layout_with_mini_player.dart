@@ -24,7 +24,6 @@ class AppLayoutWithMiniPlayer extends StatelessWidget {
         return Stack(
           clipBehavior: Clip.none,
           children: [
-            // Conteúdo principal
             Padding(
               padding: EdgeInsets.only(
                 bottom: hasMusic && !isOnPlayerPage 
@@ -33,7 +32,6 @@ class AppLayoutWithMiniPlayer extends StatelessWidget {
               ),
               child: child,
             ),
-            // MiniPlayer fixo na parte inferior
             if (!isOnPlayerPage && hasMusic)
               Positioned(
                 left: 0,
@@ -41,7 +39,6 @@ class AppLayoutWithMiniPlayer extends StatelessWidget {
                 bottom: safeAreaBottom * 0.5,
                 child: Builder(
                   builder: (ctx) {
-                    // Verificação adicional
                     final location = GoRouterState.of(ctx).uri.path;
                     if (location == '/player' || location.contains('/player')) {
                       return const SizedBox.shrink();

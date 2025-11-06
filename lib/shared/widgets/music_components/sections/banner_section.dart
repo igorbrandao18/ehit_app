@@ -80,7 +80,6 @@ class _BannerSectionState extends State<BannerSection>
           return const SizedBox.shrink();
         }
         
-        // Garante que os índices estão corretos
         if (_currentIndex >= controller.banners.length) {
           _currentIndex = 0;
         }
@@ -88,7 +87,6 @@ class _BannerSectionState extends State<BannerSection>
           _nextIndex = controller.banners.length > 1 ? 1 : 0;
         }
         
-        // Inicia o auto-slide quando os banners estiverem disponíveis (apenas uma vez)
         if (controller.banners.length > 1 && !_autoSlideStarted) {
           _autoSlideStarted = true;
           _startAutoSlide(controller.banners.length);
@@ -98,10 +96,8 @@ class _BannerSectionState extends State<BannerSection>
           height: 200,
           child: Stack(
             children: [
-              // Banner atual (sempre visível)
               _buildBannerCard(context, controller.banners[_currentIndex]),
               
-              // Próximo banner (aparece por cima)
               if (controller.banners.length > 1)
               AnimatedBuilder(
                 animation: _fadeAnimation,
@@ -139,7 +135,5 @@ class _BannerSectionState extends State<BannerSection>
     debugPrint('🎯 Banner clicado: ${banner.name}');
     debugPrint('🎯 Link: ${banner.link}');
     
-    // TODO: Implementar abertura de link quando necessário
-    // Pode usar banner.targetId e banner.targetType para navegar
   }
 }

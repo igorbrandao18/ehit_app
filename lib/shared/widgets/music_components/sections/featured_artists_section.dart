@@ -23,7 +23,7 @@ class FeaturedArtistsSection extends StatelessWidget {
   }
   Widget _buildLoadingState(BuildContext context) {
     return Container(
-      height: DesignTokens.playhitsCardWidth + DesignTokens.spaceXL,
+      height: DesignTokens.playhitsCardWidth + DesignTokens.spaceXL + 40,
       padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
       child: const Center(
         child: CircularProgressIndicator(
@@ -34,7 +34,7 @@ class FeaturedArtistsSection extends StatelessWidget {
   }
   Widget _buildEmptyState(BuildContext context) {
     return Container(
-      height: DesignTokens.playhitsCardWidth + DesignTokens.spaceXL,
+      height: DesignTokens.playhitsCardWidth + DesignTokens.spaceXL + 40,
       padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
       child: Center(
         child: Text(
@@ -55,7 +55,7 @@ class FeaturedArtistsSection extends StatelessWidget {
         SectionTitle(title: AppLocalizations.of(context)!.featuredArtists),
         const SizedBox(height: DesignTokens.spaceMD),
         SizedBox(
-          height: DesignTokens.playhitsCardWidth + DesignTokens.spaceLG,
+          height: DesignTokens.playhitsCardWidth + DesignTokens.spaceLG + 40,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
@@ -77,10 +77,11 @@ class FeaturedArtistsSection extends StatelessWidget {
       child: GestureDetector(
         onTap: () => _navigateToArtist(context, artist.id.toString(), artist.name),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               height: DesignTokens.playhitsCardWidth, 
+              width: DesignTokens.playhitsCardWidth,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(DesignTokens.radiusCircular),
                 color: Colors.grey[800],
@@ -91,6 +92,18 @@ class FeaturedArtistsSection extends StatelessWidget {
                   },
                 ),
               ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              artist.name ?? '',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),

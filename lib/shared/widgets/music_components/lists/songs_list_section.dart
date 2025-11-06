@@ -10,7 +10,7 @@ class SongsListSection extends StatelessWidget {
   final Function(Song) onSongTap;
   final VoidCallback onShuffleTap;
   final VoidCallback onRepeatTap;
-  final String? playlistCoverUrl; // URL da capa da playlist
+  final String? playlistCoverUrl; 
   const SongsListSection({
     super.key,
     required this.songs,

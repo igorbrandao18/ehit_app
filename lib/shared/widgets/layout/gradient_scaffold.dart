@@ -39,7 +39,6 @@ class GradientScaffold extends StatelessWidget {
     );
     
     if (showMiniPlayer) {
-      // Usar AppLayout para páginas dentro do shell
       return AppLayout(
         appBar: appBar,
         extendBodyBehindAppBar: extendBodyBehindAppBar,

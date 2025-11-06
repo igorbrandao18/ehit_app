@@ -53,12 +53,10 @@ class AlbumCard extends StatelessWidget {
     );
   }
   double _getResponsiveCardWidth(DeviceType deviceType) {
-    // Tamanho será calculado via MediaQuery no componente pai
-    return double.infinity; // Usa toda a largura disponível
+    return double.infinity; 
   }
   double _getResponsiveCardHeight(DeviceType deviceType) {
-    // Altura será calculada no componente pai
-    return double.infinity; // Usa toda a altura disponível
+    return double.infinity; 
   }
   double _getResponsiveTextHeight(DeviceType deviceType) {
     switch (deviceType) {

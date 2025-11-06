@@ -33,7 +33,7 @@ class _PlayerPageState extends State<PlayerPage> {
           body: SafeArea(
             child: Column(
               children: [
-                  _buildHeader(context),
+                  _buildHeader(context, audioPlayer),
                   Expanded(
                     child: SingleChildScrollView(
                     child: Padding(
@@ -64,7 +64,7 @@ class _PlayerPageState extends State<PlayerPage> {
       },
     );
   }
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, AudioPlayerService audioPlayer) {
     final screenWidth = MediaQuery.of(context).size.width;
     final iconSize = screenWidth * DesignTokens.playerIconSizeRatio;
     final fontSize = screenWidth * DesignTokens.playerFontSizeRatio;
@@ -75,11 +75,9 @@ class _PlayerPageState extends State<PlayerPage> {
         children: [
           GestureDetector(
             onTap: () {
-              // Verificar se pode fazer pop, senão voltar para home
               if (context.canPop()) {
                 context.pop();
               } else {
-                // Se não há nada para fazer pop, voltar para a rota home
                 context.go(AppRoutes.home);
               }
             },
@@ -91,13 +89,15 @@ class _PlayerPageState extends State<PlayerPage> {
           ),
           Expanded(
             child: Text(
-              'Decretos Reais',
+              audioPlayer.currentPlaylistName ?? audioPlayer.currentSong?.title ?? 'Agora tocando',
               textAlign: TextAlign.center,
               style: TextStyle(
                 color: Colors.white,
                 fontSize: fontSize,
                 fontWeight: FontWeight.w600,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           SizedBox(width: iconSize), 
@@ -190,7 +190,6 @@ class _PlayerPageState extends State<PlayerPage> {
   Widget _buildProgressBar(BuildContext context, AudioPlayerService audioPlayer) {
     final progress = audioPlayer.progress;
     
-    // Garantir que a duração seja pelo menos a pré-carregada da API
     final effectiveDuration = audioPlayer.duration.inSeconds > 0 
         ? audioPlayer.duration 
         : Duration.zero;
@@ -203,7 +202,6 @@ class _PlayerPageState extends State<PlayerPage> {
         ? (_isDragging ? _currentSliderValue : progress.clamp(0.0, 1.0))
         : 0.0;
     
-    // Log apenas quando value muda significativamente
     if (!_isDragging) {
       final currentSeconds = (sliderValue * audioPlayer.duration.inMilliseconds / 1000).round();
       debugPrint('🎚️ Progress: ${audioPlayer.position.inSeconds}s / ${audioPlayer.duration.inSeconds}s = $sliderValue');

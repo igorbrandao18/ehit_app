@@ -71,7 +71,6 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
     return musicsData.map((musicData) {
       debugPrint('🎵 Parsing música: ${musicData['title']}');
       
-      // Tratar duration que pode ser null, int ou string
       String durationFormatted = '0:00';
       final duration = musicData['duration'];
       if (duration != null) {
@@ -82,10 +81,7 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
         }
       }
       
-      // A API não retorna 'cover' no musics_data, apenas no nível da playlist
-      // Deixar imageUrl vazio, a UI usará a capa da playlist via playlistCoverUrl
       
-      // O campo 'file' já vem com URL completa da API
       String audioUrl = musicData['file'] as String? ?? '';
       
       return SongModel(
@@ -94,7 +90,7 @@ class MusicRemoteDataSourceImpl implements MusicRemoteDataSource {
         artist: musicData['artist_name'],
         album: musicData['album_data']?['name'] ?? musicData['album_name'] ?? 'Unknown Album',
         duration: durationFormatted,
-        imageUrl: '', // Deixar vazio, usar cover da playlist
+        imageUrl: '', 
         audioUrl: audioUrl,
         isExplicit: false, 
         releaseDate: DateTime.parse(musicData['release_date']),

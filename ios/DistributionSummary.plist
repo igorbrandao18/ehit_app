@@ -10,7 +10,7 @@
 				<string>arm64</string>
 			</array>
 			<key>buildNumber</key>
-			<string>26</string>
+			<string>25</string>
 			<key>certificate</key>
 			<dict>
 				<key>SHA1</key>
@@ -232,6 +232,36 @@
 					<key>versionNumber</key>
 					<string>0.0.1</string>
 				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>375BBA01A939E995666CDDB11B894012ED1E57C3</string>
+						<key>dateExpires</key>
+						<string>19/10/26</string>
+						<key>type</key>
+						<string>Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>sqflite.framework</string>
+					<key>symbols</key>
+					<true/>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>W66MTSPZ69</string>
+						<key>name</key>
+						<string></string>
+					</dict>
+					<key>versionNumber</key>
+					<string>0.0.3</string>
+				</dict>
 			</array>
 			<key>entitlements</key>
 			<dict>
@@ -265,7 +295,7 @@
 				<string></string>
 			</dict>
 			<key>versionNumber</key>
-			<string>1.2.14</string>
+			<string>1.2.15</string>
 		</dict>
 	</array>
 </dict>

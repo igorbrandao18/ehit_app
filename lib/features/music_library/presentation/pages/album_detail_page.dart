@@ -181,7 +181,6 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
         children: [
           _buildHeaderSection(context, album),
           _buildSongsSection(context, controller),
-          // Padding inferior para não sobrepor o footer (se houver)
           SizedBox(height: MediaQuery.of(context).padding.bottom + 140),
         ],
       ),
@@ -191,7 +190,6 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
   Widget _buildHeaderSection(BuildContext context, Album album) {
     final padding = ResponsiveUtils.getResponsivePadding(context);
     final screenWidth = MediaQuery.of(context).size.width;
-    // Mesmo tamanho da imagem do artista: 50% da largura da tela
     final imageSize = screenWidth * 0.5;
     
     return Container(
@@ -199,13 +197,12 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
       padding: EdgeInsets.only(
         left: padding.horizontal,
         right: padding.horizontal,
-        top: DesignTokens.spaceXS, // Padding superior mínimo (igual ao artista)
+        top: DesignTokens.spaceXS, 
         bottom: DesignTokens.spaceMD,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Sem espaçamento superior adicional para maximizar a posição da imagem
           Center(
             child: Container(
               width: imageSize,
@@ -297,7 +294,7 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
     final songs = _controller.songs;
     final songIndex = songs.indexWhere((s) => s.id == song.id);
     if (songIndex >= 0) {
-      audioPlayer.playPlaylist(songs, startIndex: songIndex);
+      audioPlayer.playPlaylist(songs, startIndex: songIndex, playlistName: _controller.album?.title);
       debugPrint('🎵 Tocando álbum: ${_controller.album?.title}');
       debugPrint('🎵 Música atual: ${song.title} - ${song.artist}');
     } else {
@@ -311,7 +308,7 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
     final songs = controller.songs;
     if (songs.isNotEmpty) {
       final shuffledSongs = List<Song>.from(songs)..shuffle();
-      audioPlayer.playPlaylist(shuffledSongs, startIndex: 0);
+      audioPlayer.playPlaylist(shuffledSongs, startIndex: 0, playlistName: controller.album?.title);
       debugPrint('🔀 Shuffle play: ${songs.length} músicas do álbum ${controller.album?.title}');
       context.pushNamed('player');
     }
@@ -321,7 +318,7 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
     final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
     final songs = controller.songs;
     if (songs.isNotEmpty) {
-      audioPlayer.playPlaylist(songs, startIndex: 0);
+      audioPlayer.playPlaylist(songs, startIndex: 0, playlistName: controller.album?.title);
       debugPrint('🔁 Repeat play: ${songs.length} músicas do álbum ${controller.album?.title}');
       context.pushNamed('player');
     }
@@ -333,26 +330,22 @@ class _AlbumDetailPageState extends State<AlbumDetailPage> {
     for (final song in songs) {
       if (song.duration.isEmpty) continue;
       
-      // Tentar parsear formato MM:SS
       final durationParts = song.duration.split(':');
       if (durationParts.length == 2) {
         final minutes = int.tryParse(durationParts[0]) ?? 0;
         final seconds = int.tryParse(durationParts[1]) ?? 0;
         totalSeconds += minutes * 60 + seconds;
       } else if (durationParts.length == 3) {
-        // Formato HH:MM:SS
         final hours = int.tryParse(durationParts[0]) ?? 0;
         final minutes = int.tryParse(durationParts[1]) ?? 0;
         final seconds = int.tryParse(durationParts[2]) ?? 0;
         totalSeconds += hours * 3600 + minutes * 60 + seconds;
       } else {
-        // Tentar parsear como segundos diretos
         final seconds = int.tryParse(song.duration);
         if (seconds != null && seconds > 0) {
           totalSeconds += seconds;
         } else {
-          // Duração padrão se não conseguir parsear
-          totalSeconds += 210; // 3:30
+          totalSeconds += 210; 
         }
       }
     }

@@ -5,7 +5,6 @@ import '../../utils/responsive_utils.dart';
 import '../base_components/cached_image.dart';
 import '../../../features/music_library/domain/entities/song.dart';
 
-/// Dialog de confirmação profissional e reutilizável - Full Screen
 class ConfirmDialog extends StatelessWidget {
   final String title;
   final String message;
@@ -32,7 +31,6 @@ class ConfirmDialog extends StatelessWidget {
     this.song,
   });
 
-  /// Método estático para exibir o dialog em tela cheia
   static Future<bool?> show(
     BuildContext context, {
     required String title,
@@ -93,7 +91,6 @@ class ConfirmDialog extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-              // Header com música (se fornecido) ou ícone
               if (song != null) ...[
                 _buildSongInfo(context),
                 SizedBox(height: ResponsiveUtils.getResponsiveSpacing(
@@ -145,7 +142,6 @@ class ConfirmDialog extends StatelessWidget {
                   desktop: DesignTokens.spaceXL + DesignTokens.spaceMD,
                 )),
 
-              // Título
               Text(
                 title,
                 style: TextStyle(
@@ -169,7 +165,6 @@ class ConfirmDialog extends StatelessWidget {
                 desktop: DesignTokens.spaceXL,
               )),
 
-              // Mensagem ou conteúdo customizado
               customContent != null
                   ? customContent!
                   : Text(
@@ -195,7 +190,6 @@ class ConfirmDialog extends StatelessWidget {
                 desktop: DesignTokens.spaceXL + DesignTokens.spaceMD,
               )),
 
-              // Divisor
               Container(
                 height: 1,
                 color: Colors.white.withOpacity(0.1),
@@ -208,10 +202,8 @@ class ConfirmDialog extends StatelessWidget {
                 desktop: DesignTokens.spaceXL,
               )),
 
-              // Botões de ação
               Column(
                 children: [
-                  // Botão Confirmar (primeiro quando destrutivo)
                   if (isDestructive) ...[
                     SizedBox(
                       width: double.infinity,
@@ -230,7 +222,6 @@ class ConfirmDialog extends StatelessWidget {
                       desktop: DesignTokens.spaceMD,
                     )),
                   ],
-                  // Botão Cancelar
                   SizedBox(
                     width: double.infinity,
                     child: _ActionButton(
@@ -241,7 +232,6 @@ class ConfirmDialog extends StatelessWidget {
                       primaryColor: effectiveConfirmColor,
                     ),
                   ),
-                  // Botão Confirmar (segundo quando não destrutivo)
                   if (!isDestructive) ...[
                     SizedBox(height: ResponsiveUtils.getResponsiveSpacing(
                       context,
@@ -289,7 +279,6 @@ class ConfirmDialog extends StatelessWidget {
 
     return Column(
       children: [
-        // Capa do álbum
         Container(
           width: coverSize,
           height: coverSize,
@@ -352,7 +341,6 @@ class ConfirmDialog extends StatelessWidget {
           tablet: DesignTokens.spaceMD,
           desktop: DesignTokens.spaceLG,
         )),
-        // Título da música
         Padding(
           padding: EdgeInsets.symmetric(
             horizontal: ResponsiveUtils.getResponsiveSpacing(
@@ -386,7 +374,6 @@ class ConfirmDialog extends StatelessWidget {
           tablet: DesignTokens.spaceSM,
           desktop: DesignTokens.spaceMD,
         )),
-        // Artista
         Padding(
           padding: EdgeInsets.symmetric(
             horizontal: ResponsiveUtils.getResponsiveSpacing(
@@ -414,7 +401,6 @@ class ConfirmDialog extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        // Duração (opcional)
         if (song!.duration.isNotEmpty && song!.duration != '0:00') ...[
           SizedBox(height: ResponsiveUtils.getResponsiveSpacing(
             context,
@@ -442,7 +428,6 @@ class ConfirmDialog extends StatelessWidget {
   }
 }
 
-/// Botão de ação do dialog
 class _ActionButton extends StatefulWidget {
   final String text;
   final VoidCallback onPressed;

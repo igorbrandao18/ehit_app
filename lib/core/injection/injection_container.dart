@@ -64,7 +64,6 @@ final GetIt sl = GetIt.instance;
 Future<void> init() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
-  // Criar e inicializar o storage do Hive
   final downloadedSongsStorage = DownloadedSongsStorage();
   await downloadedSongsStorage.init();
   sl.registerSingleton<DownloadedSongsStorage>(downloadedSongsStorage);

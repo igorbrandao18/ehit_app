@@ -20,7 +20,6 @@ class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
         final data = response.data;
         final results = data['results'] as List;
         return results.map((playlistData) {
-          // Map API response to PlaylistModel
           return PlaylistModel(
             id: playlistData['id'].toString(),
             name: playlistData['name'] ?? 'Unknown Playlist',
@@ -36,9 +35,9 @@ class PlaylistRemoteDataSourceImpl implements PlaylistRemoteDataSource {
             updatedAt: playlistData['updated_at'] != null 
                 ? DateTime.parse(playlistData['updated_at']) 
                 : DateTime.now(),
-            songs: [], // Songs would need to be parsed separately if available
+            songs: [], 
             totalSongs: playlistData['musics_count'] ?? 0,
-            totalDuration: '0:00', // Would need to calculate from songs
+            totalDuration: '0:00', 
             followersCount: playlistData['followers_count'] ?? 0,
             isFollowing: playlistData['is_following'] ?? false,
           );

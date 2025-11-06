@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import '../../design/app_colors.dart';
 
-/// Widget otimizado para exibir imagens com cache inteligente
-/// Reduz uso de banda em 70-80% e melhora performance significativamente
 class CachedImage extends StatelessWidget {
   final String? imageUrl;
   final BoxFit fit;
@@ -17,11 +15,10 @@ class CachedImage extends StatelessWidget {
   final int? cacheWidth;
   final int? cacheHeight;
 
-  // Cache manager compartilhado para todas as imagens
   static final CacheManager _cacheManager = CacheManager(
     Config(
       'ehit_image_cache',
-      stalePeriod: const Duration(days: 7), // AppConfig.imageCacheExpiration
+      stalePeriod: const Duration(days: 7), 
       maxNrOfCacheObjects: 200,
     ),
   );

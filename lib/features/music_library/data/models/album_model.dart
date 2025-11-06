@@ -18,7 +18,6 @@ class AlbumModel extends Album {
   });
 
   factory AlbumModel.fromJson(Map<String, dynamic> json) {
-    // Helper para concatenar URL completa
     String? coverUrl = json['cover'] as String? ?? json['image'] as String? ?? '';
     if (coverUrl.isNotEmpty && !coverUrl.startsWith('http')) {
       coverUrl = '${AppConfig.resourcesBaseUrl}$coverUrl';
@@ -26,7 +25,6 @@ class AlbumModel extends Album {
     
     return AlbumModel(
       id: json['id'] as int,
-      // API retorna 'name' ao invés de 'title'
       title: json['name'] as String? ?? json['title'] as String? ?? 'Unknown Album',
       artistName: json['artist_name'] as String? ?? json['artist_data']?['stage_name'] as String? ?? 'Unknown Artist',
       imageUrl: coverUrl,

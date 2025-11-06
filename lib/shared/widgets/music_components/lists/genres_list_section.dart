@@ -21,7 +21,6 @@ class GenresListSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Mensagem quando não há resultados de busca
     if (genres.isEmpty && searchQuery.isNotEmpty) {
       return Padding(
         padding: padding ??
@@ -63,7 +62,6 @@ class GenresListSection extends StatelessWidget {
       );
     }
 
-    // Lista de gêneros em grid 2x2
     final screenWidth = MediaQuery.of(context).size.width;
     final sectionPadding = padding ??
         EdgeInsets.symmetric(
@@ -71,12 +69,10 @@ class GenresListSection extends StatelessWidget {
         );
     final spacing = ResponsiveUtils.getResponsiveSpacing(context);
     
-    // Calcular largura do card baseado na largura disponível
     final availableWidth = screenWidth - (sectionPadding.horizontal * 2) - spacing;
     final cardWidth = availableWidth / 2;
-    const cardHeight = 120.0; // Altura fixa do GenreCard
+    const cardHeight = 120.0; 
     
-    // Calcular aspect ratio correto
     final aspectRatio = cardWidth / cardHeight;
 
     return Padding(
@@ -87,9 +83,9 @@ class GenresListSection extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // 2 colunas
-              crossAxisSpacing: spacing, // Espaçamento horizontal entre cards
-              mainAxisSpacing: spacing, // Espaçamento vertical entre cards
+              crossAxisCount: 2, 
+              crossAxisSpacing: spacing, 
+              mainAxisSpacing: spacing, 
               childAspectRatio: aspectRatio,
             ),
             itemCount: genres.length,

@@ -25,7 +25,6 @@ class DownloadedSongsController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Carregar diretamente do Hive (banco offline)
       final songs = await _downloadedStorage.getDownloadedSongs();
       
       debugPrint('🎵 DownloadedSongsController: ${songs.length} músicas carregadas do Hive');

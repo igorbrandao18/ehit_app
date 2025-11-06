@@ -53,7 +53,6 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                       'assets/logo-header.png',
                       fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) {
-                        // Fallback caso a imagem não seja encontrada
                         return const SizedBox.shrink();
                       },
                     ),

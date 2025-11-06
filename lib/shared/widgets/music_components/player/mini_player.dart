@@ -8,14 +8,9 @@ import '../../../design/design_tokens.dart';
 import '../../../utils/responsive_utils.dart';
 import '../../base_components/cached_image.dart';
 
-/// Mini player reutilizável e controlável
-/// Pode ser usado em qualquer lugar da aplicação
-/// Por padrão, não aparece na página do player principal
 class MiniPlayer extends StatefulWidget {
-  /// Se true, força o mini player a aparecer mesmo na página do player
   final bool forceShow;
   
-  /// Se true, verifica automaticamente se está na rota /player e oculta
   final bool autoHideOnPlayerPage;
 
   const MiniPlayer({
@@ -32,7 +27,6 @@ class _MiniPlayerState extends State<MiniPlayer> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Forçar reconstrução quando as dependências mudarem (mudança de rota)
   }
 
 
@@ -49,12 +43,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
     }
   }
 
-  /// Verifica se a rota /player está ativa (mesmo que seja um push/modal)
   bool _isPlayerRouteActive(BuildContext context) {
     try {
       final router = GoRouter.of(context);
       
-      // Verificar a URI principal
       final mainUri = router.routerDelegate.currentConfiguration.uri.path;
       if (mainUri == AppRoutes.player || 
           mainUri == '/player' ||
@@ -62,7 +54,6 @@ class _MiniPlayerState extends State<MiniPlayer> {
         return true;
       }
       
-      // Verificar todas as rotas na stack (para detectar push/modal)
       final matches = router.routerDelegate.currentConfiguration.matches;
       for (final match in matches) {
         final path = match.matchedLocation;
@@ -73,7 +64,6 @@ class _MiniPlayerState extends State<MiniPlayer> {
         }
       }
       
-      // Verificar também no GoRouterState se disponível
       try {
         final state = GoRouterState.of(context);
         final statePath = state.uri.path;
@@ -83,7 +73,6 @@ class _MiniPlayerState extends State<MiniPlayer> {
           return true;
         }
       } catch (e) {
-        // Ignorar erro
       }
       
       return false;
@@ -94,14 +83,10 @@ class _MiniPlayerState extends State<MiniPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    // VERIFICAÇÃO ABSOLUTA PRIMEIRO: se está na página do player, NUNCA mostrar
-    // Usar Builder para pegar o contexto correto da rota atual
     return Builder(
       builder: (builderContext) {
-        // Verificar se a rota do player está ativa (incluindo modals/push)
         final isOnPlayerPage = _isPlayerRouteActive(builderContext);
         
-        // DEBUG
         try {
           final router = GoRouter.of(builderContext);
           final currentPath = router.routerDelegate.currentConfiguration.uri.path;
@@ -110,27 +95,21 @@ class _MiniPlayerState extends State<MiniPlayer> {
           debugPrint('🎵 MiniPlayer build - isOnPlayerPage: $isOnPlayerPage');
         }
         
-        // SE estiver na rota /player e autoHideOnPlayerPage for true, NÃO mostrar
         if (widget.autoHideOnPlayerPage && isOnPlayerPage) {
           debugPrint('🎵 MiniPlayer - OCULTANDO na página do player');
           return const SizedBox.shrink();
         }
     
-        // Se forceShow for true, mostrar sempre (mesmo na página do player)
         if (widget.forceShow) {
           return _buildMiniPlayerContent(builderContext);
         }
         
-        // Mostrar o mini player normalmente
         return _buildMiniPlayerContent(builderContext);
       },
     );
   }
   
-  /// Conteúdo do mini player (extraído para reutilização)
   Widget _buildMiniPlayerContent(BuildContext context) {
-    // VERIFICAÇÃO ABSOLUTA ANTES DO CONSUMER
-    // Se autoHideOnPlayerPage for true, verificar a rota PRIMEIRO
     if (widget.autoHideOnPlayerPage && _isPlayerRouteActive(context)) {
       debugPrint('🎵 MiniPlayer _buildMiniPlayerContent - OCULTANDO na página do player');
       return const SizedBox.shrink();
@@ -138,7 +117,6 @@ class _MiniPlayerState extends State<MiniPlayer> {
     
     return Consumer<AudioPlayerService>(
       builder: (context, audioPlayer, child) {
-        // Verificação DUPLA dentro do Consumer também (por segurança)
         if (widget.autoHideOnPlayerPage && _isPlayerRouteActive(context)) {
           debugPrint('🎵 MiniPlayer Consumer - OCULTANDO na página do player');
           return const SizedBox.shrink();
@@ -165,7 +143,6 @@ class _MiniPlayerState extends State<MiniPlayer> {
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                // Usar pushNamed para adicionar à stack e permitir voltar
                 context.pushNamed('player');
               },
               child: Padding(

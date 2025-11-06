@@ -17,7 +17,6 @@ class ImageUtils {
     final text = fallbackText ?? 'Image';
     return 'https://via.placeholder.com/300x300/333333/ffffff?text=${Uri.encodeComponent(text)}';
   }
-  /// Usa CachedImage para melhor performance (cache automático)
   static Widget buildNetworkImage(
     String? imageUrl, {
     BoxFit fit = BoxFit.cover,

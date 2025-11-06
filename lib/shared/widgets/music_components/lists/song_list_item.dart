@@ -15,7 +15,7 @@ class SongListItem extends StatelessWidget {
   final Song song;
   final int index;
   final VoidCallback onTap;
-  final String? playlistCoverUrl; // URL da capa da playlist
+  final String? playlistCoverUrl; 
   const SongListItem({
     super.key,
     required this.song,
@@ -61,12 +61,10 @@ class SongListItem extends StatelessWidget {
     final isMobile = ResponsiveUtils.getDeviceType(context) == DeviceType.mobile;
     final isTablet = ResponsiveUtils.getDeviceType(context) == DeviceType.tablet;
     
-    // Usar cover da playlist se song.imageUrl estiver vazio
     final imageUrl = (song.imageUrl.isNotEmpty) 
         ? song.imageUrl 
         : (playlistCoverUrl ?? '');
     
-    // Se ainda estiver vazio, mostrar placeholder
     if (imageUrl.isEmpty) {
       return Container(
         width: thumbnailSize,
@@ -236,7 +234,6 @@ class SongListItem extends StatelessWidget {
     final offlineService = OfflineAudioService();
     final downloadedStorage = di.sl<DownloadedSongsStorage>();
     
-    // Verificar se já está baixada
     final isDownloaded = await _isSongAvailableOffline();
     if (isDownloaded) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -248,7 +245,6 @@ class SongListItem extends StatelessWidget {
       return;
     }
 
-    // Mostrar feedback de início do download
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Baixando "${song.title}"...'),
@@ -256,26 +252,22 @@ class SongListItem extends StatelessWidget {
       ),
     );
 
-    // Fazer o download
     final result = await offlineService.downloadSong(song);
     
     result.when(
       success: (_) async {
-        // Obter a duração real da música usando o mesmo método do player
         Song songToSave = song;
         try {
           final audioPlayerService = di.sl<AudioPlayerService>();
           final realDuration = await audioPlayerService.getSongDuration(song.audioUrl);
           
           if (realDuration != null) {
-            // Formatar a duração para o formato MM:SS
             final minutes = realDuration.inMinutes;
             final seconds = realDuration.inSeconds % 60;
             final formattedDuration = '$minutes:${seconds.toString().padLeft(2, '0')}';
             
             debugPrint('✅ Duração real obtida para "${song.title}": $formattedDuration');
             
-            // Criar uma cópia da música com a duração correta
             songToSave = song.copyWith(duration: formattedDuration);
           } else {
             debugPrint('⚠️ Não foi possível obter duração real para "${song.title}", usando duração original: ${song.duration}');
@@ -284,20 +276,16 @@ class SongListItem extends StatelessWidget {
           debugPrint('❌ Erro ao obter duração real: $e, usando duração original: ${song.duration}');
         }
         
-        // Salvar o objeto completo da música baixada (com duração correta se disponível)
         await downloadedStorage.addDownloadedSong(songToSave);
         
-        // Notificar o controller para recarregar
         try {
           final downloadedController = di.sl<DownloadedSongsController>();
           debugPrint('🔄 Recarregando músicas baixadas...');
           await downloadedController.loadDownloadedSongs();
         } catch (e) {
-          // Controller ainda não foi inicializado, será carregado quando a página for aberta
           debugPrint('⚠️ Controller não disponível ainda: $e');
         }
         
-        // Mostrar feedback de sucesso
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -309,7 +297,6 @@ class SongListItem extends StatelessWidget {
         }
       },
       error: (message, code) {
-        // Mostrar feedback de erro
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

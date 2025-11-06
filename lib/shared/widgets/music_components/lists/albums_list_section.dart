@@ -28,17 +28,14 @@ class AlbumsListSection extends StatelessWidget {
       );
     }
 
-    // Usar MediaQuery para cálculos responsivos precisos
     final screenWidth = MediaQuery.of(context).size.width;
     final padding = ResponsiveUtils.getResponsivePadding(context);
     final spacing = ResponsiveUtils.getResponsiveSpacing(context);
     
-    // Calcular largura do card baseado na largura disponível
     final availableWidth = screenWidth - (padding.horizontal * 2) - spacing;
     final cardWidth = availableWidth / 2;
-    final cardHeight = cardWidth; // Quadrado
+    final cardHeight = cardWidth; 
     
-    // Calcular aspect ratio correto
     final aspectRatio = cardWidth / cardHeight;
 
     return Padding(
@@ -52,9 +49,9 @@ class AlbumsListSection extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2, // 2 colunas
-              crossAxisSpacing: spacing, // Espaçamento horizontal entre cards
-              mainAxisSpacing: spacing, // Espaçamento vertical entre cards
+              crossAxisCount: 2, 
+              crossAxisSpacing: spacing, 
+              mainAxisSpacing: spacing, 
               childAspectRatio: aspectRatio,
             ),
             itemCount: albums.length,

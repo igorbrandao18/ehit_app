@@ -20,12 +20,10 @@ class AlbumRemoteDataSourceImpl implements AlbumRemoteDataSource {
       final response = await _dio.get(AppConfig.getApiEndpoint('artists/$artistId/albums/'));
       if (response.statusCode == 200) {
         final data = response.data;
-        // Suporta múltiplos formatos de resposta: List direta ou Map com chaves comuns
         List<dynamic> results;
         if (data is List) {
           results = data;
         } else if (data is Map<String, dynamic>) {
-          // Priorizar 'albums' já que é o formato retornado pela API
           if (data['albums'] is List) {
             results = data['albums'] as List;
           } else if (data['results'] is List) {
@@ -52,11 +50,7 @@ class AlbumRemoteDataSourceImpl implements AlbumRemoteDataSource {
 
   @override
   Future<List<SongModel>> getSongsByAlbum(int albumId) async {
-    // Como a API não tem endpoint direto para músicas do álbum,
-    // precisamos buscar pelos álbuns de um artista e extrair as músicas do álbum desejado.
-    // Primeiro, vamos tentar buscar o álbum específico para obter o artistId
     try {
-      // Tentar buscar álbum específico para obter artistId
       int? artistId;
       try {
         final albumResponse = await _dio.get(AppConfig.getApiEndpoint('albums/$albumId/'));
@@ -70,14 +64,8 @@ class AlbumRemoteDataSourceImpl implements AlbumRemoteDataSource {
         debugPrint('⚠️ Não foi possível buscar dados do álbum: $e');
       }
       
-      // Se não conseguiu o artistId pelo endpoint do álbum, tentar buscar de todos os artistas
-      // Mas isso seria muito custoso. Por enquanto, vamos usar uma abordagem diferente:
-      // Tentar buscar pelo endpoint que já sabemos que funciona
       
-      // Fallback: buscar por artistId se disponível, senão retornar lista vazia
-      // Na prática, quando o álbum é clicado, ele já deveria ter o artistId
       if (artistId == null) {
-        // Se não temos artistId, tentar endpoint alternativo
         try {
           final response = await _dio.get(AppConfig.getApiEndpoint('albums/$albumId/'));
           if (response.statusCode == 200) {
@@ -92,12 +80,10 @@ class AlbumRemoteDataSourceImpl implements AlbumRemoteDataSource {
           debugPrint('⚠️ Endpoint do álbum também falhou: $e');
         }
         
-        // Se chegou aqui, não temos como buscar sem o artistId
         debugPrint('❌ Não foi possível obter artistId para buscar músicas do álbum $albumId');
         return [];
       }
       
-      // Agora buscar os álbuns do artista (que já vem com as músicas)
       final response = await _dio.get(AppConfig.getApiEndpoint('artists/$artistId/albums/'));
       if (response.statusCode == 200) {
         final data = response.data;
@@ -110,7 +96,6 @@ class AlbumRemoteDataSourceImpl implements AlbumRemoteDataSource {
           albums = const [];
         }
         
-        // Encontrar o álbum específico e extrair suas músicas
         for (final albumData in albums) {
           if (albumData is Map<String, dynamic> && albumData['id'] == albumId) {
             final musics = albumData['musics'] as List<dynamic>? ?? [];
@@ -132,7 +117,6 @@ class AlbumRemoteDataSourceImpl implements AlbumRemoteDataSource {
   
   List<SongModel> _parseMusicsList(List<dynamic> musicsData) {
     return musicsData.map((musicData) {
-      // Tratar duration que pode ser null, int ou string
       String durationFormatted = '0:00';
       final duration = musicData['duration'];
       if (duration != null) {
@@ -143,8 +127,6 @@ class AlbumRemoteDataSourceImpl implements AlbumRemoteDataSource {
         }
       }
 
-      // Helper para concatenar URL completa
-      // Usar cover do album_data se disponível, senão tentar cover direto
       String? coverUrl = musicData['album_data']?['cover'] as String? ?? 
                          musicData['cover'] as String? ?? '';
       if (coverUrl.isNotEmpty && !coverUrl.startsWith('http')) {
@@ -152,13 +134,11 @@ class AlbumRemoteDataSourceImpl implements AlbumRemoteDataSource {
       }
       
       String? fileUrl = musicData['file'] as String? ?? '';
-      // O campo 'file' já vem com URL completa da API conforme mostrado no exemplo
       
       return SongModel(
         id: musicData['id'].toString(),
         title: musicData['title'],
         artist: musicData['artist_name'] as String? ?? 'Unknown Artist',
-        // API pode retornar 'album_name' ou 'album_data.name'
         album: musicData['album_name'] as String? ?? 
                musicData['album_data']?['name'] as String? ?? 
                'Unknown Album',

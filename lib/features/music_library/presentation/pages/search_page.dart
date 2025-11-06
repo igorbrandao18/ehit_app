@@ -31,7 +31,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _initializeController() {
-    if (_controller != null) return; // Já inicializado
+    if (_controller != null) return; 
     
     _controller = di.sl<GenresController>();
     _controller?.initialize();
@@ -47,7 +47,6 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Garantir que o controller seja inicializado mesmo após hot reload
     if (!_isInitialized || _controller == null) {
       _initializeController();
     }
@@ -193,7 +192,6 @@ class _SearchPageState extends State<SearchPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Barra de busca - logo abaixo do header
             Padding(
               padding: EdgeInsets.only(
                 left: headerPadding,
@@ -203,19 +201,16 @@ class _SearchPageState extends State<SearchPage> {
               ),
               child: _buildSearchBar(controller),
             ),
-            // Título "Gêneros" - logo após a barra de busca
             const SectionTitle(
               title: 'Gêneros',
               fontSize: 24,
             ),
             const SizedBox(height: DesignTokens.spaceMD),
-            // Lista de gêneros ou mensagem quando não há resultados
             GenresListSection(
               genres: filteredGenres,
               searchQuery: controller.searchQuery,
               onGenreTap: (genre) => _onGenreTap(context, genre),
             ),
-            // Espaçamento final
             SizedBox(height: DesignTokens.spaceXL),
           ],
         ),
@@ -237,7 +232,6 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _onGenreTap(BuildContext context, Genre genre) {
-    // Navegar para página de detalhes do gênero
     context.pushNamed(
       'category-detail',
       pathParameters: {'categoryTitle': genre.name},

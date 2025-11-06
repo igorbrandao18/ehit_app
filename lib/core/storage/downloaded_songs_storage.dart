@@ -3,34 +3,26 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../../features/music_library/domain/entities/song.dart';
 import '../../features/music_library/data/models/song_model.dart';
 
-/// Serviço para gerenciar persistência das músicas baixadas usando Hive
 class DownloadedSongsStorage {
   static const String _boxName = 'downloaded_songs_box';
-  Box? _box; // Box sem tipo genérico para armazenar Maps
+  Box? _box; 
 
   DownloadedSongsStorage();
 
-  /// Inicializa o box do Hive
   Future<void> init() async {
     try {
-      // Verificar se já existe um box aberto com esse nome
       if (Hive.isBoxOpen(_boxName)) {
         _box = Hive.box(_boxName);
         return;
       }
       
-      // Tentar abrir o box (o Hive deve estar inicializado no main.dart)
       _box = await Hive.openBox(_boxName);
     } catch (e) {
       debugPrint('❌ Erro ao inicializar box do Hive: $e');
-      // Se falhar, pode ser que o Hive não esteja inicializado (durante hot reload)
-      // Tentar inicializar e abrir novamente
       try {
-        // Verificar se precisa inicializar
         try {
           await Hive.initFlutter();
         } catch (_) {
-          // Já inicializado, continuar
         }
         _box = await Hive.openBox(_boxName);
       } catch (e2) {
@@ -40,19 +32,16 @@ class DownloadedSongsStorage {
     }
   }
 
-  /// Garante que o box está inicializado
   Future<void> _ensureInitialized() async {
     if (_box == null || !_box!.isOpen) {
       await init();
     }
   }
 
-  /// Adiciona uma música à lista de músicas baixadas (salva o objeto completo)
   Future<void> addDownloadedSong(Song song) async {
     try {
       await _ensureInitialized();
       
-      // Debug: verificar se a duração está presente antes de salvar
       if (song.duration.isEmpty || song.duration == '0:00') {
         debugPrint('⚠️ ATENÇÃO: Duração vazia/inválida ao salvar: ${song.title} - valor: "${song.duration}"');
       }
@@ -60,12 +49,10 @@ class DownloadedSongsStorage {
       final songModel = SongModel.fromEntity(song);
       final songMap = songModel.toMap();
       
-      // Verificar se duration está no map
       if (!songMap.containsKey('duration') || songMap['duration'] == null || songMap['duration'].toString().isEmpty) {
         debugPrint('⚠️ ATENÇÃO: Duração ausente no map ao salvar: ${song.title}');
       }
       
-      // Usar o ID da música como chave no Hive
       await _box!.put(song.id, songMap);
       
       debugPrint('✅ Música ${song.id} (${song.title}) salva no Hive - Duração: ${song.duration}');
@@ -74,7 +61,6 @@ class DownloadedSongsStorage {
     }
   }
 
-  /// Remove uma música da lista de músicas baixadas
   Future<void> removeDownloadedSong(String songId) async {
     try {
       await _ensureInitialized();
@@ -85,7 +71,6 @@ class DownloadedSongsStorage {
     }
   }
 
-  /// Retorna a lista de músicas baixadas (objetos completos)
   Future<List<Song>> getDownloadedSongs() async {
     try {
       await _ensureInitialized();
@@ -94,7 +79,6 @@ class DownloadedSongsStorage {
           .map((songMap) {
             try {
               final map = Map<String, dynamic>.from(songMap);
-              // Debug: verificar se duration está presente no map
               if (!map.containsKey('duration') || map['duration'] == null || map['duration'].toString().isEmpty) {
                 debugPrint('⚠️ Duração ausente no Hive para música: ${map['title']} (ID: ${map['id']})');
               }
@@ -116,7 +100,6 @@ class DownloadedSongsStorage {
     }
   }
 
-  /// Retorna a lista de IDs das músicas baixadas
   Future<List<String>> getDownloadedSongIds() async {
     try {
       await _ensureInitialized();
@@ -127,7 +110,6 @@ class DownloadedSongsStorage {
     }
   }
 
-  /// Verifica se uma música está baixada
   Future<bool> isDownloaded(String songId) async {
     try {
       await _ensureInitialized();
@@ -137,7 +119,6 @@ class DownloadedSongsStorage {
     }
   }
 
-  /// Limpa todas as músicas baixadas
   Future<void> clearAll() async {
     try {
       await _ensureInitialized();

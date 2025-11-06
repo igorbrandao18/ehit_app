@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Layout simples para páginas dentro do shell
-/// O menu e mini player são gerenciados pelo AppShell
 class AppLayout extends StatelessWidget {
   final Widget child;
   final PreferredSizeWidget? appBar;
@@ -20,8 +18,8 @@ class AppLayout extends StatelessWidget {
       extendBodyBehindAppBar: extendBodyBehindAppBar,
       appBar: appBar,
       body: SafeArea(
-        top: true, // Sempre respeitar a status bar
-        bottom: false, // O footer já gerencia o safe area inferior
+        top: true, 
+        bottom: false, 
         child: child,
       ),
     );

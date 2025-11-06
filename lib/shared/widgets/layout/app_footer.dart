@@ -7,15 +7,11 @@ import '../../../../core/routing/app_routes.dart';
 import '../../utils/responsive_utils.dart';
 import 'bottom_navigation_menu.dart';
 
-/// Footer do app que contém o menu de navegação e o mini player
-/// Gerencia o posicionamento e visibilidade de ambos os componentes
 class AppFooter extends StatelessWidget {
-  /// Verifica se a rota /player está ativa (mesmo que seja um push/modal)
   bool _isPlayerRouteActive(BuildContext context) {
     try {
       final router = GoRouter.of(context);
       
-      // Verificar a URI principal
       final mainUri = router.routerDelegate.currentConfiguration.uri.path;
       if (mainUri == AppRoutes.player || 
           mainUri == '/player' ||
@@ -23,7 +19,6 @@ class AppFooter extends StatelessWidget {
         return true;
       }
       
-      // Verificar todas as rotas na stack (para detectar push/modal)
       final matches = router.routerDelegate.currentConfiguration.matches;
       for (final match in matches) {
         final path = match.matchedLocation;
@@ -47,7 +42,6 @@ class AppFooter extends StatelessWidget {
     final safeAreaBottom = MediaQuery.of(context).padding.bottom;
     const menuHeight = 70.0;
     
-    // Verificar se está na página do player
     final isOnPlayerPage = _isPlayerRouteActive(context);
     
     return Consumer<AudioPlayerService>(
@@ -60,10 +54,8 @@ class AppFooter extends StatelessWidget {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // MiniPlayer - aparece acima do menu quando há música e não está na página do player
             if (hasMusic && !isOnPlayerPage)
               const MiniPlayer(),
-            // Menu de navegação - sempre aparece nas rotas principais
             Padding(
               padding: EdgeInsets.only(bottom: safeAreaBottom),
               child: const BottomNavigationMenu(),

@@ -8,7 +8,6 @@ import '../../../design/design_tokens.dart';
 import '../../../utils/responsive_utils.dart';
 import '../../base_components/cached_image.dart';
 
-/// Lista impressionante e bem alinhada de músicas offline
 class OfflineSongsList extends StatelessWidget {
   final List<Song> songs;
   final Function(Song, int) onSongTap;
@@ -50,7 +49,6 @@ class OfflineSongsList extends StatelessWidget {
   }
 }
 
-/// Item individual da lista de música offline
 class _OfflineSongListItem extends StatefulWidget {
   final Song song;
   final int index;
@@ -149,7 +147,6 @@ class _OfflineSongListItemState extends State<_OfflineSongListItem>
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // Número do índice (largura fixa para alinhamento)
                   SizedBox(
                     width: 32,
                     child: Center(
@@ -167,16 +164,13 @@ class _OfflineSongListItemState extends State<_OfflineSongListItem>
                   ),
                   SizedBox(width: DesignTokens.spaceSM),
 
-                  // Thumbnail da música (tamanho fixo)
                   _buildThumbnail(thumbnailSize),
                   SizedBox(width: DesignTokens.spaceMD),
 
-                  // Informações da música (ocupa espaço restante)
                   Expanded(
                     child: _buildSongInfo(isMobile),
                   ),
 
-                  // Badge offline e mais opções (alinhado à direita, largura fixa)
                   SizedBox(width: DesignTokens.spaceSM),
                   _buildRightActions(isMobile),
                 ],
@@ -221,7 +215,6 @@ class _OfflineSongListItemState extends State<_OfflineSongListItem>
                 ),
               ),
             ),
-            // Overlay gradient sutil
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -241,7 +234,6 @@ class _OfflineSongListItemState extends State<_OfflineSongListItem>
   }
 
   Widget _buildSongInfo(bool isMobile) {
-    // Debug: verificar se a duração está presente
     if (widget.song.duration.isEmpty || widget.song.duration == '0:00') {
       debugPrint('⚠️ Duração vazia ou inválida para: ${widget.song.title} - valor: "${widget.song.duration}"');
     }
@@ -253,7 +245,6 @@ class _OfflineSongListItemState extends State<_OfflineSongListItem>
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Título da música
         Text(
           widget.song.title,
           style: TextStyle(
@@ -266,11 +257,9 @@ class _OfflineSongListItemState extends State<_OfflineSongListItem>
           overflow: TextOverflow.ellipsis,
         ),
         SizedBox(height: 5),
-        // Artista e duração na mesma linha, bem alinhados
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Artista (flexível, mas não pode empurrar o tempo para fora)
             Expanded(
               child: Text(
                 widget.song.artist,
@@ -285,7 +274,6 @@ class _OfflineSongListItemState extends State<_OfflineSongListItem>
               ),
             ),
             SizedBox(width: 8),
-            // Duração da música (fixo à direita, sempre visível)
             Text(
               formattedDuration,
               style: TextStyle(
@@ -326,8 +314,6 @@ class _OfflineSongListItemState extends State<_OfflineSongListItem>
     );
   }
 
-  /// Formata a duração da música
-  /// Converte de "MM:SS" para formato mais legível
   String _formatDuration(String duration) {
     try {
       if (duration.contains(':')) {
@@ -335,11 +321,9 @@ class _OfflineSongListItemState extends State<_OfflineSongListItem>
         if (parts.length == 2) {
           final minutes = int.tryParse(parts[0]) ?? 0;
           final seconds = int.tryParse(parts[1]) ?? 0;
-          // Formatar: M:SS (minutos sem zero à esquerda se < 10, segundos sempre 2 dígitos)
           return '$minutes:${seconds.toString().padLeft(2, '0')}';
         }
       }
-      // Se não está no formato esperado, tentar converter de segundos
       final seconds = int.tryParse(duration);
       if (seconds != null) {
         final minutes = seconds ~/ 60;
@@ -347,7 +331,6 @@ class _OfflineSongListItemState extends State<_OfflineSongListItem>
         return '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
       }
     } catch (e) {
-      // Se der erro, retornar o valor original
     }
     return duration.isEmpty ? '0:00' : duration;
   }

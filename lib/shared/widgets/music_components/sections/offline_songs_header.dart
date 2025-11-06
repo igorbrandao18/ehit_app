@@ -3,7 +3,6 @@ import '../../../design/app_colors.dart';
 import '../../../design/design_tokens.dart';
 import '../../../utils/responsive_utils.dart';
 
-/// Header impressionante para a seção de músicas offline
 class OfflineSongsHeader extends StatelessWidget {
   final int totalSongs;
   final Function()? onShufflePlay;
@@ -40,7 +39,6 @@ class OfflineSongsHeader extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Título e badge
             Row(
               children: [
                 Container(
@@ -81,7 +79,6 @@ class OfflineSongsHeader extends StatelessWidget {
             ),
             SizedBox(height: isMobile ? DesignTokens.spaceMD : DesignTokens.spaceLG),
             
-            // Estatísticas
             Text(
               '$totalSongs ${totalSongs == 1 ? 'Música' : 'Músicas'}',
               style: TextStyle(
@@ -102,7 +99,6 @@ class OfflineSongsHeader extends StatelessWidget {
             ),
             SizedBox(height: isMobile ? DesignTokens.spaceMD : DesignTokens.spaceLG),
             
-            // Botões de ação
             Row(
               children: [
                 Expanded(

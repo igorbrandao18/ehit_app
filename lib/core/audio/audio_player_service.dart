@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:just_audio/just_audio.dart';
 import '../../features/music_library/domain/entities/song.dart';
 import '../utils/audio_position_helper.dart';
+import '../routing/app_router.dart';
+import '../routing/app_routes.dart';
 
 class AudioPlayerService extends ChangeNotifier {
   final AudioPlayer _audioPlayer = AudioPlayer();
@@ -13,6 +15,7 @@ class AudioPlayerService extends ChangeNotifier {
   bool _isPlaying = false;
   Duration _position = Duration.zero;
   Duration _duration = Duration.zero;
+  String? _currentPlaylistName;
   Timer? _simulationTimer;
   Timer? _positionPollTimer;
   AudioPositionHelper? _positionHelper;
@@ -23,6 +26,7 @@ class AudioPlayerService extends ChangeNotifier {
   bool get isPlaying => _isPlaying;
   Duration get position => _position;
   Duration get duration => _duration;
+  String? get currentPlaylistName => _currentPlaylistName;
   double get progress => _duration.inMilliseconds > 0 
       ? _position.inMilliseconds / _duration.inMilliseconds 
       : 0.0;
@@ -36,30 +40,21 @@ class AudioPlayerService extends ChangeNotifier {
       final wasPlaying = _isPlaying;
       _isPlaying = state.playing;
       
-      // Gerenciar positionHelper baseado no estado de reprodução
       if (_isPlaying && !wasPlaying) {
-        // Começou a tocar - iniciar ou retomar positionHelper
         if (_positionHelper != null) {
-          // Helper já existe, apenas retomar usando a posição atual salva
           debugPrint('🔄 playerStateStream: Retomando helper existente na posição: ${_positionHelper!.position.inSeconds}s');
           _positionHelper!.resume();
         } else {
-          // Helper não existe, criar novo
           debugPrint('🔄 playerStateStream: Criando novo helper na posição: ${_position.inSeconds}s');
           _startPositionPolling();
         }
       } else if (!_isPlaying && wasPlaying) {
-        // Pausou - apenas pausar positionHelper sem reiniciar
-        // IMPORTANTE: NÃO criar novo helper, NÃO descartar, apenas pausar
         if (_positionHelper != null) {
-          // Salvar posição atual antes de pausar
           final currentPos = _positionHelper!.position;
           _positionHelper!.pause();
-          // Garantir que temos a posição atual do helper após pausar
           _position = _positionHelper!.position;
           debugPrint('⏸️ playerStateStream: Pausado - posição preservada: ${_position.inSeconds}s (era: ${currentPos.inSeconds}s)');
           
-          // Proteção extra: se a posição ficou zero mas não deveria
           if (_position == Duration.zero && currentPos != Duration.zero) {
             _position = currentPos;
             debugPrint('⚠️ playerStateStream: Corrigindo posição de 0s para ${currentPos.inSeconds}s');
@@ -69,21 +64,22 @@ class AudioPlayerService extends ChangeNotifier {
       
       notifyListeners();
       if (state.processingState == ProcessingState.completed) {
+        if (_positionHelper != null) {
+          _positionHelper!.stop();
+          _position = _duration; 
+          debugPrint('✅ Música terminou - posição fixada em: ${_duration.inSeconds}s');
+          notifyListeners();
+        }
         next();
       }
     });
     
-    // O positionStream do just_audio não funciona bem no iOS durante reprodução
-    // Quando temos AudioPositionHelper, ele é a fonte da verdade
-    // Ignorar positionStream completamente se temos helper ativo
     _audioPlayer.positionStream.listen(
       (position) {
-        // Se temos helper ativo, ignorar positionStream (ele cuida da posição)
         if (_positionHelper != null) {
           return;
         }
         
-        // Fallback apenas se não temos helper
         if (position != _position) {
           _position = position;
           notifyListeners();
@@ -101,30 +97,30 @@ class AudioPlayerService extends ChangeNotifier {
           debugPrint('🎵 Duração atualizada: ${_duration.inSeconds}s -> ${duration.inSeconds}s');
         }
         _duration = duration;
+        _positionHelper?.setMaxDuration(_duration);
         notifyListeners();
       }
     });
   }
   
   void _startPositionPolling() {
-    // Não reiniciar se já existe um helper ativo
-    // apenas retomar se estiver pausado
-    if (_positionHelper != null) {
-      // Se o helper já existe, apenas retomar
-      _positionHelper!.resume();
-      debugPrint('🔄 PositionHelper retomado - posição atual: ${_positionHelper!.position.inSeconds}s');
-      return;
-    }
-    
     _stopPositionPolling();
     
-    // Usar AudioPositionHelper para calcular posição manualmente
-    // já que o positionStream não funciona durante reprodução no iOS
+    if (_positionHelper != null) {
+      _positionHelper!.stop();
+      _positionHelper = null;
+    }
+    
     _positionHelper = AudioPositionHelper(
       onPositionUpdate: (position) {
-        _position = position;
+        if (_duration.inMilliseconds > 0 && position > _duration) {
+          _position = _duration;
+        } else {
+          _position = position;
+        }
         notifyListeners();
       },
+      maxDuration: _duration.inMilliseconds > 0 ? _duration : null,
     );
     _positionHelper!.start(initialPosition: _position);
     
@@ -134,8 +130,6 @@ class AudioPlayerService extends ChangeNotifier {
   void _stopPositionPolling() {
     _positionPollTimer?.cancel();
     _positionPollTimer = null;
-    // Não pausar o helper aqui, apenas parar o timer antigo se existir
-    // O helper será pausado explicitamente quando necessário
   }
 
   Future<void> playSong(Song song) async {
@@ -146,6 +140,7 @@ class AudioPlayerService extends ChangeNotifier {
       _currentSong = song;
       _playlist = [song];
       _currentIndex = 0;
+      _currentPlaylistName = null; 
       _preloadDuration(song);
       if (kIsWeb || !await _isAudioPlayerAvailable()) {
         debugPrint('⚠️ Plugin de áudio não disponível, simulando reprodução...');
@@ -153,10 +148,13 @@ class AudioPlayerService extends ChangeNotifier {
         return;
       }
       await _audioPlayer.setUrl(song.audioUrl);
-      await _audioPlayer.play();
       
-      // Resetar posição
+      _stopPositionPolling();
+      _positionHelper?.stop();
+      _positionHelper = null;
       _position = Duration.zero;
+      
+      await _audioPlayer.play();
       _startPositionPolling();
       
       notifyListeners();
@@ -166,13 +164,15 @@ class AudioPlayerService extends ChangeNotifier {
     }
   }
 
-  Future<void> playPlaylist(List<Song> songs, {int startIndex = 0}) async {
+  Future<void> playPlaylist(List<Song> songs, {int startIndex = 0, String? playlistName}) async {
     if (songs.isEmpty) return;
     try {
       _playlist = songs;
       _currentIndex = startIndex;
       _currentSong = songs[startIndex];
+      _currentPlaylistName = playlistName;
       debugPrint('🎵 Tocando playlist: ${songs.length} músicas');
+      debugPrint('🎵 Nome da playlist/álbum: ${playlistName ?? "Não especificado"}');
       debugPrint('🎵 Começando em: ${_currentSong!.title}');
       debugPrint('🎵 Duração da API: ${_currentSong!.duration}');
       debugPrint('🎵 ImageUrl da música atual: ${_currentSong!.imageUrl}');
@@ -183,10 +183,13 @@ class AudioPlayerService extends ChangeNotifier {
         return;
       }
       await _audioPlayer.setUrl(_currentSong!.audioUrl);
-      await _audioPlayer.play();
       
-      // Resetar posição
+      _stopPositionPolling();
+      _positionHelper?.stop();
+      _positionHelper = null;
       _position = Duration.zero;
+      
+      await _audioPlayer.play();
       _startPositionPolling();
       
       notifyListeners();
@@ -197,37 +200,28 @@ class AudioPlayerService extends ChangeNotifier {
   }
 
   Future<void> pause() async {
-    // Salvar a posição ANTES de pausar o player
-    // Isso garante que temos a posição correta mesmo se o player resetar algo
     Duration? savedPosition;
     if (_positionHelper != null) {
-      // Forçar atualização da posição no helper antes de pausar
       savedPosition = _positionHelper!.position;
       _position = savedPosition;
       debugPrint('⏸️ Pausando na posição: ${_position.inSeconds}s (helper: ${savedPosition.inSeconds}s)');
     } else {
-      // Se não tem helper, usar a posição atual
       savedPosition = _position;
       debugPrint('⏸️ Pausando na posição: ${_position.inSeconds}s (sem helper)');
     }
     
     await _audioPlayer.pause();
-    _isPlaying = false; // Atualizar estado manualmente
+    _isPlaying = false; 
     
-    // Pausar helper - ele para de contar mas mantém a posição salva
-    // IMPORTANTE: NÃO descartar o helper, apenas pausar
     if (_positionHelper != null) {
       _positionHelper!.pause();
-      // Garantir que a posição está preservada
       _position = _positionHelper!.position;
       debugPrint('⏸️ Posição após pausar helper: ${_position.inSeconds}s');
     } else {
-      // Se não tinha helper, usar a posição salva
       _position = savedPosition ?? Duration.zero;
       debugPrint('⏸️ Posição preservada (sem helper): ${_position.inSeconds}s');
     }
     
-    // Proteção: garantir que a posição nunca seja zero após pausar se estava tocando
     if (_position == Duration.zero && savedPosition != null && savedPosition != Duration.zero) {
       _position = savedPosition;
       debugPrint('⚠️ Corrigindo posição de 0s para ${savedPosition.inSeconds}s');
@@ -238,8 +232,7 @@ class AudioPlayerService extends ChangeNotifier {
 
   Future<void> resume() async {
     await _audioPlayer.play();
-    _isPlaying = true; // Atualizar estado manualmente
-    // Retomar helper - ele continua de onde parou
+    _isPlaying = true; 
     _positionHelper?.resume();
     notifyListeners();
   }
@@ -260,16 +253,30 @@ class AudioPlayerService extends ChangeNotifier {
   }
 
   Future<void> next() async {
-    if (_playlist.isEmpty) return;
-    // Se há apenas uma música na playlist, não há próxima música para tocar
+    if (_playlist.isEmpty) {
+      _navigateToHome();
+      return;
+    }
     if (_playlist.length == 1) {
       debugPrint('⏭️ Única música na playlist, parando reprodução');
       _isPlaying = false;
       _position = _duration;
       notifyListeners();
+      _navigateToHome();
       return;
     }
-    _currentIndex = (_currentIndex + 1) % _playlist.length;
+    
+    final nextIndex = (_currentIndex + 1) % _playlist.length;
+    if (nextIndex == 0 && _currentIndex == _playlist.length - 1) {
+      debugPrint('⏭️ Última música da playlist, voltando para home');
+      _isPlaying = false;
+      _position = _duration;
+      notifyListeners();
+      _navigateToHome();
+      return;
+    }
+    
+    _currentIndex = nextIndex;
     _currentSong = _playlist[_currentIndex];
     debugPrint('⏭️ Próxima música: ${_currentSong!.title}');
     _preloadDuration(_currentSong!);
@@ -279,10 +286,13 @@ class AudioPlayerService extends ChangeNotifier {
         return;
       }
       await _audioPlayer.setUrl(_currentSong!.audioUrl);
-      await _audioPlayer.play();
       
-      // Resetar posição
+      _stopPositionPolling();
+      _positionHelper?.stop();
+      _positionHelper = null;
       _position = Duration.zero;
+      
+      await _audioPlayer.play();
       _startPositionPolling();
     } catch (e) {
       debugPrint('❌ Erro ao tocar próxima música: $e');
@@ -303,10 +313,13 @@ class AudioPlayerService extends ChangeNotifier {
         return;
       }
       await _audioPlayer.setUrl(_currentSong!.audioUrl);
-      await _audioPlayer.play();
       
-      // Resetar posição
+      _stopPositionPolling();
+      _positionHelper?.stop();
+      _positionHelper = null;
       _position = Duration.zero;
+      
+      await _audioPlayer.play();
       _startPositionPolling();
     } catch (e) {
       debugPrint('❌ Erro ao tocar música anterior: $e');
@@ -317,7 +330,6 @@ class AudioPlayerService extends ChangeNotifier {
 
   Future<void> seek(Duration position) async {
     await _audioPlayer.seek(position);
-    // Atualizar helper com nova posição
     _positionHelper?.seek(position);
     _position = position;
     notifyListeners();
@@ -392,7 +404,6 @@ class AudioPlayerService extends ChangeNotifier {
         await tempPlayer?.stop();
         await tempPlayer?.dispose();
       } catch (e) {
-        // Ignorar erros ao liberar recursos
       }
     }
   }
@@ -405,20 +416,17 @@ class AudioPlayerService extends ChangeNotifier {
       if (song.duration.isEmpty) continue;
       
       Duration? parsedDuration;
-      // Tentar parsear formato MM:SS
       final durationParts = song.duration.split(':');
       if (durationParts.length == 2) {
         final minutes = int.tryParse(durationParts[0]) ?? 0;
         final seconds = int.tryParse(durationParts[1]) ?? 0;
         parsedDuration = Duration(minutes: minutes, seconds: seconds);
       } else if (durationParts.length == 3) {
-        // Formato HH:MM:SS
         final hours = int.tryParse(durationParts[0]) ?? 0;
         final minutes = int.tryParse(durationParts[1]) ?? 0;
         final seconds = int.tryParse(durationParts[2]) ?? 0;
         parsedDuration = Duration(hours: hours, minutes: minutes, seconds: seconds);
       } else {
-        // Tentar parsear como segundos diretos
         final seconds = int.tryParse(song.duration);
         if (seconds != null && seconds > 0) {
           parsedDuration = Duration(seconds: seconds);
@@ -437,14 +445,12 @@ class AudioPlayerService extends ChangeNotifier {
     try {
       Duration? parsedDuration;
       
-      // Tentar parsear a duração da API (formato MM:SS ou segundos como int)
       final durationParts = song.duration.split(':');
       if (durationParts.length == 2) {
         final minutes = int.tryParse(durationParts[0]) ?? 0;
         final seconds = int.tryParse(durationParts[1]) ?? 0;
         parsedDuration = Duration(minutes: minutes, seconds: seconds);
       } else {
-        // Tentar parsear como segundos diretos
         final seconds = int.tryParse(song.duration);
         if (seconds != null && seconds > 0) {
           parsedDuration = Duration(seconds: seconds);
@@ -457,7 +463,6 @@ class AudioPlayerService extends ChangeNotifier {
         notifyListeners();
       } else {
         debugPrint('⚠️ Formato de duração inválido ou vazio: "${song.duration}"');
-        // Se a duração não puder ser parseada, aguardar o durationStream do just_audio
       }
     } catch (e) {
       debugPrint('❌ Erro ao pré-carregar duração: $e');
@@ -491,6 +496,15 @@ class AudioPlayerService extends ChangeNotifier {
       notifyListeners();
     });
     notifyListeners();
+  }
+  
+  void _navigateToHome() {
+    try {
+      AppRouter.router.go(AppRoutes.home);
+      debugPrint('🏠 Navegando para home após término da playlist');
+    } catch (e) {
+      debugPrint('❌ Erro ao navegar para home: $e');
+    }
   }
 
   @override

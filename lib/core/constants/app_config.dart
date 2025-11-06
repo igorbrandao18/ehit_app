@@ -10,7 +10,6 @@ class AppConfig {
   static const String apiBaseUrl = 'http://31.97.173.118:3030';
   static const String apiVersion = 'v1';
   
-  /// URL base para recursos (imagens, arquivos de áudio)
   static const String resourcesBaseUrl = 'http://31.97.173.118:3030';
   static const int maxRetries = 3;
   static const Duration retryDelay = Duration(seconds: 1);
@@ -48,12 +47,10 @@ class AppConfig {
   static const int maxUsernameLength = 30;
   static const int minPasswordLength = 8;
   static String getApiUrl(String endpoint) {
-    // Remover barra inicial se houver
     final cleanEndpoint = endpoint.startsWith('/') ? endpoint : '/$endpoint';
     return '$apiBaseUrl/api$cleanEndpoint';
   }
   
-  /// Método auxiliar para obter endpoints da API
   static String getApiEndpoint(String endpoint) {
     final cleanEndpoint = endpoint.startsWith('/') ? endpoint.substring(1) : endpoint;
     return '$apiBaseUrl/api/$cleanEndpoint';

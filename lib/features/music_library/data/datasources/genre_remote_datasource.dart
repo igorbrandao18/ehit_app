@@ -19,7 +19,6 @@ class GenreRemoteDataSourceImpl implements GenreRemoteDataSource {
       if (response.statusCode == 200) {
         final data = response.data;
         
-        // A API pode retornar um array direto ou um objeto com 'results'
         List<dynamic> results;
         if (data is List) {
           results = data;

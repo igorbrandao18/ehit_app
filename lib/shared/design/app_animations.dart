@@ -14,7 +14,7 @@ class AppAnimations {
   static const Curve curveBounceOut = Curves.bounceOut;
   static const Curve curveElasticIn = Curves.elasticIn;
   static const Curve curveElasticOut = Curves.elasticOut;
-  static const double scalePressed = DesignTokens.scaleAnimationValue;
+  static const double scalePressed = 0.95;
   static const double scaleNormal = 1.0;
   static const double scaleHover = 1.05;
   static const double opacityVisible = 1.0;

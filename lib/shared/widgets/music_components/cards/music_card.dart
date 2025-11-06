@@ -94,7 +94,7 @@ class _MusicCardState extends State<MusicCard>
             animation: _scaleAnimation,
             builder: (context, child) {
               return Transform.scale(
-                scale: 1.0 - (_scaleAnimation.value * DesignTokens.scaleAnimationValue),
+                scale: 1.0 - (_scaleAnimation.value * 0.05),
                 child: Container(
                   width: cardWidth,
                   height: cardHeight,
@@ -195,7 +195,7 @@ class _MusicCardState extends State<MusicCard>
             animation: _scaleAnimation,
             builder: (context, child) {
               return Transform.scale(
-                scale: 1.0 - (_scaleAnimation.value * DesignTokens.scaleAnimationValue),
+                scale: 1.0 - (_scaleAnimation.value * 0.05),
                 child: Container(
                   width: cardWidth,
                   height: cardHeight,
@@ -218,13 +218,12 @@ class _MusicCardState extends State<MusicCard>
                                   cacheHeight: cardHeight.toInt(),
                                   errorWidget: Container(
                                     color: AppColors.backgroundCard,
-                                      child: Icon(
-                                        widget.isCircular ? Icons.person : Icons.music_note,
-                                        color: AppColors.textTertiary,
-                                        size: iconSize * 2,
-                                      ),
-                                    );
-                                  },
+                                    child: Icon(
+                                      widget.isCircular ? Icons.person : Icons.music_note,
+                                      color: AppColors.textTertiary,
+                                      size: iconSize * 2,
+                                    ),
+                                  ),
                                 ),
                               ),
                               if (widget.showPlayButton)

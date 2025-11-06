@@ -78,9 +78,7 @@ class CategoryDetailPage extends StatelessWidget {
           );
         }
         
-        // Filtrar playlists pelo gênero selecionado
         final filteredPlaylists = controller.playlists.where((playlist) {
-          // Verificar se alguma música na playlist pertence ao gênero selecionado
           return playlist.musicsData.any((song) {
             return song.genre.toLowerCase().contains(categoryTitle.toLowerCase()) ||
                    categoryTitle.toLowerCase().contains(song.genre.toLowerCase());

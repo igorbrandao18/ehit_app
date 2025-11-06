@@ -21,7 +21,6 @@ class _BottomNavigationMenuState extends State<BottomNavigationMenu> {
   }
 
   void _updateLocation() {
-    // Atualizar após o frame para evitar problemas durante build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       
@@ -34,17 +33,14 @@ class _BottomNavigationMenuState extends State<BottomNavigationMenu> {
           });
         }
       } catch (e) {
-        // Ignorar erros ao acessar router state
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // Atualizar localização se necessário
     _updateLocation();
     
-    // Menu aparece APENAS nas rotas principais: home, library, search, radios, more
     final mainRoutes = [
       AppRoutes.home,
       AppRoutes.library,
@@ -53,7 +49,6 @@ class _BottomNavigationMenuState extends State<BottomNavigationMenu> {
       AppRoutes.more,
     ];
 
-    // Se não for uma rota principal, não mostrar o menu
     if (!mainRoutes.contains(_currentLocation)) {
       return const SizedBox.shrink();
     }
@@ -84,7 +79,6 @@ class _BottomNavigationMenuState extends State<BottomNavigationMenu> {
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   final screenWidth = constraints.maxWidth;
-                  // Usar MediaQuery para garantir que o menu se adapte à largura da tela
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     mainAxisSize: MainAxisSize.max,
@@ -147,7 +141,7 @@ class _BottomNavigationMenuState extends State<BottomNavigationMenu> {
           },
           child: Container(
             padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width * 0.02, // 2% da largura da tela
+              horizontal: MediaQuery.of(context).size.width * 0.02, 
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,

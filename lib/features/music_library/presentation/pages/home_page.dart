@@ -31,18 +31,16 @@ class HomePage extends StatelessWidget {
         builder: (context, controller, child) {
             return CustomScrollView(
               slivers: [
-                // Banner pode se estender por trás do header
                 const SliverToBoxAdapter(
                   child: BannerSection(),
                 ),
-                // Conteúdo abaixo do banner
                 SliverList(
                   delegate: SliverChildListDelegate([
                     const SizedBox(height: DesignTokens.bannerBottomSpacing),
                     const PlayHitsPersonalizedSection(),
                     const SizedBox(height: DesignTokens.spaceSM),
                     const FeaturedArtistsSection(),
-                    SizedBox(height: DesignTokens.spaceMD), // Espaçamento mínimo no final
+                    SizedBox(height: DesignTokens.spaceMD), 
                   ]),
                 ),
               ],

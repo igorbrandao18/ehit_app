@@ -22,7 +22,6 @@ class _LibraryPageState extends State<LibraryPage> {
   @override
   void initState() {
     super.initState();
-    // Carregar músicas baixadas quando a página for aberta
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         final controller = context.read<DownloadedSongsController>();
@@ -34,11 +33,9 @@ class _LibraryPageState extends State<LibraryPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Recarregar sempre que a página for visitada
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         final controller = context.read<DownloadedSongsController>();
-        // Só recarregar se não estiver carregando
         if (!controller.isLoading) {
           controller.loadDownloadedSongs();
         }
@@ -183,7 +180,6 @@ class _LibraryPageState extends State<LibraryPage> {
               color: AppColors.genreCardRed,
               child: CustomScrollView(
                 slivers: [
-                  // Header impressionante
                   SliverToBoxAdapter(
                     child: OfflineSongsHeader(
                       totalSongs: controller.songsCount,
@@ -214,7 +210,6 @@ class _LibraryPageState extends State<LibraryPage> {
                     ),
                   ),
                   
-                  // Lista de músicas
                   SliverPadding(
                     padding: EdgeInsets.only(
                       top: DesignTokens.spaceMD,

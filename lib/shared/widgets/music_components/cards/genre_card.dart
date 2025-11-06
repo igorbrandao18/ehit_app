@@ -93,7 +93,6 @@ class _GenreCardState extends State<GenreCard>
               child: Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Efeito de brilho sutil
                   Positioned(
                     top: -50,
                     right: -50,
@@ -111,7 +110,6 @@ class _GenreCardState extends State<GenreCard>
                       ),
                     ),
                   ),
-                  // Conteúdo principal
                   Padding(
                     padding: EdgeInsets.all(spacing * 1.5),
                     child: Center(

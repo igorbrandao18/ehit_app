@@ -160,7 +160,6 @@ class _ArtistDetailPageState extends State<ArtistDetailPage> {
             albums: controller.albums,
             onAlbumTap: (album) => _onAlbumTap(album),
           ),
-          // Padding inferior para não sobrepor o footer (se houver)
           SizedBox(height: MediaQuery.of(context).padding.bottom + 140),
         ],
       ),

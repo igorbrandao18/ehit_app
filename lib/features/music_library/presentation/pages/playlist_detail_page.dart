@@ -178,7 +178,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
       onSongTap: (song) => _onSongTap(context, song),
       onShuffleTap: () => _onShuffleTap(context, playlist),
       onRepeatTap: () => _onRepeatTap(context, playlist),
-      playlistCoverUrl: playlist.cover, // Passar a capa da playlist
+      playlistCoverUrl: playlist.cover, 
     );
   }
   void _onSongTap(BuildContext context, Song song) {
@@ -190,9 +190,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
     if (playlist != null && playlist.musicsData.isNotEmpty) {
       final songIndex = playlist.musicsData.indexWhere((s) => s.id == song.id);
       if (songIndex >= 0) {
-        // Atualizar músicas sem imageUrl para usar a capa da playlist
         final updatedSongs = playlist.musicsData.map((s) {
-          // Se a música não tem imageUrl ou está vazio, usar capa da playlist
           final shouldUsePlaylistCover = (s.imageUrl.isEmpty || s.imageUrl.trim().isEmpty) && 
                                          playlist.cover.isNotEmpty && 
                                          playlist.cover.trim().isNotEmpty;
@@ -206,13 +204,12 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
           debugPrint('   - imageUrl atualizado: ${updatedSong.imageUrl.isEmpty ? "VAZIO" : updatedSong.imageUrl}');
           return updatedSong;
         }).toList();
-        audioPlayer.playPlaylist(updatedSongs, startIndex: songIndex);
+        audioPlayer.playPlaylist(updatedSongs, startIndex: songIndex, playlistName: playlist.name);
         debugPrint('🎵 Tocando playlist: ${playlist.name}');
         debugPrint('🎵 Música atual: ${song.title} - ${song.artist}');
         debugPrint('🎵 Cover da playlist: ${playlist.cover}');
         debugPrint('🎵 Current song imageUrl após update: ${updatedSongs[songIndex].imageUrl}');
       } else {
-        // Se a música não está na playlist, usar capa como fallback se necessário
         final songToPlay = song.imageUrl.isEmpty && playlist.cover.isNotEmpty
             ? song.copyWith(imageUrl: playlist.cover)
             : song;
@@ -229,26 +226,22 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
     for (final song in playlist.musicsData) {
       if (song.duration.isEmpty) continue;
       
-      // Tentar parsear formato MM:SS
       final durationParts = song.duration.split(':');
       if (durationParts.length == 2) {
         final minutes = int.tryParse(durationParts[0]) ?? 0;
         final seconds = int.tryParse(durationParts[1]) ?? 0;
         totalSeconds += minutes * 60 + seconds;
       } else if (durationParts.length == 3) {
-        // Formato HH:MM:SS
         final hours = int.tryParse(durationParts[0]) ?? 0;
         final minutes = int.tryParse(durationParts[1]) ?? 0;
         final seconds = int.tryParse(durationParts[2]) ?? 0;
         totalSeconds += hours * 3600 + minutes * 60 + seconds;
       } else {
-        // Tentar parsear como segundos diretos
         final seconds = int.tryParse(song.duration);
         if (seconds != null && seconds > 0) {
           totalSeconds += seconds;
         } else {
-          // Duração padrão se não conseguir parsear
-          totalSeconds += 210; // 3:30
+          totalSeconds += 210; 
         }
       }
     }
@@ -266,9 +259,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
   void _onShuffleTap(BuildContext context, Playlist playlist) {
     final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
     if (playlist.musicsData.isNotEmpty) {
-      // Atualizar músicas sem imageUrl para usar a capa da playlist
       final updatedSongs = playlist.musicsData.map((s) {
-        // Se a música não tem imageUrl ou está vazio, usar capa da playlist
         final shouldUsePlaylistCover = (s.imageUrl.isEmpty || s.imageUrl.trim().isEmpty) && 
                                        playlist.cover.isNotEmpty && 
                                        playlist.cover.trim().isNotEmpty;
@@ -278,7 +269,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
             : s;
       }).toList();
       final shuffledSongs = List<Song>.from(updatedSongs)..shuffle();
-      audioPlayer.playPlaylist(shuffledSongs, startIndex: 0);
+      audioPlayer.playPlaylist(shuffledSongs, startIndex: 0, playlistName: playlist.name);
       debugPrint('🔀 Shuffle play: ${playlist.musicsData.length} músicas da playlist ${playlist.name}');
       context.pushNamed('player');
     }
@@ -286,9 +277,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
   void _onRepeatTap(BuildContext context, Playlist playlist) {
     final audioPlayer = Provider.of<AudioPlayerService>(context, listen: false);
     if (playlist.musicsData.isNotEmpty) {
-      // Atualizar músicas sem imageUrl para usar a capa da playlist
       final updatedSongs = playlist.musicsData.map((s) {
-        // Se a música não tem imageUrl ou está vazio, usar capa da playlist
         final shouldUsePlaylistCover = (s.imageUrl.isEmpty || s.imageUrl.trim().isEmpty) && 
                                        playlist.cover.isNotEmpty && 
                                        playlist.cover.trim().isNotEmpty;
@@ -297,7 +286,7 @@ class _PlaylistDetailPageState extends State<PlaylistDetailPage> {
             ? s.copyWith(imageUrl: playlist.cover)
             : s;
       }).toList();
-      audioPlayer.playPlaylist(updatedSongs, startIndex: 0);
+      audioPlayer.playPlaylist(updatedSongs, startIndex: 0, playlistName: playlist.name);
       debugPrint('🔁 Repeat play: ${playlist.musicsData.length} músicas da playlist ${playlist.name}');
       context.pushNamed('player');
     }

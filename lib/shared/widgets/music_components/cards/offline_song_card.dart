@@ -5,7 +5,6 @@ import '../../../design/design_tokens.dart';
 import '../../../utils/responsive_utils.dart';
 import '../../base_components/cached_image.dart';
 
-/// Card impressionante para exibir música offline
 class OfflineSongCard extends StatefulWidget {
   final Song song;
   final int index;
@@ -109,7 +108,6 @@ class _OfflineSongCardState extends State<OfflineSongCard>
                     padding: EdgeInsets.all(isMobile ? DesignTokens.spaceSM : DesignTokens.spaceMD),
                     child: Row(
                       children: [
-                        // Número do índice
                         Container(
                           width: 32,
                           alignment: Alignment.center,
@@ -124,16 +122,13 @@ class _OfflineSongCardState extends State<OfflineSongCard>
                         ),
                         SizedBox(width: DesignTokens.spaceSM),
                         
-                        // Thumbnail da música
                         _buildThumbnail(thumbnailSize),
                         SizedBox(width: DesignTokens.spaceMD),
                         
-                        // Informações da música
                         Expanded(
                           child: _buildSongInfo(isMobile),
                         ),
                         
-                        // Badge offline e mais opções
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -211,7 +206,6 @@ class _OfflineSongCardState extends State<OfflineSongCard>
                 ),
               ),
             ),
-            // Overlay gradient
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(

@@ -1,10 +1,6 @@
-// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'playlist_model.dart';
 
-// **************************************************************************
-// JsonSerializableGenerator
-// **************************************************************************
 
 PlaylistModel _$PlaylistModelFromJson(Map<String, dynamic> json) =>
     PlaylistModel(

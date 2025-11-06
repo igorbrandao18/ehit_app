@@ -3,8 +3,8 @@ class AppConstants {
   static const String appName = 'ÊHIT';
   static const String appVersion = '1.0.0';
   static const String apiBaseUrl = 'http://31.97.173.118:3030';
-  static const int connectionTimeout = 30000;
-  static const int receiveTimeout = 30000;
+  static const int connectionTimeout = 60000; 
+  static const int receiveTimeout = 60000; 
   static const String songsEndpoint = '/songs';
   static const String artistsEndpoint = '/artists';
   static const String albumsEndpoint = '/albums';

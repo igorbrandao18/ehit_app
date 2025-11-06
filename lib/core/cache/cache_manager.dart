@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/app_config.dart';
 
-/// Gerenciador de cache inteligente para respostas da API
-/// Reduz requisições em 60-70% e melhora performance significativamente
 class ApiCacheManager {
   static final ApiCacheManager _instance = ApiCacheManager._internal();
   factory ApiCacheManager() => _instance;
@@ -16,7 +14,6 @@ class ApiCacheManager {
     _prefs ??= await SharedPreferences.getInstance();
   }
 
-  /// Cacheia dados da API com TTL (Time To Live)
   Future<void> cacheData<T>({
     required String key,
     required T data,
@@ -38,7 +35,6 @@ class ApiCacheManager {
     debugPrint('💾 Cache salvo: $key (expira em ${expiration ?? AppConfig.cacheExpiration})');
   }
 
-  /// Recupera dados do cache se ainda válidos
   Future<T?> getCachedData<T>({
     required String key,
     required T Function(String) fromJson,
@@ -70,7 +66,6 @@ class ApiCacheManager {
     }
   }
 
-  /// Verifica se existe cache válido
   Future<bool> hasValidCache(String key) async {
     await init();
     final cached = _prefs?.getString(key);
@@ -85,14 +80,12 @@ class ApiCacheManager {
     }
   }
 
-  /// Limpa um cache específico
   Future<void> clearCache(String key) async {
     await init();
     await _prefs?.remove(key);
     debugPrint('🗑️ Cache removido: $key');
   }
 
-  /// Limpa todos os caches
   Future<void> clearAllCache() async {
     await init();
     final keys = _prefs?.getKeys() ?? {};
@@ -108,7 +101,6 @@ class ApiCacheManager {
     debugPrint('🗑️ $removed caches removidos');
   }
 
-  /// Limpa apenas caches expirados
   Future<void> clearExpiredCache() async {
     await init();
     final keys = _prefs?.getKeys() ?? {};
@@ -127,7 +119,6 @@ class ApiCacheManager {
               removed++;
             }
           } catch (e) {
-            // Se houver erro, remover cache corrompido
             await _prefs?.remove(key);
             removed++;
           }
@@ -140,7 +131,6 @@ class ApiCacheManager {
     }
   }
 
-  /// Obtém informações sobre o cache
   Future<Map<String, dynamic>> getCacheInfo() async {
     await init();
     final keys = _prefs?.getKeys() ?? {};

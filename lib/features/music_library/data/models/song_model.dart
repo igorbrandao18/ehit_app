@@ -49,7 +49,6 @@ class SongModel extends Song {
     );
   }
   factory SongModel.fromMap(Map<String, dynamic> map) {
-    // Tratar duration que pode ser null ou string vazia
     String duration = '0:00';
     final durationValue = map['duration'];
     if (durationValue != null && durationValue.toString().isNotEmpty) {

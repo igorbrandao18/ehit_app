@@ -23,7 +23,6 @@ class AppRouter {
     initialLocation: AppRoutes.home,
     debugLogDiagnostics: false,
     routes: [
-      // Shell route que mantém o menu fixo apenas nas rotas principais
       ShellRoute(
         builder: (BuildContext context, GoRouterState state, Widget child) {
           return AppShell(child: child);
@@ -74,7 +73,6 @@ class AppRouter {
           ),
         ],
       ),
-      // Rotas de detalhes SEM shell (não mostram menu)
       GoRoute(
         path: AppRoutes.categoryDetailPath(':categoryTitle'),
         name: 'category-detail',
@@ -115,7 +113,6 @@ class AppRouter {
           return PlaylistDetailPage(playlistId: playlistId);
         },
       ),
-      // Rotas sem shell (player, queue, etc)
       GoRoute(
         path: AppRoutes.player,
         name: 'player',

@@ -11,7 +11,6 @@ class ArtistHeroSection extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    // Usar MediaQuery para garantir padding responsivo
     final screenWidth = MediaQuery.of(context).size.width;
     final padding = ResponsiveUtils.getResponsivePadding(context);
     
@@ -20,12 +19,11 @@ class ArtistHeroSection extends StatelessWidget {
       padding: EdgeInsets.only(
         left: padding.horizontal,
         right: padding.horizontal,
-        top: DesignTokens.spaceXS, // Padding superior mínimo
+        top: DesignTokens.spaceXS, 
         bottom: DesignTokens.spaceMD,
       ),
       child: Column(
         children: [
-          // Sem espaçamento superior para maximizar a posição da imagem
           _buildAlbumArt(),
           SizedBox(height: DesignTokens.spaceLG),
           _buildAlbumTitle(),
@@ -39,7 +37,6 @@ class ArtistHeroSection extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = constraints.maxWidth;
-        // Aumentar o tamanho da imagem de 0.4 para 0.5 (50% da largura da tela)
         final imageSize = screenWidth * 0.5;
         return Container(
           width: imageSize,
