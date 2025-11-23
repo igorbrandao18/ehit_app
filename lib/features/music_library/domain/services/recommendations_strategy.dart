@@ -34,6 +34,8 @@ class RecommendationsStrategy {
       includePlaylists: includeParams['playlists'] ?? true,
       includeMusic: includeParams['music'] ?? false,
       preferredGenres: consumptionAnalysis.favoriteGenres,
+      favoriteArtistIds: consumptionAnalysis.favoriteArtistIds,
+      listenedAlbumIds: consumptionAnalysis.listenedAlbumIds,
       prioritizePopular: true, // Sempre priorizar popularidade
     );
   }
@@ -81,6 +83,8 @@ class RecommendationsStrategy {
     int playlistsCount = 0;
     int musicCount = 0;
     List<String> favoriteGenres = [];
+    List<int> favoriteArtistIds = [];
+    List<int> listenedAlbumIds = [];
     
     try {
       // Analisar músicas recentes
@@ -88,10 +92,23 @@ class RecommendationsStrategy {
         final recentSongs = await _musicLocalDataSource!.getRecentSongs();
         musicCount = recentSongs.length;
         
-        // Extrair gêneros das músicas recentes
+        // Extrair gêneros, artistas e álbuns das músicas recentes
         for (final song in recentSongs) {
           if (song.genre.isNotEmpty && !favoriteGenres.contains(song.genre)) {
             favoriteGenres.add(song.genre);
+          }
+          
+          // Extrair ID do artista (se disponível no modelo)
+          // Nota: SongModel pode não ter artistId diretamente, pode precisar buscar
+          try {
+            // Tentar extrair do ID se for numérico
+            final songId = int.tryParse(song.id);
+            if (songId != null) {
+              // Se o modelo tiver artistId, usar aqui
+              // Por enquanto, vamos focar em gêneros
+            }
+          } catch (e) {
+            // Ignorar erros de parsing
           }
         }
       }
@@ -100,6 +117,13 @@ class RecommendationsStrategy {
       if (_musicLocalDataSource != null) {
         final favorites = await _musicLocalDataSource!.getFavoriteSongs();
         musicCount += favorites.length;
+        
+        // Extrair gêneros dos favoritos também
+        for (final song in favorites) {
+          if (song.genre.isNotEmpty && !favoriteGenres.contains(song.genre)) {
+            favoriteGenres.add(song.genre);
+          }
+        }
       }
       
       // Verificar preferências salvas
@@ -124,6 +148,8 @@ class RecommendationsStrategy {
       playlistsCount: playlistsCount,
       musicCount: musicCount,
       favoriteGenres: favoriteGenres,
+      favoriteArtistIds: favoriteArtistIds,
+      listenedAlbumIds: listenedAlbumIds,
     );
   }
 
@@ -181,6 +207,8 @@ class RecommendationParams {
   final bool includePlaylists;
   final bool includeMusic;
   final List<String> preferredGenres;
+  final List<int> favoriteArtistIds;
+  final List<int> listenedAlbumIds;
   final bool prioritizePopular;
 
   RecommendationParams({
@@ -189,6 +217,8 @@ class RecommendationParams {
     required this.includePlaylists,
     required this.includeMusic,
     this.preferredGenres = const [],
+    this.favoriteArtistIds = const [],
+    this.listenedAlbumIds = const [],
     this.prioritizePopular = true,
   });
 }
@@ -199,12 +229,16 @@ class ConsumptionAnalysis {
   final int playlistsCount;
   final int musicCount;
   final List<String> favoriteGenres;
+  final List<int> favoriteArtistIds;
+  final List<int> listenedAlbumIds;
 
   ConsumptionAnalysis({
     required this.albumsCount,
     required this.playlistsCount,
     required this.musicCount,
     required this.favoriteGenres,
+    this.favoriteArtistIds = const [],
+    this.listenedAlbumIds = const [],
   });
 }
 

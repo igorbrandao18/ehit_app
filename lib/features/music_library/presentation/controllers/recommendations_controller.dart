@@ -64,6 +64,8 @@ class RecommendationsController extends ChangeNotifier {
         includePlaylists: params.includePlaylists,
         includeMusic: params.includeMusic,
         preferredGenres: params.preferredGenres,
+        favoriteArtistIds: params.favoriteArtistIds,
+        listenedAlbumIds: params.listenedAlbumIds,
         prioritizePopular: params.prioritizePopular,
       );
     } catch (e) {
@@ -79,6 +81,8 @@ class RecommendationsController extends ChangeNotifier {
     bool includePlaylists = true,
     bool includeMusic = false,
     List<String>? preferredGenres,
+    List<int>? favoriteArtistIds,
+    List<int>? listenedAlbumIds,
     bool prioritizePopular = true,
   }) async {
     if (_isDisposed) return;
@@ -92,6 +96,8 @@ class RecommendationsController extends ChangeNotifier {
         includePlaylists: includePlaylists,
         includeMusic: includeMusic,
         preferredGenres: preferredGenres,
+        favoriteArtistIds: favoriteArtistIds,
+        listenedAlbumIds: listenedAlbumIds,
         prioritizePopular: prioritizePopular,
       );
       

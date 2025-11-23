@@ -9,6 +9,8 @@ abstract class RecommendationsRemoteDataSource {
     bool includePlaylists = true,
     bool includeMusic = false,
     List<String>? preferredGenres,
+    List<int>? favoriteArtistIds,
+    List<int>? listenedAlbumIds,
     bool prioritizePopular = true,
   });
 }
@@ -25,6 +27,8 @@ class RecommendationsRemoteDataSourceImpl implements RecommendationsRemoteDataSo
     bool includePlaylists = true,
     bool includeMusic = false,
     List<String>? preferredGenres,
+    List<int>? favoriteArtistIds,
+    List<int>? listenedAlbumIds,
     bool prioritizePopular = true,
   }) async {
     try {
@@ -39,6 +43,16 @@ class RecommendationsRemoteDataSourceImpl implements RecommendationsRemoteDataSo
       // Adicionar gêneros preferidos se houver
       if (preferredGenres != null && preferredGenres.isNotEmpty) {
         queryParams['genres'] = preferredGenres.join(',');
+      }
+      
+      // Adicionar IDs de artistas preferidos se houver
+      if (favoriteArtistIds != null && favoriteArtistIds.isNotEmpty) {
+        queryParams['artist_ids'] = favoriteArtistIds.join(',');
+      }
+      
+      // Adicionar IDs de álbuns já ouvidos para excluir
+      if (listenedAlbumIds != null && listenedAlbumIds.isNotEmpty) {
+        queryParams['album_ids'] = listenedAlbumIds.join(',');
       }
 
       final response = await _dio.get(
