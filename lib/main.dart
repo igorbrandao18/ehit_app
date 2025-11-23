@@ -14,6 +14,7 @@ import 'features/music_library/presentation/controllers/artists_controller.dart'
 import 'features/music_library/presentation/controllers/featured_albums_controller.dart';
 import 'features/music_library/presentation/controllers/banner_controller.dart';
 import 'features/music_library/presentation/controllers/recommendations_controller.dart';
+import 'features/music_library/presentation/controllers/moments_controller.dart';
 import 'features/authentication/presentation/controllers/auth_controller.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -81,6 +82,7 @@ class _EhitAppState extends State<EhitApp> with WidgetsBindingObserver {
     final featuredAlbumsController = di.sl<FeaturedAlbumsController>();
     final bannerController = di.sl<BannerController>();
     final recommendationsController = di.sl<RecommendationsController>();
+    final momentsController = di.sl<MomentsController>();
     
     Future.microtask(() async {
       await musicLibraryController.initialize();
@@ -103,6 +105,7 @@ class _EhitAppState extends State<EhitApp> with WidgetsBindingObserver {
         ChangeNotifierProvider.value(value: featuredAlbumsController),
         ChangeNotifierProvider.value(value: bannerController),
         ChangeNotifierProvider.value(value: recommendationsController),
+        ChangeNotifierProvider.value(value: momentsController),
       ],
       child: MaterialApp.router(
         title: 'ÊHIT',

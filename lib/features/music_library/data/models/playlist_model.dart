@@ -17,6 +17,10 @@ class PlaylistModel {
   final String updatedAt;
   @JsonKey(name: 'is_active')
   final bool isActive;
+  @JsonKey(name: 'is_moment')
+  final bool isMoment;
+  @JsonKey(name: 'is_explicit')
+  final bool isExplicit;
   const PlaylistModel({
     required this.id,
     required this.name,
@@ -26,6 +30,8 @@ class PlaylistModel {
     required this.createdAt,
     required this.updatedAt,
     required this.isActive,
+    this.isMoment = false,
+    this.isExplicit = false,
   });
   factory PlaylistModel.fromJson(Map<String, dynamic> json) {
     // Converter id de forma segura
@@ -102,6 +108,18 @@ class PlaylistModel {
         ? isActiveValue
         : (isActiveValue is int ? isActiveValue != 0 : (isActiveValue is String ? isActiveValue.toLowerCase() == 'true' : true));
     
+    // Converter isMoment de forma segura
+    final isMomentValue = json['is_moment'];
+    final isMoment = isMomentValue is bool
+        ? isMomentValue
+        : (isMomentValue is int ? isMomentValue != 0 : (isMomentValue is String ? isMomentValue.toLowerCase() == 'true' : false));
+    
+    // Converter isExplicit de forma segura
+    final isExplicitValue = json['is_explicit'];
+    final isExplicit = isExplicitValue is bool
+        ? isExplicitValue
+        : (isExplicitValue is int ? isExplicitValue != 0 : (isExplicitValue is String ? isExplicitValue.toLowerCase() == 'true' : false));
+    
     return PlaylistModel(
       id: id,
       name: name,
@@ -111,6 +129,8 @@ class PlaylistModel {
       createdAt: createdAt,
       updatedAt: updatedAt,
       isActive: isActive,
+      isMoment: isMoment,
+      isExplicit: isExplicit,
     );
   }
   Map<String, dynamic> toJson() => _$PlaylistModelToJson(this);
