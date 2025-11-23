@@ -105,7 +105,7 @@ class _EventDetailPageState extends State<EventDetailPage> {
   Widget _buildHeaderSection(BuildContext context, EventModel event) {
     final screenWidth = ResponsiveUtils.getScreenWidth(context);
     final imageSize = screenWidth * 0.7;
-    final imageUrl = event.cover ?? '';
+    final imageUrl = event.photo ?? '';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,

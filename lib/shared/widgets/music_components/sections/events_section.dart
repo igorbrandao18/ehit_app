@@ -98,7 +98,7 @@ class _EventsSectionState extends State<EventsSection> {
   }
 
   Widget _buildEventCard(BuildContext context, EventModel event) {
-    final imageUrl = event.cover;
+    final imageUrl = event.photo;
     final finalImageUrl = (imageUrl != null && imageUrl.isNotEmpty)
         ? imageUrl
         : 'https://via.placeholder.com/300';

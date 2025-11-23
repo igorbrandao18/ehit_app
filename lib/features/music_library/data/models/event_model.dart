@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:flutter/foundation.dart';
 
 part 'event_model.g.dart';
 
@@ -14,7 +15,7 @@ class EventModel {
   final String formattedDate;
   @JsonKey(name: 'location_tag')
   final String locationTag;
-  final String? cover;
+  final String? photo;
   @JsonKey(name: 'is_featured')
   final bool isFeatured;
   final int order;
@@ -34,7 +35,7 @@ class EventModel {
     required this.date,
     required this.formattedDate,
     required this.locationTag,
-    this.cover,
+    this.photo,
     required this.isFeatured,
     required this.order,
     required this.createdAt,
@@ -43,13 +44,17 @@ class EventModel {
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
-    final coverValue = json['cover'];
-    String? coverUrl;
-    if (coverValue != null) {
-      if (coverValue is String && coverValue.isNotEmpty) {
-        coverUrl = coverValue;
-      } else if (coverValue is int) {
-        coverUrl = coverValue.toString();
+    final photoValue = json['photo'] ?? json['cover'];
+    String? photoUrl;
+    
+    if (photoValue != null) {
+      if (photoValue is String) {
+        photoUrl = photoValue.trim();
+        if (photoUrl.isEmpty) {
+          photoUrl = null;
+        }
+      } else if (photoValue is int) {
+        photoUrl = photoValue.toString();
       }
     }
     
@@ -62,7 +67,7 @@ class EventModel {
       date: json['date'] as String,
       formattedDate: json['formatted_date'] as String,
       locationTag: json['location_tag'] as String,
-      cover: coverUrl,
+      photo: photoUrl,
       isFeatured: json['is_featured'] as bool,
       order: (json['order'] as num).toInt(),
       createdAt: json['created_at'] as String,

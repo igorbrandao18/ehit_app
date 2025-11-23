@@ -35,8 +35,10 @@ class EventsController extends ChangeNotifier {
       
       _events = eventsList.map((eventData) {
         try {
-          final event = EventModel.fromJson(eventData as Map<String, dynamic>);
-          debugPrint('📅 ${event.name} - Cover: ${event.cover ?? "null"}');
+          final eventJson = eventData as Map<String, dynamic>;
+          debugPrint('🔍 Raw JSON photo: ${eventJson['photo'] ?? eventJson['cover']}');
+          final event = EventModel.fromJson(eventJson);
+          debugPrint('📅 ${event.name} - Photo: ${event.photo ?? "null"}');
           return event;
         } catch (e) {
           debugPrint('⚠️ Erro ao criar modelo de evento: $e');
