@@ -10,6 +10,7 @@ import '../../features/music_library/presentation/pages/artist_detail_page.dart'
 import '../../features/music_library/presentation/pages/album_detail_page.dart';
 import '../../features/music_library/presentation/pages/category_detail_page.dart';
 import '../../features/music_library/presentation/pages/playlist_detail_page.dart';
+import '../../features/music_library/presentation/pages/event_detail_page.dart';
 import '../../features/music_player/presentation/pages/player_page.dart';
 import '../../features/music_player/presentation/pages/queue_page.dart';
 import '../../features/music_library/presentation/controllers/downloaded_songs_controller.dart';
@@ -111,6 +112,14 @@ class AppRouter {
         builder: (context, state) {
           final playlistId = state.pathParameters['playlistId']!;
           return PlaylistDetailPage(playlistId: playlistId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.eventDetailPath(':eventId'),
+        name: 'event-detail',
+        builder: (context, state) {
+          final eventId = state.pathParameters['eventId']!;
+          return EventDetailPage(eventId: eventId);
         },
       ),
       GoRoute(

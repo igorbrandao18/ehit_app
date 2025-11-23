@@ -1,6 +1,10 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'playlist_model.dart';
 
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
 
 PlaylistModel _$PlaylistModelFromJson(Map<String, dynamic> json) =>
     PlaylistModel(
@@ -14,6 +18,8 @@ PlaylistModel _$PlaylistModelFromJson(Map<String, dynamic> json) =>
       createdAt: json['created_at'] as String,
       updatedAt: json['updated_at'] as String,
       isActive: json['is_active'] as bool,
+      isMoment: json['is_moment'] as bool? ?? false,
+      isExplicit: json['is_explicit'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$PlaylistModelToJson(PlaylistModel instance) =>
@@ -26,4 +32,6 @@ Map<String, dynamic> _$PlaylistModelToJson(PlaylistModel instance) =>
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
       'is_active': instance.isActive,
+      'is_moment': instance.isMoment,
+      'is_explicit': instance.isExplicit,
     };

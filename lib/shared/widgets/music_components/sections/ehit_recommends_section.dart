@@ -128,57 +128,57 @@ class _EhitRecommendsSectionState extends State<EhitRecommendsSection> {
         : 'https://via.placeholder.com/300';
     
     return Container(
-      height: DesignTokens.playhitsCardWidth,
-      width: DesignTokens.playhitsCardWidth,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
-        color: Colors.grey[800],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
-        child: CachedImage(
-          imageUrl: finalImageUrl,
-          fit: BoxFit.cover,
-          width: DesignTokens.playhitsCardWidth,
-          height: DesignTokens.playhitsCardWidth,
-          cacheWidth: DesignTokens.playhitsCardWidth.toInt(),
-          cacheHeight: DesignTokens.playhitsCardWidth.toInt(),
-          errorWidget: Container(
-            color: Colors.grey[800],
-            child: const Icon(
-              Icons.music_note,
-              color: Colors.white54,
-              size: 40,
-            ),
-          ),
-        ),
-      ),
+              height: DesignTokens.playhitsCardWidth,
+              width: DesignTokens.playhitsCardWidth,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+                color: Colors.grey[800],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+                child: CachedImage(
+                  imageUrl: finalImageUrl,
+                  fit: BoxFit.cover,
+                  width: DesignTokens.playhitsCardWidth,
+                  height: DesignTokens.playhitsCardWidth,
+                  cacheWidth: DesignTokens.playhitsCardWidth.toInt(),
+                  cacheHeight: DesignTokens.playhitsCardWidth.toInt(),
+                  errorWidget: Container(
+                    color: Colors.grey[800],
+                    child: const Icon(
+                      Icons.music_note,
+                      color: Colors.white54,
+                      size: 40,
+                    ),
+                  ),
+                ),
+              ),
     );
   }
 
   Widget _buildCardTitle(String title) {
     return Text(
-      title,
-      style: const TextStyle(
-        color: Colors.white,
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-      ),
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
     );
   }
 
   Widget _buildCardSubtitle(String subtitle) {
     return Text(
       subtitle,
-      style: const TextStyle(
-        color: Colors.white70,
-        fontSize: 11,
-        fontWeight: FontWeight.w400,
-      ),
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 11,
+                fontWeight: FontWeight.w400,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
     );
   }
 
@@ -206,7 +206,7 @@ class _EhitRecommendsSectionState extends State<EhitRecommendsSection> {
         imageUrl: item.data['cover'] ?? item.data['imageUrl'] ?? '',
         title: item.data['name'] ?? item.data['title'] ?? 'Desconhecido',
         subtitle: item.data['artist_name'] ?? item.data['artistName'] ?? '',
-      );
+    );
     }
   }
 

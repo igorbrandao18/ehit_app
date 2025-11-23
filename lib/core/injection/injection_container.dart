@@ -10,6 +10,7 @@ import '../../features/music_library/data/datasources/album_remote_datasource.da
 import '../../features/music_library/data/datasources/genre_remote_datasource.dart';
 import '../../features/music_library/data/datasources/recommendations_remote_datasource.dart';
 import '../../features/music_library/data/datasources/moments_remote_datasource.dart';
+import '../../features/music_library/data/datasources/events_remote_datasource.dart';
 import '../../features/music_library/domain/services/recommendations_strategy.dart';
 import '../../features/music_player/data/datasources/playlist_remote_datasource.dart';
 import '../../features/music_player/data/datasources/playlist_local_datasource.dart';
@@ -57,6 +58,7 @@ import '../../features/music_library/presentation/controllers/downloaded_songs_c
 import '../../features/music_library/presentation/controllers/genres_controller.dart';
 import '../../features/music_library/presentation/controllers/recommendations_controller.dart';
 import '../../features/music_library/presentation/controllers/moments_controller.dart';
+import '../../features/music_library/presentation/controllers/events_controller.dart';
 import '../../features/music_player/presentation/controllers/music_player_controller.dart';
 import '../../features/music_player/presentation/controllers/playlist_controller.dart';
 import '../../features/music_player/presentation/controllers/audio_player_controller.dart';
@@ -105,6 +107,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<MomentsRemoteDataSource>(
     () => MomentsRemoteDataSourceImpl(sl<Dio>()),
+  );
+  sl.registerLazySingleton<EventsRemoteDataSource>(
+    () => EventsRemoteDataSourceImpl(sl<Dio>()),
   );
   sl.registerLazySingleton<PlaylistRemoteDataSource>(
     () => PlaylistRemoteDataSourceImpl(sl<Dio>()),
@@ -225,6 +230,9 @@ Future<void> init() async {
   ));
   sl.registerLazySingleton(() => MomentsController(
     sl<MomentsRemoteDataSource>(),
+  ));
+  sl.registerLazySingleton(() => EventsController(
+    sl<EventsRemoteDataSource>(),
   ));
   sl.registerLazySingleton(() => MusicPlayerController());
   sl.registerLazySingleton(() => PlaylistController(

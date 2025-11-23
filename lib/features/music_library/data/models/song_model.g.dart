@@ -1,6 +1,10 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
 
 part of 'song_model.dart';
 
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
 
 SongModel _$SongModelFromJson(Map<String, dynamic> json) => SongModel(
       id: json['id'] as String,

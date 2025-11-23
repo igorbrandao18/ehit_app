@@ -9,6 +9,7 @@ import '../../../../shared/widgets/music_components/sections/playhits_personaliz
 import '../../../../shared/widgets/music_components/sections/featured_artists_section.dart';
 import '../../../../shared/widgets/music_components/sections/releases_section.dart';
 import '../../../../shared/widgets/music_components/sections/ehit_recommends_section.dart';
+import '../../../../shared/widgets/music_components/sections/events_section.dart';
 import '../../../../shared/design/layout_tokens.dart';
 import '../../../../shared/design/design_tokens.dart';
 import '../controllers/music_library_controller.dart';
@@ -46,6 +47,8 @@ class HomePage extends StatelessWidget {
                     const ReleasesSection(),
                     const SizedBox(height: DesignTokens.spaceSM),
                     const EhitRecommendsSection(),
+                    const SizedBox(height: DesignTokens.spaceSM),
+                    const EventsSection(),
                     SizedBox(height: DesignTokens.spaceMD), 
                   ]),
                 ),

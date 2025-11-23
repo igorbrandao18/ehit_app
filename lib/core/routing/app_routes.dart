@@ -9,6 +9,7 @@ class AppRoutes {
   static const String artistDetail = '/artist';
   static const String albumDetail = '/album';
   static const String playlistDetail = '/playlist';
+  static const String eventDetail = '/event';
   static const String songDetail = '/song';
   static const String player = '/player';
   static const String queue = '/queue';
@@ -23,5 +24,6 @@ class AppRoutes {
   static String artistDetailPath(String artistId) => '$artistDetail/$artistId';
   static String albumDetailPath(String albumId) => '$albumDetail/$albumId';
   static String playlistDetailPath(String playlistId) => '$playlistDetail/$playlistId';
+  static String eventDetailPath(String eventId) => '$eventDetail/$eventId';
   static String songDetailPath(String songId) => '$songDetail/$songId';
 }

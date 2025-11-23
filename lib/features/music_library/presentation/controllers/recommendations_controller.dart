@@ -67,7 +67,7 @@ class RecommendationsController extends ChangeNotifier {
       );
     } catch (e) {
       debugPrint('⚠️ Erro ao calcular parâmetros automáticos: $e');
-      await loadRecommendations();
+    await loadRecommendations();
     }
   }
 
@@ -106,10 +106,10 @@ class RecommendationsController extends ChangeNotifier {
         
         dynamic model;
         try {
-          if (type == 'album') {
-            model = AlbumModel.fromJson(data);
-          } else if (type == 'playlist') {
-            model = PlaylistModel.fromJson(data);
+        if (type == 'album') {
+          model = AlbumModel.fromJson(data);
+        } else if (type == 'playlist') {
+          model = PlaylistModel.fromJson(data);
           }
         } catch (e) {
           debugPrint('⚠️ Erro ao criar modelo para $type: $e');
