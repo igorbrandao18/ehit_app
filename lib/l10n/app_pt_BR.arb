@@ -29,6 +29,11 @@
   "music": "Music",
   "@music": {
     "description": "Subtítulo do aplicativo"
+  },
+  
+  "ehitRecommends": "ÉHIT Recomenda",
+  "@ehitRecommends": {
+    "description": "Título da seção de recomendações do ÉHIT"
   }
 }
 

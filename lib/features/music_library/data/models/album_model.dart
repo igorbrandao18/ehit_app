@@ -18,26 +18,74 @@ class AlbumModel extends Album {
   });
 
   factory AlbumModel.fromJson(Map<String, dynamic> json) {
-    String? coverUrl = json['cover'] as String? ?? json['image'] as String? ?? '';
+    // Converter cover de forma segura
+    final coverValue = json['cover'] ?? json['image'];
+    String? coverUrl = '';
+    if (coverValue != null) {
+      if (coverValue is String) {
+        coverUrl = coverValue;
+      } else if (coverValue is int) {
+        coverUrl = coverValue.toString();
+      }
+    }
     if (coverUrl.isNotEmpty && !coverUrl.startsWith('http')) {
       coverUrl = '${AppConfig.resourcesBaseUrl}$coverUrl';
     }
     
+    // Converter id de forma segura
+    final idValue = json['id'];
+    final id = idValue is int 
+        ? idValue 
+        : (idValue is String ? int.tryParse(idValue) ?? 0 : 0);
+    
+    // Converter title de forma segura
+    final nameValue = json['name'] ?? json['title'];
+    final title = nameValue is String 
+        ? nameValue 
+        : (nameValue is int ? nameValue.toString() : 'Unknown Album');
+    
+    // Converter artistName de forma segura
+    final artistNameValue = json['artist_name'] ?? json['artist_data']?['stage_name'];
+    final artistName = artistNameValue is String
+        ? artistNameValue
+        : (artistNameValue is int ? artistNameValue.toString() : 'Unknown Artist');
+    
+    // Converter songsCount de forma segura
+    final musicsCountValue = json['musics_count'] ?? json['songs_count'];
+    final songsCount = musicsCountValue is int
+        ? musicsCountValue
+        : (musicsCountValue is String ? int.tryParse(musicsCountValue) ?? 0 : 0);
+    
+    // Converter datas de forma segura
+    DateTime parseDate(dynamic dateValue) {
+      if (dateValue == null) return DateTime.now();
+      if (dateValue is String) {
+        try {
+          return DateTime.parse(dateValue);
+        } catch (e) {
+          return DateTime.now();
+        }
+      }
+      if (dateValue is int) {
+        // Pode ser timestamp
+        try {
+          return DateTime.fromMillisecondsSinceEpoch(dateValue * 1000);
+        } catch (e) {
+          return DateTime.fromMillisecondsSinceEpoch(dateValue);
+        }
+      }
+      return DateTime.now();
+    }
+    
     return AlbumModel(
-      id: json['id'] as int,
-      title: json['name'] as String? ?? json['title'] as String? ?? 'Unknown Album',
-      artistName: json['artist_name'] as String? ?? json['artist_data']?['stage_name'] as String? ?? 'Unknown Artist',
+      id: id,
+      title: title,
+      artistName: artistName,
       imageUrl: coverUrl,
-      songsCount: json['musics_count'] as int? ?? json['songs_count'] as int? ?? 0,
-      releaseDate: json['release_date'] != null 
-          ? DateTime.parse(json['release_date'] as String)
-          : (json['created_at'] != null ? DateTime.parse(json['created_at'] as String) : DateTime.now()),
-      createdAt: json['created_at'] != null 
-          ? DateTime.parse(json['created_at'] as String)
-          : DateTime.now(),
-      updatedAt: json['updated_at'] != null
-          ? DateTime.parse(json['updated_at'] as String)
-          : DateTime.now(),
+      songsCount: songsCount,
+      releaseDate: parseDate(json['release_date'] ?? json['created_at']),
+      createdAt: parseDate(json['created_at']),
+      updatedAt: parseDate(json['updated_at']),
     );
   }
 

@@ -6,6 +6,9 @@ import '../../features/music_library/domain/entities/song.dart';
 import '../utils/audio_position_helper.dart';
 import '../routing/app_router.dart';
 import '../routing/app_routes.dart';
+import 'media_notification_service.dart';
+import 'ios_media_controls_service.dart';
+import 'ios_now_playing_service.dart';
 
 class AudioPlayerService extends ChangeNotifier {
   final AudioPlayer _audioPlayer = AudioPlayer();
@@ -19,6 +22,9 @@ class AudioPlayerService extends ChangeNotifier {
   Timer? _simulationTimer;
   Timer? _positionPollTimer;
   AudioPositionHelper? _positionHelper;
+  final MediaNotificationService _notificationService = MediaNotificationService();
+  final IOSMediaControlsService _iosMediaControls = IOSMediaControlsService();
+  final IOSNowPlayingService _iosNowPlaying = IOSNowPlayingService();
 
   Song? get currentSong => _currentSong;
   List<Song> get playlist => _playlist;
@@ -33,6 +39,92 @@ class AudioPlayerService extends ChangeNotifier {
 
   AudioPlayerService() {
     _init();
+    _initializeNotifications();
+  }
+
+  Future<void> _initializeNotifications() async {
+    await _notificationService.initialize(
+      onAction: _handleNotificationAction,
+    );
+    // Inicializar controles de mídia do iOS
+    await _iosMediaControls.initialize();
+    await _iosNowPlaying.initialize();
+    
+    // Configurar callbacks para comandos de mídia remota do iOS
+    _iosNowPlaying.setCommandCallbacks(
+      onPlay: resume,
+      onPause: pause,
+      onNext: next,
+      onPrevious: previous,
+    );
+  }
+
+  void _handleNotificationAction(String actionId) {
+    switch (actionId) {
+      case 'play_pause':
+        togglePlayPause();
+        break;
+      case 'next':
+        next();
+        break;
+      case 'previous':
+        previous();
+        break;
+      default:
+        debugPrint('📱 Ação desconhecida: $actionId');
+    }
+  }
+
+  Future<void> _updateNotification() async {
+    await updateMediaNotification();
+  }
+
+  Future<void> updateMediaNotification() async {
+    if (_currentSong != null) {
+      // Atualizar notificação local
+      await _notificationService.updateMediaNotification(
+        song: _currentSong!,
+        isPlaying: _isPlaying,
+      );
+      
+      // Atualizar controles de mídia nativos do iOS
+      await _iosMediaControls.updateNowPlayingInfo(
+        song: _currentSong!,
+        isPlaying: _isPlaying,
+        position: _position,
+        duration: _duration,
+      );
+    }
+  }
+
+  Future<void> _showNotification() async {
+    await showMediaNotification();
+  }
+
+  Future<void> showMediaNotification() async {
+    if (_currentSong != null) {
+      // Mostrar notificação local (Android e iOS)
+      await _notificationService.showMediaNotification(
+        song: _currentSong!,
+        isPlaying: _isPlaying,
+        onPlayPause: togglePlayPause,
+        onNext: next,
+        onPrevious: previous,
+      );
+      
+      // Atualizar controles de mídia nativos do iOS
+      await _iosMediaControls.updateNowPlayingInfo(
+        song: _currentSong!,
+        isPlaying: _isPlaying,
+        position: _position,
+        duration: _duration,
+      );
+    }
+  }
+
+  Future<void> _hideNotification() async {
+    await _notificationService.hideMediaNotification();
+    await _iosMediaControls.clearNowPlayingInfo();
   }
 
   void _init() {
@@ -62,6 +154,7 @@ class AudioPlayerService extends ChangeNotifier {
         }
       }
       
+      _updateNotification();
       notifyListeners();
       if (state.processingState == ProcessingState.completed) {
         if (_positionHelper != null) {
@@ -98,6 +191,15 @@ class AudioPlayerService extends ChangeNotifier {
         }
         _duration = duration;
         _positionHelper?.setMaxDuration(_duration);
+        // Atualizar controles de mídia do iOS quando a duração mudar
+        if (_currentSong != null) {
+          _iosMediaControls.updateNowPlayingInfo(
+            song: _currentSong!,
+            isPlaying: _isPlaying,
+            position: _position,
+            duration: _duration,
+          );
+        }
         notifyListeners();
       }
     });
@@ -157,6 +259,7 @@ class AudioPlayerService extends ChangeNotifier {
       await _audioPlayer.play();
       _startPositionPolling();
       
+      await _showNotification();
       notifyListeners();
     } catch (e) {
       debugPrint('❌ Erro ao tocar música: $e');
@@ -192,6 +295,7 @@ class AudioPlayerService extends ChangeNotifier {
       await _audioPlayer.play();
       _startPositionPolling();
       
+      await _showNotification();
       notifyListeners();
     } catch (e) {
       debugPrint('❌ Erro ao tocar playlist: $e');
@@ -227,6 +331,7 @@ class AudioPlayerService extends ChangeNotifier {
       debugPrint('⚠️ Corrigindo posição de 0s para ${savedPosition.inSeconds}s');
     }
     
+    await _updateNotification();
     notifyListeners();
   }
 
@@ -234,6 +339,7 @@ class AudioPlayerService extends ChangeNotifier {
     await _audioPlayer.play();
     _isPlaying = true; 
     _positionHelper?.resume();
+    await _updateNotification();
     notifyListeners();
   }
 
@@ -249,6 +355,7 @@ class AudioPlayerService extends ChangeNotifier {
     await _audioPlayer.stop();
     _currentSong = null;
     _position = Duration.zero;
+    await _hideNotification();
     notifyListeners();
   }
 
@@ -294,6 +401,7 @@ class AudioPlayerService extends ChangeNotifier {
       
       await _audioPlayer.play();
       _startPositionPolling();
+      await _updateNotification();
     } catch (e) {
       debugPrint('❌ Erro ao tocar próxima música: $e');
       _simulatePlayback();
@@ -321,6 +429,7 @@ class AudioPlayerService extends ChangeNotifier {
       
       await _audioPlayer.play();
       _startPositionPolling();
+      await _updateNotification();
     } catch (e) {
       debugPrint('❌ Erro ao tocar música anterior: $e');
       _simulatePlayback();

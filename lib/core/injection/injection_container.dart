@@ -8,6 +8,8 @@ import '../../features/music_library/data/datasources/artist_remote_datasource.d
 import '../../features/music_library/data/datasources/banner_remote_datasource.dart';
 import '../../features/music_library/data/datasources/album_remote_datasource.dart';
 import '../../features/music_library/data/datasources/genre_remote_datasource.dart';
+import '../../features/music_library/data/datasources/recommendations_remote_datasource.dart';
+import '../../features/music_library/domain/services/recommendations_strategy.dart';
 import '../../features/music_player/data/datasources/playlist_remote_datasource.dart';
 import '../../features/music_player/data/datasources/playlist_local_datasource.dart';
 import '../../features/music_player/data/datasources/just_audio_datasource.dart';
@@ -52,6 +54,7 @@ import '../../features/music_library/presentation/controllers/featured_albums_co
 import '../../features/music_library/presentation/controllers/banner_controller.dart';
 import '../../features/music_library/presentation/controllers/downloaded_songs_controller.dart';
 import '../../features/music_library/presentation/controllers/genres_controller.dart';
+import '../../features/music_library/presentation/controllers/recommendations_controller.dart';
 import '../../features/music_player/presentation/controllers/music_player_controller.dart';
 import '../../features/music_player/presentation/controllers/playlist_controller.dart';
 import '../../features/music_player/presentation/controllers/audio_player_controller.dart';
@@ -94,6 +97,9 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<GenreRemoteDataSource>(
     () => GenreRemoteDataSourceImpl(sl<Dio>()),
+  );
+  sl.registerLazySingleton<RecommendationsRemoteDataSource>(
+    () => RecommendationsRemoteDataSourceImpl(sl<Dio>()),
   );
   sl.registerLazySingleton<PlaylistRemoteDataSource>(
     () => PlaylistRemoteDataSourceImpl(sl<Dio>()),
@@ -203,6 +209,16 @@ Future<void> init() async {
     downloadedStorage: sl<DownloadedSongsStorage>(),
   ));
   sl.registerLazySingleton(() => GenresController(sl<GetGenresUseCase>()));
+  sl.registerLazySingleton<RecommendationsStrategy>(
+    () => RecommendationsStrategy(
+      musicLocalDataSource: sl<MusicLocalDataSource>(),
+      prefs: sl<SharedPreferences>(),
+    ),
+  );
+  sl.registerLazySingleton(() => RecommendationsController(
+    sl<RecommendationsRemoteDataSource>(),
+    strategy: sl<RecommendationsStrategy>(),
+  ));
   sl.registerLazySingleton(() => MusicPlayerController());
   sl.registerLazySingleton(() => PlaylistController(
     getUserPlaylistsUseCase: sl<GetUserPlaylistsUseCase>(),
