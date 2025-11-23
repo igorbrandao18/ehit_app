@@ -1,7 +1,4 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../../../core/constants/app_constants.dart';
 import '../../../../shared/utils/responsive_utils.dart';
 import '../../data/datasources/music_local_datasource.dart';
 
@@ -9,34 +6,26 @@ import '../../data/datasources/music_local_datasource.dart';
 /// baseado no consumo do usuário e características do dispositivo
 class RecommendationsStrategy {
   final MusicLocalDataSource? _musicLocalDataSource;
-  final SharedPreferences? _prefs;
 
   RecommendationsStrategy({
     MusicLocalDataSource? musicLocalDataSource,
-    SharedPreferences? prefs,
-  })  : _musicLocalDataSource = musicLocalDataSource,
-        _prefs = prefs;
+  }) : _musicLocalDataSource = musicLocalDataSource;
 
   /// Calcula automaticamente os parâmetros ideais de recomendação
   Future<RecommendationParams> calculateParams(BuildContext context) async {
     // 1. Calcular limite baseado no tamanho da tela
     final limit = _calculateLimitFromScreen(context);
     
-    // 2. Analisar histórico de consumo do usuário
-    final consumptionAnalysis = await _analyzeUserConsumption();
-    
-    // 3. Determinar quais tipos incluir automaticamente
-    final includeParams = _determineIncludeParams(consumptionAnalysis);
+    // 2. Analisar histórico de consumo do usuário para extrair gêneros
+    final preferredGenres = await _extractPreferredGenres();
     
     return RecommendationParams(
       limit: limit,
-      includeAlbums: includeParams['albums'] ?? true,
-      includePlaylists: includeParams['playlists'] ?? true,
-      includeMusic: includeParams['music'] ?? false,
-      preferredGenres: consumptionAnalysis.favoriteGenres,
-      favoriteArtistIds: consumptionAnalysis.favoriteArtistIds,
-      listenedAlbumIds: consumptionAnalysis.listenedAlbumIds,
-      prioritizePopular: true, // Sempre priorizar popularidade
+      includeAlbums: true,
+      includePlaylists: true,
+      includeMusic: false,
+      preferredGenres: preferredGenres,
+      prioritizePopular: true,
     );
   }
 
@@ -77,126 +66,34 @@ class RecommendationsStrategy {
     return baseLimit;
   }
 
-  /// Analisa o histórico de consumo do usuário
-  Future<ConsumptionAnalysis> _analyzeUserConsumption() async {
-    int albumsCount = 0;
-    int playlistsCount = 0;
-    int musicCount = 0;
-    List<String> favoriteGenres = [];
-    List<int> favoriteArtistIds = [];
-    List<int> listenedAlbumIds = [];
+  /// Extrai gêneros preferidos do histórico local do usuário
+  Future<List<String>> _extractPreferredGenres() async {
+    final genres = <String>{};
     
     try {
-      // Analisar músicas recentes
-      if (_musicLocalDataSource != null) {
-        final recentSongs = await _musicLocalDataSource!.getRecentSongs();
-        musicCount = recentSongs.length;
-        
-        // Extrair gêneros, artistas e álbuns das músicas recentes
+      final dataSource = _musicLocalDataSource;
+      if (dataSource != null) {
+        // Analisar músicas recentes
+        final recentSongs = await dataSource.getRecentSongs();
         for (final song in recentSongs) {
-          if (song.genre.isNotEmpty && !favoriteGenres.contains(song.genre)) {
-            favoriteGenres.add(song.genre);
-          }
-          
-          // Extrair ID do artista (se disponível no modelo)
-          // Nota: SongModel pode não ter artistId diretamente, pode precisar buscar
-          try {
-            // Tentar extrair do ID se for numérico
-            final songId = int.tryParse(song.id);
-            if (songId != null) {
-              // Se o modelo tiver artistId, usar aqui
-              // Por enquanto, vamos focar em gêneros
-            }
-          } catch (e) {
-            // Ignorar erros de parsing
+          if (song.genre.isNotEmpty) {
+            genres.add(song.genre);
           }
         }
-      }
-      
-      // Analisar favoritos
-      if (_musicLocalDataSource != null) {
-        final favorites = await _musicLocalDataSource!.getFavoriteSongs();
-        musicCount += favorites.length;
         
-        // Extrair gêneros dos favoritos também
+        // Analisar favoritos
+        final favorites = await dataSource.getFavoriteSongs();
         for (final song in favorites) {
-          if (song.genre.isNotEmpty && !favoriteGenres.contains(song.genre)) {
-            favoriteGenres.add(song.genre);
+          if (song.genre.isNotEmpty) {
+            genres.add(song.genre);
           }
         }
       }
-      
-      // Verificar preferências salvas
-      if (_prefs != null) {
-        final prefs = await _getUserPreferences();
-        final preferredContentType = prefs['preferred_content_type'] as String?;
-        
-        if (preferredContentType == 'albums') {
-          albumsCount += 10; // Boost para álbuns
-        } else if (preferredContentType == 'playlists') {
-          playlistsCount += 10; // Boost para playlists
-        } else if (preferredContentType == 'music') {
-          musicCount += 10; // Boost para músicas individuais
-        }
-      }
     } catch (e) {
-      debugPrint('⚠️ Erro ao analisar consumo: $e');
+      debugPrint('⚠️ Erro ao extrair gêneros preferidos: $e');
     }
     
-    return ConsumptionAnalysis(
-      albumsCount: albumsCount,
-      playlistsCount: playlistsCount,
-      musicCount: musicCount,
-      favoriteGenres: favoriteGenres,
-      favoriteArtistIds: favoriteArtistIds,
-      listenedAlbumIds: listenedAlbumIds,
-    );
-  }
-
-  /// Determina quais tipos de conteúdo incluir baseado na análise
-  Map<String, bool> _determineIncludeParams(ConsumptionAnalysis analysis) {
-    final params = <String, bool>{};
-    
-    // Se o usuário ouve mais músicas individuais, incluir músicas
-    if (analysis.musicCount > analysis.albumsCount && 
-        analysis.musicCount > analysis.playlistsCount) {
-      params['music'] = true;
-      params['albums'] = analysis.albumsCount > 0;
-      params['playlists'] = analysis.playlistsCount > 0;
-    } 
-    // Se o usuário prefere álbuns
-    else if (analysis.albumsCount > analysis.playlistsCount) {
-      params['albums'] = true;
-      params['playlists'] = true;
-      params['music'] = false;
-    }
-    // Se o usuário prefere playlists
-    else if (analysis.playlistsCount > analysis.albumsCount) {
-      params['playlists'] = true;
-      params['albums'] = true;
-      params['music'] = false;
-    }
-    // Padrão: álbuns e playlists
-    else {
-      params['albums'] = true;
-      params['playlists'] = true;
-      params['music'] = false;
-    }
-    
-    return params;
-  }
-
-  Future<Map<String, dynamic>> _getUserPreferences() async {
-    if (_prefs == null) return {};
-    try {
-      final jsonString = _prefs!.getString(AppConstants.userPreferencesKey);
-      if (jsonString != null) {
-        return json.decode(jsonString) as Map<String, dynamic>;
-      }
-    } catch (e) {
-      debugPrint('⚠️ Erro ao ler preferências: $e');
-    }
-    return {};
+    return genres.toList();
   }
 }
 
@@ -207,8 +104,6 @@ class RecommendationParams {
   final bool includePlaylists;
   final bool includeMusic;
   final List<String> preferredGenres;
-  final List<int> favoriteArtistIds;
-  final List<int> listenedAlbumIds;
   final bool prioritizePopular;
 
   RecommendationParams({
@@ -217,28 +112,7 @@ class RecommendationParams {
     required this.includePlaylists,
     required this.includeMusic,
     this.preferredGenres = const [],
-    this.favoriteArtistIds = const [],
-    this.listenedAlbumIds = const [],
     this.prioritizePopular = true,
-  });
-}
-
-/// Análise do consumo do usuário
-class ConsumptionAnalysis {
-  final int albumsCount;
-  final int playlistsCount;
-  final int musicCount;
-  final List<String> favoriteGenres;
-  final List<int> favoriteArtistIds;
-  final List<int> listenedAlbumIds;
-
-  ConsumptionAnalysis({
-    required this.albumsCount,
-    required this.playlistsCount,
-    required this.musicCount,
-    required this.favoriteGenres,
-    this.favoriteArtistIds = const [],
-    this.listenedAlbumIds = const [],
   });
 }
 

@@ -1,12 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../data/datasources/recommendations_remote_datasource.dart';
 import '../../data/models/album_model.dart';
 import '../../data/models/playlist_model.dart';
 import '../../domain/services/recommendations_strategy.dart';
-import '../../data/datasources/music_local_datasource.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
+/// Modelo para um item de recomendação
 class RecommendationItem {
   final String type; // 'album', 'playlist', 'music'
   final int id;
@@ -21,6 +19,7 @@ class RecommendationItem {
   });
 }
 
+/// Controller para gerenciar recomendações
 class RecommendationsController extends ChangeNotifier {
   final RecommendationsRemoteDataSource _dataSource;
   final RecommendationsStrategy? _strategy;
@@ -38,18 +37,18 @@ class RecommendationsController extends ChangeNotifier {
   List<RecommendationItem> get recommendations => _recommendations;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+  bool get hasError => _errorMessage != null;
 
+  /// Inicializa o controller e carrega recomendações
   Future<void> initialize(BuildContext? context) async {
     if (context != null && _strategy != null) {
-      // Usar estratégia automática
       await loadRecommendationsAuto(context);
     } else {
-      // Usar valores padrão
       await loadRecommendations();
     }
   }
 
-  /// Carrega recomendações usando estratégia automática
+  /// Carrega recomendações usando estratégia automática baseada no contexto
   Future<void> loadRecommendationsAuto(BuildContext context) async {
     if (_strategy == null) {
       await loadRecommendations();
@@ -57,35 +56,32 @@ class RecommendationsController extends ChangeNotifier {
     }
     
     try {
-      final params = await _strategy!.calculateParams(context);
+      final params = await _strategy.calculateParams(context);
       await loadRecommendations(
         limit: params.limit,
         includeAlbums: params.includeAlbums,
         includePlaylists: params.includePlaylists,
         includeMusic: params.includeMusic,
-        preferredGenres: params.preferredGenres,
-        favoriteArtistIds: params.favoriteArtistIds,
-        listenedAlbumIds: params.listenedAlbumIds,
+        preferredGenres: params.preferredGenres.isNotEmpty ? params.preferredGenres : null,
         prioritizePopular: params.prioritizePopular,
       );
     } catch (e) {
       debugPrint('⚠️ Erro ao calcular parâmetros automáticos: $e');
-      // Fallback para valores padrão
       await loadRecommendations();
     }
   }
 
+  /// Carrega recomendações com parâmetros específicos
   Future<void> loadRecommendations({
     int limit = 5,
     bool includeAlbums = true,
     bool includePlaylists = true,
     bool includeMusic = false,
     List<String>? preferredGenres,
-    List<int>? favoriteArtistIds,
-    List<int>? listenedAlbumIds,
     bool prioritizePopular = true,
   }) async {
     if (_isDisposed) return;
+    
     _setLoading(true);
     _clearError();
     
@@ -96,8 +92,6 @@ class RecommendationsController extends ChangeNotifier {
         includePlaylists: includePlaylists,
         includeMusic: includeMusic,
         preferredGenres: preferredGenres,
-        favoriteArtistIds: favoriteArtistIds,
-        listenedAlbumIds: listenedAlbumIds,
         prioritizePopular: prioritizePopular,
       );
       
@@ -106,18 +100,8 @@ class RecommendationsController extends ChangeNotifier {
       final recommendationsList = response['recommendations'] as List<dynamic>? ?? [];
       
       _recommendations = recommendationsList.map((item) {
-        // Converter type de forma segura (pode vir como int ou String)
-        final typeValue = item['type'];
-        final type = typeValue is String 
-            ? typeValue 
-            : (typeValue is int ? typeValue.toString() : 'album');
-        
-        // Converter id de forma segura (pode vir como String ou int)
-        final idValue = item['id'];
-        final id = idValue is int 
-            ? idValue 
-            : (idValue is String ? int.tryParse(idValue) ?? 0 : 0);
-        
+        final type = _parseString(item['type'], 'album');
+        final id = _parseInt(item['id'], 0);
         final data = item['data'] as Map<String, dynamic>? ?? {};
         
         dynamic model;
@@ -128,7 +112,7 @@ class RecommendationsController extends ChangeNotifier {
             model = PlaylistModel.fromJson(data);
           }
         } catch (e) {
-          debugPrint('❌ Erro ao criar modelo para $type: $e');
+          debugPrint('⚠️ Erro ao criar modelo para $type: $e');
         }
         
         return RecommendationItem(
@@ -139,12 +123,12 @@ class RecommendationsController extends ChangeNotifier {
         );
       }).toList();
       
-      debugPrint('🎯 Recomendações carregadas: ${_recommendations.length}');
+      debugPrint('✅ ${_recommendations.length} recomendações carregadas (estratégia: ${response['strategy'] ?? 'featured'})');
       notifyListeners();
     } catch (e) {
       if (!_isDisposed) {
         debugPrint('❌ Erro ao carregar recomendações: $e');
-        _setError('Erro ao carregar recomendações: $e');
+        _setError('Não foi possível carregar recomendações');
       }
     } finally {
       if (!_isDisposed) {
@@ -153,8 +137,23 @@ class RecommendationsController extends ChangeNotifier {
     }
   }
 
+  /// Recarrega as recomendações
   Future<void> refresh() async {
     await loadRecommendations();
+  }
+
+  /// Parse seguro de String
+  String _parseString(dynamic value, String defaultValue) {
+    if (value is String) return value;
+    if (value is int) return value.toString();
+    return defaultValue;
+  }
+
+  /// Parse seguro de int
+  int _parseInt(dynamic value, int defaultValue) {
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value) ?? defaultValue;
+    return defaultValue;
   }
 
   void _setLoading(bool loading) {

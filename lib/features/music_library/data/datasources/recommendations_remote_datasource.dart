@@ -9,8 +9,6 @@ abstract class RecommendationsRemoteDataSource {
     bool includePlaylists = true,
     bool includeMusic = false,
     List<String>? preferredGenres,
-    List<int>? favoriteArtistIds,
-    List<int>? listenedAlbumIds,
     bool prioritizePopular = true,
   });
 }
@@ -27,8 +25,6 @@ class RecommendationsRemoteDataSourceImpl implements RecommendationsRemoteDataSo
     bool includePlaylists = true,
     bool includeMusic = false,
     List<String>? preferredGenres,
-    List<int>? favoriteArtistIds,
-    List<int>? listenedAlbumIds,
     bool prioritizePopular = true,
   }) async {
     try {
@@ -44,16 +40,6 @@ class RecommendationsRemoteDataSourceImpl implements RecommendationsRemoteDataSo
       if (preferredGenres != null && preferredGenres.isNotEmpty) {
         queryParams['genres'] = preferredGenres.join(',');
       }
-      
-      // Adicionar IDs de artistas preferidos se houver
-      if (favoriteArtistIds != null && favoriteArtistIds.isNotEmpty) {
-        queryParams['artist_ids'] = favoriteArtistIds.join(',');
-      }
-      
-      // Adicionar IDs de álbuns já ouvidos para excluir
-      if (listenedAlbumIds != null && listenedAlbumIds.isNotEmpty) {
-        queryParams['album_ids'] = listenedAlbumIds.join(',');
-      }
 
       final response = await _dio.get(
         AppConfig.getApiEndpoint('recommendations/'),
@@ -61,15 +47,22 @@ class RecommendationsRemoteDataSourceImpl implements RecommendationsRemoteDataSo
       );
 
       if (response.statusCode == 200) {
-        final data = response.data;
-        debugPrint('🎯 API retornou ${data['count'] ?? 0} recomendações');
-        return data as Map<String, dynamic>;
+        final data = response.data as Map<String, dynamic>;
+        debugPrint('✅ Recomendações carregadas: ${data['count'] ?? 0} itens (estratégia: ${data['strategy'] ?? 'featured'})');
+        return data;
       } else {
         throw Exception('Failed to load recommendations: ${response.statusCode}');
       }
+    } on DioException catch (e) {
+      debugPrint('❌ Erro ao buscar recomendações: ${e.message}');
+      if (e.response != null) {
+        debugPrint('   Status: ${e.response?.statusCode}');
+        debugPrint('   Data: ${e.response?.data}');
+      }
+      rethrow;
     } catch (e) {
-      debugPrint('❌ Erro ao buscar recomendações: $e');
-      throw Exception('Error fetching recommendations: $e');
+      debugPrint('❌ Erro inesperado ao buscar recomendações: $e');
+      rethrow;
     }
   }
 }

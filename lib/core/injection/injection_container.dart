@@ -217,7 +217,6 @@ Future<void> init() async {
   sl.registerLazySingleton<RecommendationsStrategy>(
     () => RecommendationsStrategy(
       musicLocalDataSource: sl<MusicLocalDataSource>(),
-      prefs: sl<SharedPreferences>(),
     ),
   );
   sl.registerLazySingleton(() => RecommendationsController(

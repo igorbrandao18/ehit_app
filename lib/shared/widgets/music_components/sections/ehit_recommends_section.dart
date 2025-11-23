@@ -9,6 +9,7 @@ import '../../../../features/music_library/data/models/playlist_model.dart';
 import '../section_title.dart';
 import '../../base_components/cached_image.dart';
 
+/// Widget que exibe a seção "ÉHIT Recomenda"
 class EhitRecommendsSection extends StatefulWidget {
   const EhitRecommendsSection({super.key});
 
@@ -22,11 +23,14 @@ class _EhitRecommendsSectionState extends State<EhitRecommendsSection> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    if (!_initialized) {
+    if (!_initialized && mounted) {
       _initialized = true;
-      final controller = context.read<RecommendationsController>();
-      // Inicializar com contexto para usar estratégia automática
-      controller.initialize(context);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          final controller = context.read<RecommendationsController>();
+          controller.initialize(context);
+        }
+      });
     }
   }
 
@@ -35,11 +39,15 @@ class _EhitRecommendsSectionState extends State<EhitRecommendsSection> {
     return Consumer<RecommendationsController>(
       builder: (context, controller, child) {
         if (controller.isLoading) {
-          return _buildLoadingState(context);
+          return _buildLoadingState();
+        }
+
+        if (controller.hasError) {
+          return _buildErrorState(context, controller.errorMessage ?? 'Erro desconhecido');
         }
 
         if (controller.recommendations.isEmpty) {
-          return _buildEmptyState(context);
+          return const SizedBox.shrink();
         }
 
         return _buildContent(context, controller.recommendations);
@@ -47,7 +55,7 @@ class _EhitRecommendsSectionState extends State<EhitRecommendsSection> {
     );
   }
 
-  Widget _buildLoadingState(BuildContext context) {
+  Widget _buildLoadingState() {
     return Container(
       height: DesignTokens.playhitsCardWidth + DesignTokens.spaceXL + 60,
       padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
@@ -59,8 +67,16 @@ class _EhitRecommendsSectionState extends State<EhitRecommendsSection> {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
-    return const SizedBox.shrink();
+  Widget _buildErrorState(BuildContext context, String error) {
+    return Container(
+      padding: const EdgeInsets.all(DesignTokens.spaceMD),
+      child: Center(
+        child: Text(
+          error,
+          style: const TextStyle(color: Colors.white70),
+        ),
+      ),
+    );
   }
 
   Widget _buildContent(BuildContext context, List<RecommendationItem> items) {
@@ -76,8 +92,7 @@ class _EhitRecommendsSectionState extends State<EhitRecommendsSection> {
             padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
             itemCount: items.length,
             itemBuilder: (context, index) {
-              final item = items[index];
-              return _buildRecommendedCard(context, item);
+              return _buildRecommendedCard(context, items[index]);
             },
           ),
         ),
@@ -86,30 +101,7 @@ class _EhitRecommendsSectionState extends State<EhitRecommendsSection> {
   }
 
   Widget _buildRecommendedCard(BuildContext context, RecommendationItem item) {
-    String imageUrl = '';
-    String title = '';
-    String artist = '';
-    
-    if (item.type == 'album' && item.model is AlbumModel) {
-      final album = item.model as AlbumModel;
-      imageUrl = album.imageUrl;
-      title = album.title;
-      artist = album.artistName;
-    } else if (item.type == 'playlist' && item.model is PlaylistModel) {
-      final playlist = item.model as PlaylistModel;
-      imageUrl = playlist.cover;
-      title = playlist.name;
-      if (playlist.musicsData.isNotEmpty) {
-        artist = playlist.musicsData.first.artist;
-      }
-    } else {
-      // Fallback para dados diretos
-      imageUrl = item.data['cover'] ?? item.data['imageUrl'] ?? '';
-      title = item.data['name'] ?? item.data['title'] ?? '';
-      artist = item.data['artist_name'] ?? item.data['artistName'] ?? '';
-    }
-    
-    final finalImageUrl = imageUrl.isNotEmpty ? imageUrl : 'https://via.placeholder.com/300';
+    final cardData = _extractCardData(item);
     
     return Container(
       width: DesignTokens.playhitsCardWidth,
@@ -119,61 +111,103 @@ class _EhitRecommendsSectionState extends State<EhitRecommendsSection> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              height: DesignTokens.playhitsCardWidth,
-              width: DesignTokens.playhitsCardWidth,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
-                color: Colors.grey[800],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
-                child: CachedImage(
-                  imageUrl: finalImageUrl,
-                  fit: BoxFit.cover,
-                  width: DesignTokens.playhitsCardWidth,
-                  height: DesignTokens.playhitsCardWidth,
-                  cacheWidth: DesignTokens.playhitsCardWidth.toInt(),
-                  cacheHeight: DesignTokens.playhitsCardWidth.toInt(),
-                  errorWidget: Container(
-                    color: Colors.grey[800],
-                    child: const Icon(
-                      Icons.music_note,
-                      color: Colors.white54,
-                      size: 40,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            _buildCardImage(cardData.imageUrl),
             const SizedBox(height: 8),
-            Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-              textAlign: TextAlign.left,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+            _buildCardTitle(cardData.title),
             const SizedBox(height: 4),
-            Text(
-              artist,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 11,
-                fontWeight: FontWeight.w400,
-              ),
-              textAlign: TextAlign.left,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+            _buildCardSubtitle(cardData.subtitle),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildCardImage(String imageUrl) {
+    final finalImageUrl = imageUrl.isNotEmpty 
+        ? imageUrl 
+        : 'https://via.placeholder.com/300';
+    
+    return Container(
+      height: DesignTokens.playhitsCardWidth,
+      width: DesignTokens.playhitsCardWidth,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+        color: Colors.grey[800],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
+        child: CachedImage(
+          imageUrl: finalImageUrl,
+          fit: BoxFit.cover,
+          width: DesignTokens.playhitsCardWidth,
+          height: DesignTokens.playhitsCardWidth,
+          cacheWidth: DesignTokens.playhitsCardWidth.toInt(),
+          cacheHeight: DesignTokens.playhitsCardWidth.toInt(),
+          errorWidget: Container(
+            color: Colors.grey[800],
+            child: const Icon(
+              Icons.music_note,
+              color: Colors.white54,
+              size: 40,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCardTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget _buildCardSubtitle(String subtitle) {
+    return Text(
+      subtitle,
+      style: const TextStyle(
+        color: Colors.white70,
+        fontSize: 11,
+        fontWeight: FontWeight.w400,
+      ),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  _CardData _extractCardData(RecommendationItem item) {
+    if (item.type == 'album' && item.model is AlbumModel) {
+      final album = item.model as AlbumModel;
+      return _CardData(
+        imageUrl: album.imageUrl,
+        title: album.title,
+        subtitle: album.artistName,
+      );
+    } else if (item.type == 'playlist' && item.model is PlaylistModel) {
+      final playlist = item.model as PlaylistModel;
+      final subtitle = playlist.musicsData.isNotEmpty
+          ? playlist.musicsData.first.artist
+          : 'Playlist';
+      return _CardData(
+        imageUrl: playlist.cover,
+        title: playlist.name,
+        subtitle: subtitle,
+      );
+    } else {
+      // Fallback para dados diretos
+      return _CardData(
+        imageUrl: item.data['cover'] ?? item.data['imageUrl'] ?? '',
+        title: item.data['name'] ?? item.data['title'] ?? 'Desconhecido',
+        subtitle: item.data['artist_name'] ?? item.data['artistName'] ?? '',
+      );
+    }
   }
 
   void _navigateToItem(BuildContext context, RecommendationItem item) {
@@ -193,5 +227,18 @@ class _EhitRecommendsSectionState extends State<EhitRecommendsSection> {
       );
     }
   }
+}
+
+/// Classe auxiliar para dados do card
+class _CardData {
+  final String imageUrl;
+  final String title;
+  final String subtitle;
+
+  _CardData({
+    required this.imageUrl,
+    required this.title,
+    required this.subtitle,
+  });
 }
 
