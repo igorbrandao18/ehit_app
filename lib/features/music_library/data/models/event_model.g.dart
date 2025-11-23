@@ -21,6 +21,8 @@ EventModel _$EventModelFromJson(Map<String, dynamic> json) => EventModel(
       createdAt: json['created_at'] as String,
       updatedAt: json['updated_at'] as String,
       isActive: json['is_active'] as bool,
+      description: json['description'] as String?,
+      links: json['links'] as Map<String, dynamic>?,
     );
 
 Map<String, dynamic> _$EventModelToJson(EventModel instance) =>
@@ -39,4 +41,6 @@ Map<String, dynamic> _$EventModelToJson(EventModel instance) =>
       'created_at': instance.createdAt,
       'updated_at': instance.updatedAt,
       'is_active': instance.isActive,
+      'description': instance.description,
+      'links': instance.links,
     };

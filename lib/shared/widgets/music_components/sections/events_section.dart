@@ -24,8 +24,7 @@ class _EventsSectionState extends State<EventsSection> {
       _initialized = true;
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
-          final controller = context.read<EventsController>();
-          controller.initialize();
+          context.read<EventsController>().initialize();
         }
       });
     }
@@ -40,7 +39,7 @@ class _EventsSectionState extends State<EventsSection> {
         }
 
         if (controller.hasError) {
-          return _buildErrorState(context, controller.errorMessage ?? 'Erro desconhecido');
+          return _buildErrorState(controller.errorMessage ?? 'Erro desconhecido');
         }
 
         if (controller.events.isEmpty) {
@@ -54,17 +53,15 @@ class _EventsSectionState extends State<EventsSection> {
 
   Widget _buildLoadingState() {
     return Container(
-      height: 200,
+      height: DesignTokens.eventCardHeight + DesignTokens.spaceXL + DesignTokens.albumCardTextHeight,
       padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
       child: const Center(
-        child: CircularProgressIndicator(
-          color: Colors.white,
-        ),
+        child: CircularProgressIndicator(color: Colors.white),
       ),
     );
   }
 
-  Widget _buildErrorState(BuildContext context, String error) {
+  Widget _buildErrorState(String error) {
     return Container(
       padding: const EdgeInsets.all(DesignTokens.spaceMD),
       child: Center(
@@ -83,7 +80,7 @@ class _EventsSectionState extends State<EventsSection> {
         const SectionTitle(title: 'Eventos'),
         const SizedBox(height: DesignTokens.spaceMD),
         SizedBox(
-          height: 200,
+          height: DesignTokens.eventCardHeight + DesignTokens.spaceXL + DesignTokens.albumCardTextHeight,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: DesignTokens.screenPadding),
@@ -98,14 +95,12 @@ class _EventsSectionState extends State<EventsSection> {
   }
 
   Widget _buildEventCard(BuildContext context, EventModel event) {
-    final imageUrl = event.photo;
-    final finalImageUrl = (imageUrl != null && imageUrl.isNotEmpty)
-        ? imageUrl
-        : 'https://via.placeholder.com/300';
+    const cardWidth = DesignTokens.eventCardWidth;
+    const cardHeight = DesignTokens.eventCardHeight;
     
     return Container(
-      width: 280,
-      margin: const EdgeInsets.only(right: DesignTokens.spaceMD),
+      width: cardWidth,
+      margin: const EdgeInsets.only(right: DesignTokens.cardSpacing),
       child: GestureDetector(
         onTap: () {
           context.pushNamed(
@@ -117,81 +112,99 @@ class _EventsSectionState extends State<EventsSection> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Stack(
-            children: [
-              Container(
-                height: 140,
-                width: 280,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
-                  color: Colors.grey[800],
+              children: [
+                Container(
+                  height: cardHeight,
+                  width: cardWidth,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(DesignTokens.cardBorderRadius),
+                    color: Colors.grey[800],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(DesignTokens.cardBorderRadius),
+                    child: _buildEventImage(event, cardWidth, cardHeight),
+                  ),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(DesignTokens.radiusMD),
-                  child: CachedImage(
-                    imageUrl: finalImageUrl,
-                    fit: BoxFit.cover,
-                    width: 280,
-                    height: 140,
-                    cacheWidth: 280,
-                    cacheHeight: 140,
-                    errorWidget: Container(
-                      color: Colors.grey[800],
-                      child: const Icon(
-                        Icons.event,
-                        color: Colors.white54,
-                        size: 40,
+                Positioned(
+                  top: DesignTokens.spaceSM,
+                  left: DesignTokens.spaceSM,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: DesignTokens.spaceXS,
+                      vertical: DesignTokens.spaceXS / 2,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(DesignTokens.opacityStrong),
+                      borderRadius: BorderRadius.circular(DesignTokens.radiusSM),
+                    ),
+                    child: Text(
+                      event.locationTag,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: DesignTokens.fontSizeXS,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ),
+              ],
+            ),
+            const SizedBox(height: DesignTokens.spaceSM),
+            Text(
+              event.name,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: DesignTokens.fontSizeSM,
+                fontWeight: FontWeight.w600,
               ),
-              Positioned(
-                top: 8,
-                left: 8,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.7),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Text(
-                    event.locationTag,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: DesignTokens.spaceXS),
+            Text(
+              event.venue,
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: DesignTokens.fontSizeXS,
+                fontWeight: FontWeight.w400,
               ),
-            ],
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 8),
-          Text(
-            event.name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            event.venue,
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
           ],
         ),
       ),
     );
   }
-}
 
+  Widget _buildEventImage(EventModel event, double width, double height) {
+    final photoUrl = event.photo;
+    
+    if (photoUrl != null && photoUrl.isNotEmpty && photoUrl != 'null') {
+      return CachedImage(
+        imageUrl: photoUrl,
+        fit: BoxFit.cover,
+        width: width,
+        height: height,
+        cacheWidth: width.toInt(),
+        cacheHeight: height.toInt(),
+        errorWidget: _buildPlaceholder(width, height),
+      );
+    }
+    
+    return _buildPlaceholder(width, height);
+  }
+
+  Widget _buildPlaceholder(double width, double height) {
+    return Container(
+      width: width,
+      height: height,
+      color: Colors.grey[800],
+      child: const Icon(
+        Icons.event,
+        color: Colors.white54,
+        size: DesignTokens.iconXL,
+      ),
+    );
+  }
+}

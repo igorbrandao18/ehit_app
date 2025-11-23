@@ -34,23 +34,26 @@ class EventsController extends ChangeNotifier {
       final eventsList = response['events'] as List<dynamic>? ?? [];
       
       _events = eventsList.map((eventData) {
-        try {
-          final eventJson = eventData as Map<String, dynamic>;
-          debugPrint('🔍 Raw JSON photo: ${eventJson['photo'] ?? eventJson['cover']}');
-          final event = EventModel.fromJson(eventJson);
-          debugPrint('📅 ${event.name} - Photo: ${event.photo ?? "null"}');
-          return event;
-        } catch (e) {
-          debugPrint('⚠️ Erro ao criar modelo de evento: $e');
-          rethrow;
+        final eventJson = eventData as Map<String, dynamic>;
+        if (kDebugMode) {
+          debugPrint('📅 Evento: ${eventJson['name']} - Photo: ${eventJson['photo']}');
         }
+        return EventModel.fromJson(eventJson);
       }).toList();
       
-      debugPrint('✅ ${_events.length} eventos carregados');
+      if (kDebugMode) {
+        debugPrint('✅ ${_events.length} eventos carregados');
+        for (var event in _events) {
+          debugPrint('   - ${event.name}: photo=${event.photo ?? "null"}');
+        }
+      }
+      
       notifyListeners();
     } catch (e) {
       if (!_isDisposed) {
-        debugPrint('❌ Erro ao carregar eventos: $e');
+        if (kDebugMode) {
+          debugPrint('❌ Erro ao carregar eventos: $e');
+        }
         _setError('Não foi possível carregar eventos');
       }
     } finally {
@@ -85,4 +88,3 @@ class EventsController extends ChangeNotifier {
     super.dispose();
   }
 }
-

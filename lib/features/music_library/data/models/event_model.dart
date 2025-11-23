@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:flutter/foundation.dart';
 
 part 'event_model.g.dart';
 
@@ -25,6 +24,8 @@ class EventModel {
   final String updatedAt;
   @JsonKey(name: 'is_active')
   final bool isActive;
+  final String? description;
+  final Map<String, dynamic>? links;
 
   EventModel({
     required this.id,
@@ -41,41 +42,13 @@ class EventModel {
     required this.createdAt,
     required this.updatedAt,
     required this.isActive,
+    this.description,
+    this.links,
   });
 
   factory EventModel.fromJson(Map<String, dynamic> json) {
-    final photoValue = json['photo'] ?? json['cover'];
-    String? photoUrl;
-    
-    if (photoValue != null) {
-      if (photoValue is String) {
-        photoUrl = photoValue.trim();
-        if (photoUrl.isEmpty) {
-          photoUrl = null;
-        }
-      } else if (photoValue is int) {
-        photoUrl = photoValue.toString();
-      }
-    }
-    
-    return EventModel(
-      id: (json['id'] as num).toInt(),
-      name: json['name'] as String,
-      venue: json['venue'] as String,
-      city: json['city'] as String,
-      state: json['state'] as String,
-      date: json['date'] as String,
-      formattedDate: json['formatted_date'] as String,
-      locationTag: json['location_tag'] as String,
-      photo: photoUrl,
-      isFeatured: json['is_featured'] as bool,
-      order: (json['order'] as num).toInt(),
-      createdAt: json['created_at'] as String,
-      updatedAt: json['updated_at'] as String,
-      isActive: json['is_active'] as bool,
-    );
+    return _$EventModelFromJson(json);
   }
 
   Map<String, dynamic> toJson() => _$EventModelToJson(this);
 }
-

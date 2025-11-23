@@ -138,6 +138,8 @@ class DesignTokens {
   static const double songItemThumbnailDesktop = 70.0; 
   static const double playhitsCardHeight = 160.0;
   static const double playhitsCardWidth = 120.0;
+  static const double eventCardWidth = 280.0;
+  static const double eventCardHeight = 140.0;
   static const double mobileSpacingMultiplier = 0.8;
   static const double mobileHorizontalPaddingMultiplier = 0.5;
   static const double mobileFontSizeMultiplier = 0.9;
